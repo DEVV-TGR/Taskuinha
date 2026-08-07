@@ -1,10 +1,11 @@
+import { Star } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
+import { Pergaminho } from "@/components/decor/Pergaminho";
 import { ratings, quotes } from "@/lib/reviews";
 
 /*
-  Os logótipos vêm dos ficheiros oficiais da Simple Icons em /public/logos.
-  Aplicados como máscara para herdarem a cor do tema em vez de trazerem uma
-  cor fixa que só funciona num dos modos.
+  Os logótipos vêm dos ficheiros oficiais em /public/logos. Aplicados como
+  máscara para herdarem a cor do tema em vez de trazerem uma cor fixa.
 */
 function PlatformLogo({ icon }: { icon: string }) {
   return (
@@ -25,18 +26,30 @@ function PlatformLogo({ icon }: { icon: string }) {
   );
 }
 
+function Estrelas({ score }: { score: string }) {
+  const valor = Math.round(parseFloat(score.replace(",", ".")));
+  return (
+    <span className="flex gap-0.5 text-osso" aria-hidden="true">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star key={i} size={13} weight={i < valor ? "fill" : "regular"} />
+      ))}
+    </span>
+  );
+}
+
 /* Deslocamentos diferentes por citação, para o bloco ler como um mural. */
 const offsets = ["sm:mr-auto", "sm:ml-auto", "sm:mx-auto"];
+const sementes = [4, 9, 12];
 
 export function Vozes() {
   return (
-    <section className="border-y border-line bg-surface-sunken py-24 sm:py-32">
+    <section className="border-y border-linha bg-breu-fundo py-24 sm:py-32">
       <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <Reveal className="max-w-2xl">
-          <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95]">
+          <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
             O que dizem
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-ink-muted">
+          <p className="mt-5 text-base leading-relaxed text-osso-fraco">
             Chegam avaliações em várias línguas, o que faz sentido numa casa
             onde há sempre alguém a caminho de Santiago.
           </p>
@@ -47,7 +60,7 @@ export function Vozes() {
             <Reveal
               key={rating.platform}
               index={i}
-              className="flex-1 basis-64 rounded-[var(--radius-card)] border border-line bg-surface-raised p-6"
+              className="flex-1 basis-64 rounded-[var(--radius-card)] border border-linha bg-breu-raso p-6"
             >
               <a
                 href={rating.href}
@@ -55,19 +68,26 @@ export function Vozes() {
                 rel="noreferrer"
                 className="group flex items-start gap-4"
               >
-                <span className="mt-1 text-ink-muted transition-colors group-hover:text-accent">
+                <span className="mt-1 text-osso-fraco transition-colors group-hover:text-lanterna">
                   <PlatformLogo icon={rating.icon} />
                 </span>
                 <span>
                   <span className="flex items-baseline gap-1.5">
-                    <span className="font-mono text-3xl leading-none text-ink">
+                    <span
+                      className="text-3xl leading-none text-osso"
+                      style={{ fontFamily: "var(--font-maquina)" }}
+                    >
                       {rating.score}
                     </span>
-                    <span className="font-mono text-sm text-ink-muted">
+                    <span
+                      className="text-sm text-osso-fraco"
+                      style={{ fontFamily: "var(--font-maquina)" }}
+                    >
                       / {rating.outOf}
                     </span>
                   </span>
-                  <span className="mt-2 block text-sm text-ink-muted">
+                  <Estrelas score={rating.score} />
+                  <span className="mt-2 block text-sm text-osso-fraco">
                     {rating.platform}, {rating.count}
                     {rating.note ? `. ${rating.note}` : ""}
                   </span>
@@ -77,7 +97,7 @@ export function Vozes() {
           ))}
         </div>
 
-        <div className="mt-16 space-y-12">
+        <div className="mt-16 flex flex-col gap-10 sm:gap-8">
           {quotes.map((quote, i) => (
             <Reveal
               key={quote.text}
@@ -85,21 +105,24 @@ export function Vozes() {
               as="figure"
               className={`max-w-xl ${offsets[i % offsets.length]}`}
             >
-              <blockquote
-                lang={quote.lang}
-                className="text-[clamp(1.15rem,2.4vw,1.5rem)] leading-snug text-ink"
-              >
-                <span aria-hidden className="text-accent">
-                  “
-                </span>
-                {quote.text}
-                <span aria-hidden className="text-accent">
-                  ”
-                </span>
-              </blockquote>
-              <figcaption className="mt-4 text-sm text-ink-muted">
-                {quote.source}
-              </figcaption>
+              <Pergaminho semente={sementes[i % sementes.length]}>
+                <blockquote
+                  lang={quote.lang}
+                  className="text-[clamp(1.1rem,2.2vw,1.35rem)] leading-snug"
+                  style={{ fontFamily: "var(--font-imfell)" }}
+                >
+                  <span aria-hidden className="text-[var(--pergaminho-queimado)]">
+                    “
+                  </span>
+                  {quote.text}
+                  <span aria-hidden className="text-[var(--pergaminho-queimado)]">
+                    ”
+                  </span>
+                </blockquote>
+                <figcaption className="mt-4 text-sm opacity-70">
+                  {quote.source}
+                </figcaption>
+              </Pergaminho>
             </Reveal>
           ))}
         </div>

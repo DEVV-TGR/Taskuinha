@@ -44,7 +44,7 @@ export function Mapa() {
   return (
     <div
       ref={ref}
-      className="h-[420px] overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface-raised lg:h-[600px]"
+      className="h-[420px] overflow-hidden rounded-[var(--radius-card)] border border-linha bg-breu-raso lg:h-[600px]"
     >
       {size ? (
         <iframe

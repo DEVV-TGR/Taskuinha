@@ -2,19 +2,25 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
 /*
-  Dois níveis de CTA e mais nenhum.
-  O primário assenta sobre o acento; o secundário é traço.
-  Ambos ficam legíveis por cima de fotografia porque o secundário
-  leva sempre um fundo semi-opaco.
+  Dois níveis de CTA e mais nenhum. Tabuletas de madeira, não pílulas — uma
+  tabuleta não se arredonda toda, por isso `border-radius` é
+  `var(--radius-card)` em vez de `rounded-full`. Isto quebra a regra antiga
+  do sistema ("interactivos totalmente arredondados"); é deliberado, ver o
+  comentário no topo de globals.css.
+
+  O primário leva 4 pregos de ferro nos cantos, como uma tabuleta pregada a
+  sério. O secundário é só contorno — não é madeira, é a opção que não
+  chama tanta atenção.
 */
 
 const base =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-[0.95rem] font-medium tracking-tight transition-[transform,background-color,border-color] duration-200 ease-out active:translate-y-px";
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-card)] px-6 py-3 text-[0.95rem] font-medium tracking-tight transition-[transform,background-color,border-color] duration-200 ease-out active:translate-y-px";
 
 const variants = {
-  primary: "bg-accent text-on-accent hover:brightness-110",
+  primary:
+    "gravado bg-lanterna text-sobre-acento shadow-[inset_0_1px_0_rgb(255_255_255/0.25),inset_0_-2px_4px_rgb(0_0_0/0.25)] hover:brightness-110",
   secondary:
-    "border border-line-strong bg-surface/70 text-ink backdrop-blur-sm hover:border-accent hover:text-accent",
+    "border border-linha-forte bg-breu/70 text-osso backdrop-blur-sm hover:border-lanterna hover:text-lanterna",
 } as const;
 
 type Variant = keyof typeof variants;
@@ -32,6 +38,7 @@ export function Cta({
   className?: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const classes = `${base} ${variants[variant]} ${className}`;
+  const pregos = variant === "primary" ? <Pregos /> : null;
 
   if (href.startsWith("tel:") || href.startsWith("http")) {
     return (
@@ -42,6 +49,7 @@ export function Cta({
           ? { target: "_blank", rel: "noreferrer" }
           : {})}
       >
+        {pregos}
         {children}
       </a>
     );
@@ -49,7 +57,27 @@ export function Cta({
 
   return (
     <Link href={href} className={classes} {...rest}>
+      {pregos}
       {children}
     </Link>
+  );
+}
+
+function Pregos() {
+  const posicoes = ["top-1 left-1", "top-1 right-1", "bottom-1 left-1", "bottom-1 right-1"];
+  return (
+    <>
+      {posicoes.map((posicao) => (
+        <svg
+          key={posicao}
+          aria-hidden="true"
+          viewBox="0 0 8 8"
+          className={`pointer-events-none absolute h-1.5 w-1.5 ${posicao}`}
+        >
+          <circle cx="4" cy="4" r="3" fill="var(--sobre-acento)" opacity="0.55" />
+          <circle cx="3.3" cy="3.3" r="0.7" fill="var(--osso)" opacity="0.35" />
+        </svg>
+      ))}
+    </>
   );
 }

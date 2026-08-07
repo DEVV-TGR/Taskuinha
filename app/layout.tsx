@@ -1,27 +1,58 @@
 import type { Metadata } from "next";
-import { Archivo, Geist, Geist_Mono } from "next/font/google";
+import {
+  Rye,
+  Alegreya_Sans,
+  Special_Elite,
+  IM_Fell_English_SC,
+} from "next/font/google";
 import { site } from "@/lib/site";
+import { Tralha } from "@/components/decor/Tralha";
+import { Entrada } from "@/components/Entrada";
 import "./globals.css";
 
-/* Grotesk larga, para títulos com peso de placa pintada de doca. */
-const archivo = Archivo({
-  variable: "--font-archivo",
+/*
+  Títulos e wordmark. Wood-type de tabuleta de doca. Só tem peso 400.
+  É a única fonte com `preload`: aparece no hero e é o maior candidato a LCP.
+*/
+const rye = Rye({
+  variable: "--font-rye",
   subsets: ["latin"],
-  axes: ["wdth"],
+  weight: "400",
   display: "swap",
 });
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/*
+  Corpo. Humanista, boa em pt-PT, tem acentuação completa.
+  `preload: false` — o `next/font` faz preload por omissão em todas as
+  fontes; o comentário da Rye já dizia "só ela leva preload" mas isso nunca
+  tinha sido desligado nas outras três. Verificado com Lighthouse: quatro
+  fontes a competir pela mesma ligação no arranque empurra o LCP para bem
+  longe dos 2,5s do plano.
+*/
+const alegreya = Alegreya_Sans({
+  variable: "--font-alegreya",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
   display: "swap",
+  preload: false,
 });
 
-/* Só para preços, horas e números. */
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+/* Preços, horas e números fora do pergaminho. Máquina de escrever gasta. */
+const elite = Special_Elite({
+  variable: "--font-elite",
   subsets: ["latin"],
+  weight: "400",
   display: "swap",
+  preload: false,
+});
+
+/* Só dentro do pergaminho da ementa. Prensa inglesa do séc. XVII. */
+const imfell = IM_Fell_English_SC({
+  variable: "--font-imfell",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -83,7 +114,8 @@ function StructuredData() {
       "@type": "AggregateRating",
       ratingValue: 4.6,
       bestRating: 5,
-      ratingCount: 1350,
+      // Tem de bater certo com lib/reviews.ts — verificado em Agosto de 2026.
+      ratingCount: 1348,
     },
     sameAs: [
       site.links.instagram,
@@ -107,25 +139,39 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-PT"
-      className={`${archivo.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${rye.variable} ${alegreya.variable} ${elite.variable} ${imfell.variable} h-full antialiased`}
     >
       <head>
-        <meta name="theme-color" content="#0b1214" />
-        {/* As secções entram com uma revelação em scroll. Sem JavaScript
-            ficariam invisíveis, por isso repomos o estado final. */}
+        <meta name="theme-color" content="#080B0D" />
+        {/*
+          As secções entram com uma revelação em scroll; a tralha decorativa
+          balança ou fica dependurada. Sem JavaScript nada disso corre, por
+          isso repomos o estado final de todas as marcas que dependem dele.
+        */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+          <style>{`[data-reveal],[data-pendurado],[data-tralha]{opacity:1!important;transform:none!important;animation:none!important}[data-tralha-movel]{display:none!important}`}</style>
         </noscript>
         <StructuredData />
       </head>
-      <body className="min-h-full flex flex-col bg-surface text-ink">
+      <body className="min-h-full flex flex-col bg-breu text-osso">
+        {/*
+          z-[70]: acima da <Tralha /> (z-60), senão o skip link fica
+          escondido atrás dela para quem navega só por teclado — §11.10.
+        */}
         <a
           href="#conteudo"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-accent focus:px-5 focus:py-3 focus:text-on-accent focus:font-medium"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[70] focus:rounded-[var(--radius-card)] focus:bg-lanterna focus:px-5 focus:py-3 focus:text-sobre-acento focus:font-medium"
         >
           Saltar para o conteúdo
         </a>
+        <Entrada />
         {children}
+        {/*
+          Camada de tralha decorativa: aranha, rede, bandeirinhas,
+          sardaniscas. Uma vez, aqui, depois de {children} — fixed inset-0,
+          por isso a ordem no DOM não afecta o layout, só o empilhamento.
+        */}
+        <Tralha />
       </body>
     </html>
   );

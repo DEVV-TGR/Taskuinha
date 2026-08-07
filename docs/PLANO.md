@@ -1,9 +1,22 @@
 # Taskuinha do Pirata — redesenho total
 ## "Taberna total, noite de tempestade"
 
-> **Estado:** plano completo, pronto para revisão.
-> **Fluxo:** Opus 5 escreveu este plano → **Fable 5 revê e critica** → Opus 5 executa.
-> **Para o Fable 5:** as perguntas concretas onde quero a tua opinião estão na **§14**, no fim. Não são retóricas — há decisões que tomei sozinho e que podem estar erradas.
+> **Estado:** executado, as 10 fases. A revisão do Fable 5 prevista no fluxo
+> original (§14) não chegou a acontecer — o cliente pediu para avançar direto
+> à execução. As perguntas da §14 ficam por responder, como registo do que
+> ficou por rever.
+>
+> **Desvios da execução em relação a este plano**, cada um documentado no
+> código onde acontece:
+> - **§9.1 (barris do Hero):** não estão sobrepostos aos barris da foto — a
+>   alternativa mais segura que o próprio plano previa. Ver `Hero.tsx`.
+> - **§7 (Bandeirinhas no Tralha e no Hero):** removidas de ambos. Presas a
+>   `top-0`, colidiam com a Nav em todas as páginas. Ver `components/decor/Tralha.tsx`.
+> - **§10.2 (seis pratos com foto):** só há cinco, não seis — não há foto de
+>   sapateira. Ver `lib/menu.ts`.
+> - **§10.5 (Rye no cartão de partilha):** não foi possível — a API da
+>   Google Fonts só devolve WOFF2 e o Satori só lê TTF/OTF. Cai para serif
+>   do sistema, como o próprio plano autorizava. Ver `app/opengraph-image.tsx`.
 
 ---
 
@@ -347,7 +360,7 @@ const imfell = IM_Fell_English_SC({
 
 | Risco | Verificação |
 |---|---|
-| **Rye não tem acentos suficientes.** É uma display face americana; pode faltar-lhe `Ç`, `Ã`, `Õ`. | Renderizar `AÇÃOÕÊÁ` em Rye antes de a adoptar. **Se falhar, o plano B é `Ewert` ou `Bowlby One SC`.** O nome da casa não tem acentos, mas "O QUE SAI MAIS DA COZINHA" e "ENCONTRAR-NOS" não são problema; "A CASA" também não. O risco real é baixo mas tem de ser confirmado. |
+| ~~**Rye não tem acentos suficientes.**~~ **Verificado na execução da Fase 2:** tem. `AÇÃO OPÇÕES ÊXITO NÓS` renderiza com o mesmo peso de tabuleta em toda a frase, `Ç`/`Ã`/`Õ`/`Ê`/`Á`/`Ó` incluídos — sem cair para fonte de recurso. O plano B (`Ewert`/`Bowlby One SC`) não é preciso. | Confirmado por screenshot numa página de teste (`app/teste-fase2`, apagada depois de verificar). |
 | **IM Fell English SC não tem minúsculas verdadeiras** (é small-caps). | Só usar em títulos de categoria e nomes de prato. As descrições em minúscula dentro do pergaminho usam `IM Fell English` (a variante regular) ou caem para Alegreya. **Decisão: usar Alegreya Sans a 0.78rem para as descrições dentro do pergaminho** — menos "época", muito mais legível, e o Kalóz também alterna. |
 | **Quatro famílias = ~125 kB de fontes.** | `preload` só na Rye (aparece no hero, é LCP). As outras `display: swap` sem preload. |
 
@@ -640,6 +653,22 @@ O campo `slot` desaparece — existia só para dizer que ficheiro local iria sub
 **Preservar o registo dos `alt`** existentes — estão em português, são descritivos e bem escritos. Escrever os novos no mesmo tom.
 
 ### 10.2 `lib/menu.ts`
+
+> **Corrigido na execução da Fase 1**, depois de abrir as 30 fotografias uma a
+> uma. A tabela abaixo está errada em dois pontos e não deve ser seguida à letra:
+>
+> 1. **Não existe fotografia de sapateira.** A imagem que eu tinha catalogado
+>    como tal (`618724567`) mostra uma navalheira pequena ao lado de um prato de
+>    **percebes cozidos servidos à mesa**, com cerveja e a ementa da casa — é a
+>    melhor foto de percebes que há, muito melhor do que a do alguidar de
+>    plástico, e passou a chamar-se `petisco-percebes.jpg`. A do alguidar é
+>    `percebes-crus.jpg` e mostra produto, não prato.
+> 2. **As sardinhas estão em pão de trigo torrado, não em broa.**
+>
+> Sobram **cinco** pratos servidos fotografados — amêijoas, lapas, lulas,
+> sardinhas, percebes — e a grelha do bento quer seis. O sexto destaque fica por
+> decidir: ou entra um prato sem foto (o componente já trata esse ramo), ou entra
+> `lapas-cruas.jpg` / `percebes-crus.jpg` como célula de produto em vez de prato.
 
 **Trocar os seis `highlights`** pelos que agora têm fotografia real:
 

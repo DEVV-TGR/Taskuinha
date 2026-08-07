@@ -6,6 +6,8 @@
   de origem, porque parte delas foi lida através de agregadores.
 */
 
+import { site } from "@/lib/site";
+
 export type Rating = {
   platform: string;
   score: string;
@@ -22,16 +24,20 @@ export const ratings: Rating[] = [
     platform: "Google",
     score: "4,6",
     outOf: "5",
-    count: "cerca de 1350 avaliações",
+    count: "cerca de 1348 avaliações",
     note: "",
-    href: "https://pt.restaurantguru.com/Taskuinha-Vila-Cha",
+    // Não há uma ligação directa à ficha do Google Business verificada;
+    // o Google Maps mostra as mesmas avaliações, e é uma propriedade
+    // Google a sério — ao contrário do que estava aqui antes (um logótipo
+    // do Google a apontar para o RestaurantGuru).
+    href: site.links.directions,
     icon: "google",
   },
   {
     platform: "TripAdvisor",
     score: "4,4",
     outOf: "5",
-    count: "96 avaliações",
+    count: "100 avaliações",
     note: "30.º de 182 restaurantes em Vila do Conde",
     href: "https://www.tripadvisor.pt/Restaurant_Review-g189186-d6874259-Reviews-Rumoceano_Taskuinha-Vila_do_Conde_Porto_District_Northern_Portugal.html",
     icon: "tripadvisor",
