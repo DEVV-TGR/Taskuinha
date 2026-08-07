@@ -1,0 +1,224 @@
+# Mapa da Taskuinha
+
+Índice de navegação do projecto. Se procuras onde mexer em alguma coisa, é aqui.
+
+> **Estado:** este mapa descreve o projecto **depois** do redesenho "taberna total,
+> noite de tempestade" (ver `docs/PLANO.md`). Os ficheiros marcados com 🚧 ainda
+> não existem — são criados durante a execução do plano.
+
+---
+
+## O que é isto
+
+Site da **Taskuinha do Pirata** — taberna de petiscos na Av. dos Banhos 185,
+Vila Chã, Vila do Conde. Frente ao mar, no Caminho de Santiago.
+
+Casa decorada de alto a baixo: barris pendurados a soletrar PIRATA na fachada,
+tecto de tábuas turquesa com um mural de nau em tempestade, redes de pesca,
+caveiras, aranhas que descem do tecto, sardaniscas, e um esqueleto pirata
+sentado à porta a beber uma cerveja.
+
+**Stack:** Next.js 16.3 (App Router) · React 19.2 · Tailwind v4.3 (CSS-first,
+sem ficheiro de config) · `motion` v13 (importado de `motion/react`) ·
+Phosphor Icons (`@phosphor-icons/react/dist/ssr`) · TypeScript strict.
+
+```bash
+npm run dev     # http://localhost:3000
+npm run build
+npm run lint
+```
+
+Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/components/Nav`.
+
+---
+
+## Onde mexer em quê
+
+| Quero mudar… | Ficheiro |
+|---|---|
+| Morada, telefone, horário, redes sociais | `lib/site.ts` |
+| Pratos e preços da ementa | `lib/menu.ts` |
+| Os 6 destaques da página inicial | `lib/menu.ts` → `highlights` (**têm de ser 6**) |
+| Fotografias e textos alternativos | `lib/images.ts` |
+| Avaliações e citações | `lib/reviews.ts` |
+| Cores, tipos, classes utilitárias | `app/globals.css` |
+| Fontes carregadas | `app/layout.tsx` |
+| Texturas de madeira / pergaminho / rede | 🚧 `lib/texturas.ts` |
+| Aranha, sardaniscas, barris, bandeirinhas | 🚧 `components/decor/` |
+| Como as secções entram no ecrã | `components/Reveal.tsx` |
+| Ordem das secções da homepage | `app/page.tsx` |
+| Favicon | `app/icon.svg` |
+| Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |
+| Dados estruturados para o Google | `app/layout.tsx` → `StructuredData` |
+| O que os motores de busca indexam | `app/robots.ts`, `app/sitemap.ts` |
+
+---
+
+## Rotas
+
+| Rota | Ficheiro | Conteúdo |
+|---|---|---|
+| `/` | `app/page.tsx` | Hero → Casa → Petiscos → Galeria → Vozes → Encontrar |
+| `/ementa` | `app/ementa/page.tsx` | Ementa completa em pergaminho |
+
+Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/icon.svg`.
+
+**Âncoras da homepage:** `#a-casa` · `#petiscos` · `#o-sitio` · `#encontrar-nos`
+
+> `app/page.tsx` e `app/ementa/page.tsx` importam a `Nav` e o `Footer`
+> individualmente — **não estão no `layout.tsx`**. É deliberado: a homepage
+> passa `transparentAtTop` à `Nav` e a ementa não.
+
+---
+
+## Componentes
+
+**Estrutura**
+`Nav` (68 px, fixa, com gaveta de telemóvel) · `Footer` · `Wordmark` · `Cta`
+
+**Secções**
+`Hero` + `HeroMedia` · `Casa` · `Petiscos` · `Galeria` · `Vozes` ·
+`Encontrar` + `Mapa` · `MenuCategoryNav`
+
+**Movimento**
+`Reveal` (o único primitivo, usado em todo o lado) · 🚧 `Entrada` (ecrã de abertura)
+
+**Decoração** 🚧 `components/decor/`
+`Tralha` (orquestrador) · `Aranha` · `Sardanisca` · `Rede` · `Bandeirinhas` ·
+`Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
+`Pergaminho` · `Tabua`
+
+**Componentes que recebem props** — só quatro. Todos os outros são blocos de
+zero props com o texto escrito lá dentro.
+
+| Componente | Props |
+|---|---|
+| `Nav` | `transparentAtTop?: boolean` |
+| `Wordmark` | `size?: "sm" \| "lg"` |
+| `Cta` | `href`, `variant?: "primary" \| "secondary"`, `children`, `className?` |
+| `Reveal` | `children`, `index?`, `className?`, `as?` |
+| `MenuCategoryNav` | `items: { id, title }[]` |
+
+---
+
+## Sistema de design
+
+Tema único, escuro. **Não há modo claro** — o conceito é "noite de tempestade"
+e uma versão diurna tornaria-o incoerente.
+
+| Token | Valor | Para quê |
+|---|---|---|
+| `--breu` | `#080B0D` | fundo — casco molhado à noite |
+| `--breu-raso` | `#10161A` | superfície elevada |
+| `--madeira` | `#2A1B10` | tábuas |
+| `--madeira-luz` | `#6B4A2F` | veio quando a luz bate |
+| `--turquesa` | `#2E7E80` | o tecto da casa, dessaturado |
+| `--lanterna` | `#F2A33C` | **acento principal** |
+| `--sangue` | `#A81E22` | acento secundário (Super Bock, lenço) |
+| `--osso` | `#E8DCC4` | texto |
+| `--osso-fraco` | `#9A8F7C` | texto secundário |
+| `--pergaminho` | `#D9C7A0` | só na ementa |
+
+**Regra de raio:** tudo a 4 px (`--radius-card`). Tudo é madeira serrada,
+nada é pílula.
+
+**`--sangue` e `--turquesa` nunca tocam em texto.** Fazem 3,3:1 e 4,4:1 sobre
+o breu — não passam contraste AA. São para preencher, sublinhar e desenhar.
+Para texto turquesa usar `--turquesa-luz` (8,5:1).
+
+**Tipografia**
+
+| Fonte | Papel |
+|---|---|
+| **Rye** | Títulos e wordmark — wood-type de tabuleta |
+| **Alegreya Sans** | Corpo |
+| **Special Elite** | Preços, horas, números |
+| **IM Fell English SC** | Só dentro do pergaminho da ementa |
+
+**Classes utilitárias** — `.display` (Rye com inclinação e tinta descascada) ·
+`.tabua` · `.pergaminho` · `.pendurado` · `.gravado` · `.link-underline` ·
+`.map-frame`
+
+---
+
+## Regras que não se partem
+
+1. **`data-reveal`** — o atributo no `Reveal` é o gancho das regras de
+   `<noscript>` (em `app/layout.tsx`) e de `prefers-reduced-motion`
+   (em `app/globals.css`). As secções são servidas com `opacity: 0` porque o
+   servidor não conhece a preferência do visitante; sem estas regras, quem tem
+   JavaScript desligado ou movimento reduzido vê uma página em branco.
+
+2. **`highlights` tem exactamente 6 itens** — a grelha do bento em
+   `Petiscos.tsx` está calibrada para seis: o primeiro ocupa
+   `col-span-4 row-span-2`, os outros cinco `col-span-2`. Sete ou cinco abrem
+   buracos na grelha.
+
+3. **Não tocar no `ResizeObserver` do `Mapa.tsx`** — o Leaflet dentro de um
+   iframe cross-origin mede o contentor uma vez ao inicializar e nunca mais
+   chama `invalidateSize`. A remontagem por `key={w}x{h}` com debounce de
+   200 ms é a solução, não uma gambiarra. A altura fixa
+   (`h-[420px] lg:h-[600px]`) evita CLS.
+
+4. **Altura da Nav** — `--altura-nav: 68px`. O `MenuCategoryNav` cola-se por
+   baixo dela com `sticky top-[var(--altura-nav)]`. Mudar uma implica mudar as
+   duas.
+
+5. **Toda a decoração é `aria-hidden` e some com movimento reduzido** — a
+   aranha e as sardaniscas **desaparecem**, não congelam. Uma aranha parada a
+   meio do ecrã é pior do que aranha nenhuma.
+
+6. **Fotografias são todas locais** — não há `remotePatterns` no
+   `next.config.ts` e não deve voltar a haver.
+
+7. **Texturas geram-se com semente determinística** — nunca `Math.random()`
+   durante a renderização, senão o HTML do servidor não bate certo com o do
+   cliente e o React dá erro de hidratação. As sementes vêm do índice do
+   elemento.
+
+8. **Não versionar `.claude/worktrees/` nem `.claude/skills/`** — os primeiros
+   são cópias de trabalho, os segundos são symlinks para instalações globais
+   que ficariam quebrados noutra máquina.
+
+---
+
+## Fotografias
+
+30 ficheiros em `public/images/`, todos reais da casa. Nomes descritivos —
+`fachada-noite.jpg`, `esqueleto.jpg`, `petisco-ameijoas.jpg`. O inventário
+completo, com a origem de cada uma, está em `public/images/README.md`.
+
+**Tratamento:** as fotos diurnas levam duas camadas de gradação por cima do
+`<Image>` (`bg-breu/45 mix-blend-multiply` + `bg-lanterna/12 mix-blend-overlay`)
+para assentarem na paleta nocturna. Não é filtro CSS no ficheiro — é uma camada
+sobreposta, reversível e que não toca no original. As fotos já nocturnas levam
+metade.
+
+---
+
+## O que ainda falta
+
+- **Preços reais.** Os da ementa são inventados, calibrados para o intervalo de
+  10–20 € por pessoa que as avaliações indicam. Não há preços publicados em
+  lado nenhum — nem no site `eatbu.com` da casa, nem no RestaurantGuru.
+  `PRECOS_SAO_DEMO = true` em `lib/menu.ts` faz aparecer o aviso na página.
+  Pôr a `false` quando chegarem os verdadeiros.
+- Confirmar morada e horário com o Anselmo (dono).
+
+---
+
+## A letra da casa
+
+O letreiro de madeira sobre a porta lê-se **`TASKUIИHA`** — com o **N ao
+contrário**. O comando de mesa em forma de leme, pintado à mão em vermelho,
+repete exactamente o mesmo. Duas peças independentes, feitas em alturas
+diferentes.
+
+Não é gralha. É a assinatura da casa, e está no `Wordmark.tsx`.
+
+O N invertido é `aria-hidden` — o nome correcto vai num `sr-only` ao lado, para
+leitores de ecrã e para o Google.
+
+O símbolo da casa é a bandeira negra pendurada no tecto: caveira com chapéu de
+bicorne e sabres cruzados. Está no favicon, no cartão de partilha e no
+`BandeiraNegra.tsx`.
