@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+/*
+  Taskuinha do Pirata - sistema de design
+  --------------------------------------
+  Tema: taberna náutica atlântica. Base de tinta fria, um único acento
+  (laranja de farol). O tema escuro é a identidade da casa; o claro existe
+  para quem tem o sistema em modo claro e mantém exactamente o mesmo acento.
+
+  Regra de raio (única em todo o site):
+    - superfícies, imagens e cartões .......... var(--radius-card) = 4px
+    - elementos interactivos (botões, pills) .. totalmente arredondados
+  Não há terceiro valor. Se precisares de um, o desenho está errado.
+*/
+
+:root {
+  color-scheme: dark;
+
+  --surface: #0b1214;
+  --surface-raised: #121c1f;
+  --surface-sunken: #070d0f;
+  --ink: #f2ede4;
+  --ink-muted: #9aa8aa;
+  --line: rgb(242 237 228 / 0.12);
+  --line-strong: rgb(242 237 228 / 0.24);
+  --accent: #e2622a;
+  --on-accent: #0b1214;
+  --scrim: rgb(7 13 15 / 0.62);
+
+  --radius-card: 4px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+
+    --surface: #edf0ef;
+    --surface-raised: #f7f9f8;
+    --surface-sunken: #e2e7e6;
+    --ink: #0d1618;
+    --ink-muted: #4a5a5c;
+    --line: rgb(13 22 24 / 0.14);
+    --line-strong: rgb(13 22 24 / 0.28);
+    --accent: #b8481a;
+    --on-accent: #ffffff;
+    --scrim: rgb(7 13 15 / 0.52);
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-card: 4px;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Títulos com peso de placa pintada de doca: grotesk larga, muito apertada. */
+.display {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 112;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.display-tight {
+  font-variation-settings: "wdth" 100;
+}
+
+/* Sublinhado que cresce a partir da esquerda, para links de texto. */
+.link-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* O mapa da OpenStreetMap vem sempre em modo claro. No tema escuro,
+   invertemos para não abrir um buraco branco no meio da página. */
+@media (prefers-color-scheme: dark) {
+  .map-frame {
+    filter: invert(1) hue-rotate(180deg) saturate(0.72) brightness(0.92)
+      contrast(0.94);
+  }
+}
+
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /*
+    As secções são servidas com o estado inicial da revelação já no HTML,
+    porque o servidor não conhece a preferência do visitante. Com movimento
+    reduzido o Motion não chega a animar e o conteúdo ficaria invisível para
+    sempre, por isso repomos o estado final aqui.
+  */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
