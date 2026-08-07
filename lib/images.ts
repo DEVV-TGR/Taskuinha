@@ -1,93 +1,292 @@
 /*
-  Fotografia de demonstração.
+  Inventário fotográfico da Taskuinha.
 
-  Nenhuma destas fotos é da Taskuinha. São imagens de licença aberta do
-  Unsplash, escolhidas para aproximar o enquadramento certo de cada slot.
-  Para publicar, substituir cada `src` pelo caminho local correspondente
-  (ver public/images/README.md) e apagar `remotePatterns` do next.config.ts.
+  Todas as imagens são locais, em /public/images. Não há URLs remotas e o
+  next.config.ts já não tem `remotePatterns` — não voltar a acrescentar.
+
+  Vinte e quatro destas fotografias são da casa (fachada, salas, esplanada,
+  pratos, o mar à porta). As outras seis — as três naus e as três caveiras —
+  são ilustrações de fora, usadas como decoração. O campo `origem` guarda essa
+  distinção porque o rodapé precisa dela: o aviso "as fotografias não são da
+  casa" deixou de ser verdade para a esmagadora maioria, mas não para todas.
+
+  O inventário legível, com a proveniência de cada ficheiro, está em
+  public/images/README.md.
 */
-
-const u = (id: string, w: number) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=72`;
 
 export type Photo = {
   src: string;
   alt: string;
-  /** ficheiro local que vai substituir esta imagem */
-  slot: string;
   width: number;
   height: number;
+  /**
+   * Como a fotografia se comporta debaixo da gradação nocturna:
+   * "dia" leva as duas camadas completas, "noite" leva metade da primeira.
+   */
+  luz: "dia" | "noite";
+  /** "casa" = fotografada na Taskuinha. "ilustracao" = imagem de fora. */
+  origem: "casa" | "ilustracao";
 };
 
 export const photos = {
-  hero: {
-    src: u("photo-1599407173228-40e33efaa25c", 2000),
-    alt: "O sol a pôr-se sobre o Atlântico, visto da praia.",
-    slot: "hero-mar.jpg",
-    width: 2000,
-    height: 3000,
+  /* ---------------------------------------------------------------- fachada */
+
+  fachadaNoite: {
+    src: "/images/fachada-noite.jpg",
+    alt: "A fachada da Taskuinha de noite: as letras PIRATA iluminadas ao longo do beiral, seis barris pendurados por baixo, a porta aberta a deitar luz para a calçada e o esqueleto pirata sentado à direita com uma garrafa na mão.",
+    width: 1536,
+    height: 2048,
+    luz: "noite",
+    origem: "casa",
   },
-  casa: {
-    src: u("photo-1714733340805-268e89cf861a", 1400),
-    alt: "Interior de taberna com paredes de pedra, mesas de madeira e luz quente.",
-    slot: "casa-interior.jpg",
-    width: 1400,
-    height: 933,
+  fachadaNoite2: {
+    src: "/images/fachada-noite-2.jpg",
+    alt: "A mesma fachada noutra noite, vista de frente: os barris, os dois lemes de madeira, as lanternas acesas e o corredor de entrada pintado com um cais de barcos.",
+    width: 1536,
+    height: 2048,
+    luz: "noite",
+    origem: "casa",
   },
-  ameijoas: {
-    src: u("photo-1710775694428-5f6e66ae6a4c", 1200),
-    alt: "Bivalves abertos num prato branco, com pão torrado e limão.",
-    slot: "petisco-ameijoas.jpg",
-    width: 1200,
-    height: 800,
+  fachadaPorDoSol: {
+    src: "/images/fachada-por-do-sol.jpg",
+    alt: "A fachada ao fim da tarde, com o sol rasante a acender o telhado de telha. Lê-se o letreiro de madeira sobre a porta, o cartaz manuscrito do horário e a ementa escrita em ripas de madeira ao lado da entrada.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
   },
-  lulas: {
-    src: u("photo-1763467940825-d067fb3baf22", 1200),
-    alt: "Travessa de lulas fritas numa mesa de esplanada, com uma caneca de cerveja ao fundo.",
-    slot: "petisco-lulas.jpg",
-    width: 1200,
-    height: 800,
+
+  /* --------------------------------------------------------------- esqueleto */
+
+  esqueleto: {
+    src: "/images/esqueleto.jpg",
+    alt: "O esqueleto pirata que recebe à porta, sentado numa arca do tesouro: lenço vermelho na cabeça, pala no olho, casaco esfarrapado e uma garrafa levada à boca.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
   },
-  fritura: {
-    src: u("photo-1780823231663-6f08dde9b54c", 1200),
-    alt: "Travessa de fritos de mar sobre uma mesa de madeira.",
-    slot: "petisco-pataniscas.jpg",
-    width: 1200,
-    height: 800,
+  esqueletoCorpo: {
+    src: "/images/esqueleto-corpo.jpg",
+    alt: "O esqueleto pirata de corpo inteiro, com a ementa manuscrita em ripas de madeira atrás e o quadro de autocolantes de clubes de motards ao lado.",
+    width: 1080,
+    height: 1440,
+    luz: "dia",
+    origem: "casa",
   },
-  prego: {
-    src: u("photo-1699728088600-6d684acbeada", 1200),
-    alt: "Sandes de carne num pão rústico, servida numa tábua de madeira.",
-    slot: "petisco-prego.jpg",
-    width: 1200,
-    height: 800,
+
+  /* ------------------------------------------------------------------- casa */
+
+  bandeiraCaveira: {
+    src: "/images/bandeira-caveira.jpg",
+    alt: "A bandeira negra da casa pendurada no tecto turquesa: caveira de chapéu de bicorne, sabres cruzados por baixo e uma caveira pequena na aba do chapéu.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
   },
-  passadico: {
-    src: u("photo-1785827981060-30cce0bed874", 1200),
-    alt: "Passadiço de madeira a atravessar as dunas em direcção ao mar.",
-    slot: "sitio-passadico.jpg",
-    width: 1200,
-    height: 1600,
+  lemeTaskuinha: {
+    src: "/images/leme-taskuinha.jpg",
+    alt: "O comando de mesa em forma de leme de navio, pintado à mão a vermelho com o nome da casa — o N ao contrário, como no letreiro da porta.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
   },
-  praia: {
-    src: u("photo-1716235254942-5dce42e66c4d", 1400),
-    alt: "Ondas a chegar à areia numa praia larga do litoral norte.",
-    slot: "sitio-praia.jpg",
-    width: 1400,
-    height: 1867,
+  tectoNau: {
+    src: "/images/tecto-nau.jpg",
+    alt: "O tecto pintado com uma nau à vela em mar bravo, e por baixo a parede coberta de barcos em miniatura, redes, chapéus de marinheiro e reclames antigos.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
   },
-  porDoSol: {
-    src: u("photo-1784727529054-728034f7e1f5", 1200),
-    alt: "Sol a descer sobre o mar, com a povoação junto à costa.",
-    slot: "sitio-por-do-sol.jpg",
-    width: 1200,
-    height: 1600,
+  tectoNauAranha: {
+    src: "/images/tecto-nau-aranha.jpg",
+    alt: "O mural da nau no tecto com uma aranha peluda pendurada a meio, sobre o balcão carregado de chapéus, máscaras de mergulho e barcos de madeira.",
+    width: 1152,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
   },
-  balcao: {
-    src: u("photo-1736075006642-1f535cdb5834", 1200),
-    alt: "Balcão de bar com bancos altos alinhados.",
-    slot: "sitio-balcao.jpg",
-    width: 1200,
-    height: 800,
+  salaCheia: {
+    src: "/images/sala-cheia.jpg",
+    alt: "A sala cheia a uma noite de jantar, com cachecóis de clubes de futebol pendurados no tecto de madeira, lanternas de papel, bóias salva-vidas e mesas de cadeiras verdes, amarelas e laranja.",
+    width: 2048,
+    height: 1536,
+    luz: "noite",
+    origem: "casa",
+  },
+  balcaoBandeirinhas: {
+    src: "/images/balcao-bandeirinhas.jpg",
+    alt: "O balcão visto de baixo, com a fita de bandeirinhas de países atravessada por cima — Brasil, Espanha, Alemanha, Gana, Argentina, Costa Rica, Camarões, Chile, Austrália e Coreia do Sul — sob o tecto de tábuas turquesa.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
+  },
+  balcaoEspingardas: {
+    src: "/images/balcao-espingardas.jpg",
+    alt: "Duas espingardas antigas cruzadas com remos por cima do balcão, entre redes de pesca, lanternas brancas, conchas de vieira e uma fila de barcos de madeira.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
+  },
+  salaEstatuas: {
+    src: "/images/sala-estatuas.jpg",
+    alt: "O canto dos piratas em tamanho real, com uma arca a transbordar de colares e moedas, balas de canhão empilhadas e o reclame do Captain Morgan na parede de madeira.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
+  },
+
+  /* -------------------------------------------------------------- esplanada */
+
+  esplanada: {
+    src: "/images/esplanada.jpg",
+    alt: "A esplanada, com a vedação de tábuas pintadas de todas as cores, uma prancha de salvamento do I.S.N. pendurada, bóias, remos e uma bicicleta enferrujada encostada ao fundo.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
+  },
+  esplanada2: {
+    src: "/images/esplanada-2.jpg",
+    alt: "Mesas de tampo de madeira e cadeiras vermelhas na relva sintética da esplanada, frente à vedação de tábuas às cores com a prancha do I.S.N. e duas bóias salva-vidas.",
+    width: 2048,
+    height: 1536,
+    luz: "dia",
+    origem: "casa",
+  },
+
+  /* --------------------------------------------------------------------- mar */
+
+  marPorDoSol: {
+    src: "/images/mar-por-do-sol.jpg",
+    alt: "O sol a descer sobre o Atlântico em maré vazia, visto do murete da marginal, com as rochas descobertas e o céu riscado de nuvens altas.",
+    width: 2048,
+    height: 1536,
+    luz: "noite",
+    origem: "casa",
+  },
+  marCao: {
+    src: "/images/mar-cao.jpg",
+    alt: "Um homem sentado no murete da marginal com o cão ao lado, os dois a ver o sol pôr-se no mar.",
+    width: 1536,
+    height: 2048,
+    luz: "noite",
+    origem: "casa",
+  },
+
+  /* ---------------------------------------------------------------- petiscos */
+
+  petiscoAmeijoas: {
+    src: "/images/petisco-ameijoas.jpg",
+    alt: "Uma travessa de amêijoas abertas em azeite e orégãos, com meio limão ao meio e um prato de pão ao lado.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  petiscoLapas: {
+    src: "/images/petisco-lapas.jpg",
+    alt: "Lapas grelhadas com alho e coentros, cada uma na sua concha, servidas sobre fatias de pão torrado numa frigideira de ferro.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  petiscoLulas: {
+    src: "/images/petisco-lulas.jpg",
+    alt: "Lulas grelhadas com alho e pimenta numa travessa, com batata frita ao lado.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  petiscoSardinhas: {
+    src: "/images/petisco-sardinhas.jpg",
+    alt: "Duas sardinhas assadas deitadas sobre uma fatia larga de pão torrado, num prato branco, à frente da grelha de carvão ainda acesa.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  petiscoPercebes: {
+    src: "/images/petisco-percebes.jpg",
+    alt: "Um prato de percebes cozidos e uma navalheira, à mesa da esplanada, com uma caneca de cerveja e a ementa da casa ao lado.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  percebesCrus: {
+    src: "/images/percebes-crus.jpg",
+    alt: "Percebes acabados de apanhar, ainda com as unhas fechadas e restos de alga, num alguidar.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  lapasCruas: {
+    src: "/images/lapas-cruas.jpg",
+    alt: "Lapas cruas dispostas numa tábua vermelha, tiradas da rocha nessa manhã, com fios de alga por entre as conchas.",
+    width: 1536,
+    height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+
+  /* ------------------------------------------------------------ ilustrações */
+
+  nauCruz: {
+    src: "/images/nau-cruz.jpg",
+    alt: "Ilustração antiga de uma nau portuguesa de velas quadradas com a cruz de Cristo.",
+    width: 401,
+    height: 453,
+    luz: "dia",
+    origem: "ilustracao",
+  },
+  nauArmada: {
+    src: "/images/nau-armada.webp",
+    alt: "Ilustração de uma nau das armadas portuguesas do século XVI.",
+    width: 800,
+    height: 547,
+    luz: "dia",
+    origem: "ilustracao",
+  },
+  nausFrota: {
+    src: "/images/naus-frota.jpg",
+    alt: "Ilustração de uma frota de naus à vela no mar alto.",
+    width: 630,
+    height: 420,
+    luz: "dia",
+    origem: "ilustracao",
+  },
+  caveiraMadeira: {
+    src: "/images/caveira-madeira.jpg",
+    alt: "Caveira de pirata entalhada em madeira, com chapéu de bicorne, pala no olho e sabres cruzados atrás, sobre fundo preto.",
+    width: 570,
+    height: 713,
+    luz: "noite",
+    origem: "ilustracao",
+  },
+  caveiraLenco: {
+    src: "/images/caveira-lenco.webp",
+    alt: "Caveira de pirata com lenço na cabeça, recortada sobre fundo liso.",
+    width: 410,
+    height: 500,
+    luz: "dia",
+    origem: "ilustracao",
+  },
+  caveiraMesa: {
+    src: "/images/caveira-mesa.webp",
+    alt: "Caveira decorativa vista de frente, recortada sobre fundo liso.",
+    width: 500,
+    height: 500,
+    luz: "dia",
+    origem: "ilustracao",
   },
 } satisfies Record<string, Photo>;

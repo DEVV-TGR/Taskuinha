@@ -2,91 +2,140 @@
 
 /*
   Taskuinha do Pirata - sistema de design
-  --------------------------------------
-  Tema: taberna náutica atlântica. Base de tinta fria, um único acento
-  (laranja de farol). O tema escuro é a identidade da casa; o claro existe
-  para quem tem o sistema em modo claro e mantém exactamente o mesmo acento.
+  ----------------------------------------
+  Tema: "taberna total, noite de tempestade". Casco molhado à noite, luz de
+  lanterna, tábuas por todo o lado. Não há modo claro — o conceito não tem
+  versão diurna coerente, e uma tentaria duplicar o custo de teste de cada
+  fotografia tratada.
 
-  Regra de raio (única em todo o site):
-    - superfícies, imagens e cartões .......... var(--radius-card) = 4px
-    - elementos interactivos (botões, pills) .. totalmente arredondados
-  Não há terceiro valor. Se precisares de um, o desenho está errado.
+  Regra de raio (única em todo o site): tudo a var(--radius-card) = 4px.
+  Nada é pílula — tudo é madeira serrada, e uma tabuleta não é um botão de
+  telemóvel. Se precisares de um raio diferente, o desenho está errado.
 */
 
 :root {
   color-scheme: dark;
 
-  --surface: #0b1214;
-  --surface-raised: #121c1f;
-  --surface-sunken: #070d0f;
-  --ink: #f2ede4;
-  --ink-muted: #9aa8aa;
-  --line: rgb(242 237 228 / 0.12);
-  --line-strong: rgb(242 237 228 / 0.24);
-  --accent: #e2622a;
-  --on-accent: #0b1214;
-  --scrim: rgb(7 13 15 / 0.62);
+  /* Superfícies — casco molhado à noite */
+  --breu: #080b0d; /* fundo base */
+  --breu-raso: #10161a; /* superfície elevada (cartões) */
+  --breu-fundo: #05080a; /* superfície afundada (faixas) */
+
+  /* Madeira — as tábuas da casa */
+  --madeira: #2a1b10;
+  --madeira-luz: #6b4a2f; /* veio quando a luz bate */
+  --madeira-borda: #1a1008;
+
+  /* Turquesa — o tecto da casa, dessaturado pela noite */
+  --turquesa: #2e7e80;
+  --turquesa-luz: #4fbfc4; /* quando a lanterna bate */
+
+  /* Acentos */
+  --lanterna: #f2a33c; /* âmbar — acento principal */
+  --sangue: #a81e22; /* Super Bock, lenço da caveira — secundário */
+  --sobre-acento: #0a0705; /* texto sobre --lanterna */
+
+  /* Texto */
+  --osso: #e8dcc4; /* caveiras, texto principal */
+  --osso-fraco: #9a8f7c; /* texto secundário */
+
+  /* Pergaminho — só na ementa */
+  --pergaminho: #d9c7a0;
+  --pergaminho-tinta: #2b1d0e;
+  --pergaminho-queimado: #6b4517;
+
+  /* Linhas e véus */
+  --linha: rgb(232 220 196 / 0.14);
+  --linha-forte: rgb(232 220 196 / 0.28);
+  --veu: rgb(5 8 10 / 0.72);
+  --relampago: #cfe6f0;
 
   --radius-card: 4px;
-}
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-
-    --surface: #edf0ef;
-    --surface-raised: #f7f9f8;
-    --surface-sunken: #e2e7e6;
-    --ink: #0d1618;
-    --ink-muted: #4a5a5c;
-    --line: rgb(13 22 24 / 0.14);
-    --line-strong: rgb(13 22 24 / 0.28);
-    --accent: #b8481a;
-    --on-accent: #ffffff;
-    --scrim: rgb(7 13 15 / 0.52);
-  }
+  /* Altura da Nav. O MenuCategoryNav cola-se por baixo dela com
+     sticky top-[var(--altura-nav)] — mudar uma implica mudar as duas. */
+  --altura-nav: 68px;
 }
 
 @theme inline {
-  --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
-  --color-surface-sunken: var(--surface-sunken);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
-  --color-accent: var(--accent);
-  --color-on-accent: var(--on-accent);
+  --color-breu: var(--breu);
+  --color-breu-raso: var(--breu-raso);
+  --color-breu-fundo: var(--breu-fundo);
+  --color-madeira: var(--madeira);
+  --color-madeira-luz: var(--madeira-luz);
+  --color-turquesa: var(--turquesa);
+  --color-turquesa-luz: var(--turquesa-luz);
+  --color-lanterna: var(--lanterna);
+  --color-sangue: var(--sangue);
+  --color-sobre-acento: var(--sobre-acento);
+  --color-osso: var(--osso);
+  --color-osso-fraco: var(--osso-fraco);
+  --color-pergaminho: var(--pergaminho);
+  --color-pergaminho-tinta: var(--pergaminho-tinta);
+  --color-linha: var(--linha);
+  --color-linha-forte: var(--linha-forte);
 
-  --font-display: var(--font-archivo);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-tabuleta: var(--font-rye);
+  --font-corpo: var(--font-alegreya);
+  --font-maquina: var(--font-elite);
+  --font-pergaminho: var(--font-imfell);
 
   --radius-card: 4px;
 }
 
 body {
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--breu);
+  color: var(--osso);
+  font-family: var(--font-alegreya), Georgia, serif;
 }
 
-/* Títulos com peso de placa pintada de doca: grotesk larga, muito apertada. */
+/* Tabuleta pintada: Rye com inclinação individual e tinta descascada. */
 .display {
-  font-family: var(--font-archivo), system-ui, sans-serif;
-  font-variation-settings: "wdth" 112;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-rye), Georgia, serif;
+  font-weight: 400; /* Rye só tem 400 */
+  letter-spacing: 0.01em; /* Rye é apertada de origem; abrir um pouco */
   text-transform: uppercase;
+  transform: rotate(var(--tilt, 0deg));
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 0.6),
+    0 0 24px rgb(242 163 60 / 0.15);
 }
 
-.display-tight {
-  font-variation-settings: "wdth" 100;
+/* Superfície de tábuas. Ver lib/texturas.ts para o gerador do SVG. */
+.tabua {
+  background-color: var(--madeira);
+  background-image: var(--textura-madeira);
+  background-size: 320px 100%;
+  box-shadow: inset 0 0 60px rgb(0 0 0 / 0.55);
+}
+
+/* Pergaminho com bordas rasgadas e queimadas. */
+.pergaminho {
+  background-color: var(--pergaminho);
+  background-image: var(--textura-pergaminho);
+  color: var(--pergaminho-tinta);
+  filter: drop-shadow(0 8px 24px rgb(0 0 0 / 0.7));
+  /* A borda rasgada é feita por mask-image, não por border-radius. */
+  mask-image: var(--mascara-rasgada);
+  mask-size: 100% 100%;
+}
+
+/* Tudo o que está pendurado balança a partir do topo. */
+.pendurado {
+  transform-origin: 50% 0%;
+  will-change: transform;
+}
+
+/* Letra entalhada na madeira. */
+.gravado {
+  text-shadow:
+    0 -1px 0 rgb(0 0 0 / 0.8),
+    0 1px 0 rgb(232 220 196 / 0.14);
 }
 
 /* Sublinhado que cresce a partir da esquerda, para links de texto. */
 .link-underline {
-  background-image: linear-gradient(var(--accent), var(--accent));
+  background-image: linear-gradient(var(--lanterna), var(--lanterna));
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1px;
@@ -98,19 +147,21 @@ body {
   background-size: 100% 1px;
 }
 
-/* O mapa da OpenStreetMap vem sempre em modo claro. No tema escuro,
-   invertemos para não abrir um buraco branco no meio da página. */
-@media (prefers-color-scheme: dark) {
-  .map-frame {
-    filter: invert(1) hue-rotate(180deg) saturate(0.72) brightness(0.92)
-      contrast(0.94);
-  }
+/* O mapa da OpenStreetMap vem sempre em modo claro; invertemos sempre, já
+   que não há modo claro no site para contrastar com. */
+.map-frame {
+  filter: invert(1) hue-rotate(180deg) saturate(0.72) brightness(0.92) contrast(0.94);
 }
 
 :where(a, button, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--lanterna);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* Sobre o pergaminho claro, o âmbar só faz 2,0:1 — precisa de um anel escuro. */
+.pergaminho :where(a, button):focus-visible {
+  outline-color: var(--pergaminho-tinta);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -129,8 +180,19 @@ body {
     reduzido o Motion não chega a animar e o conteúdo ficaria invisível para
     sempre, por isso repomos o estado final aqui.
   */
-  [data-reveal] {
+  [data-reveal],
+  [data-pendurado],
+  [data-tralha] {
     opacity: 1 !important;
     transform: none !important;
+    animation: none !important;
+  }
+
+  /*
+    A aranha e as sardaniscas não congelam — desaparecem. Uma aranha parada
+    a meio do ecrã é pior do que aranha nenhuma.
+  */
+  [data-tralha-movel] {
+    display: none !important;
   }
 }

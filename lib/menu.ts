@@ -42,8 +42,8 @@ export const menu: Category[] = [
         price: 12.5,
       },
       {
-        name: "Lulas fritas",
-        description: "Fritas na hora, limão ao lado.",
+        name: "Lulas grelhadas",
+        description: "Grelhadas na hora, com alho. Limão ao lado.",
         price: 11,
       },
       {
@@ -51,6 +51,16 @@ export const menu: Category[] = [
         description: "Só quando o mar deixa apanhar.",
         price: 19,
         note: "época",
+      },
+      {
+        name: "Lapas ao alho",
+        description: "Grelhadas com alho e coentros, sobre pão torrado.",
+        price: 9,
+      },
+      {
+        name: "Sardinhas no pão",
+        description: "Assadas na hora, sobre uma fatia de pão torrado.",
+        price: 7.5,
       },
       {
         name: "Pataniscas de bacalhau",
@@ -183,6 +193,14 @@ export type Highlight = {
 /*
   Seis pratos-âncora para a página inicial: os que as avaliações mais citam.
   Seis, e não mais, porque é o número que fecha a grelha do bento sem sobras.
+
+  Cinco têm fotografia real, servida à mesa (amêijoas, lapas, lulas,
+  sardinhas, percebes) — não há uma sexta, e não há sapateira nenhuma,
+  ao contrário do que a primeira versão do plano supunha (ver
+  public/images/README.md). O sexto lugar fica com o Bacalhau à Brás, sem
+  foto, o que mantém viva a célula "sem fotografia" do componente
+  `Petiscos.tsx` — a Fase 1 já tinha corrigido a expectativa de que esse
+  ramo fosse desaparecer.
 */
 export const highlights: Highlight[] = [
   {
@@ -190,30 +208,32 @@ export const highlights: Highlight[] = [
     description:
       "O prato que mais aparece nas avaliações. Vem com pão, e o pão serve para o molho.",
     price: 12.5,
-    photo: photos.ameijoas,
+    photo: photos.petiscoAmeijoas,
   },
   {
-    name: "Lulas fritas",
-    description: "Fritas na hora. Sabem melhor na esplanada, com uma imperial.",
+    name: "Lapas ao alho",
+    description: "Grelhadas com alho e coentros, sobre pão torrado.",
+    price: 9,
+    photo: photos.petiscoLapas,
+  },
+  {
+    name: "Lulas grelhadas",
+    description:
+      "Grelhadas na hora, com alho. Sabem melhor na esplanada, com uma imperial.",
     price: 11,
-    photo: photos.lulas,
+    photo: photos.petiscoLulas,
+  },
+  {
+    name: "Sardinhas no pão",
+    description: "Assadas na hora, sobre uma fatia de pão torrado.",
+    price: 7.5,
+    photo: photos.petiscoSardinhas,
   },
   {
     name: "Percebes",
     description: "Só há quando o mar deixa apanhar. Quando há, acabam cedo.",
     price: 19,
-  },
-  {
-    name: "Pataniscas de bacalhau",
-    description: "Quatro por dose, feitas à medida do pedido.",
-    price: 8,
-    photo: photos.fritura,
-  },
-  {
-    name: "Prego no pão",
-    description: "O almoço de quem vai a pé para Santiago e não quer parar muito.",
-    price: 6.5,
-    photo: photos.prego,
+    photo: photos.petiscoPercebes,
   },
   {
     name: "Bacalhau à Brás",

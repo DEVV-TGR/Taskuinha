@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  images: {
-    // Só necessário enquanto a fotografia for de demonstração.
-    // Ao trocar para as fotos da casa em /public/images, apagar este bloco.
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "cdn.simpleicons.org" },
-    ],
-  },
-};
+/*
+  Sem `images.remotePatterns`: toda a fotografia é local, em /public/images.
+  Se alguma vez voltar a haver imagem remota, é sinal de que algo correu mal —
+  ver lib/images.ts.
+*/
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

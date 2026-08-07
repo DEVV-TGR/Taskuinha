@@ -38,7 +38,7 @@ export function MenuCategoryNav({ items }: { items: Item[] }) {
   return (
     <nav
       aria-label="Categorias da ementa"
-      className="sticky top-[68px] z-30 border-y border-line bg-surface/92 backdrop-blur-md"
+      className="sticky top-[var(--altura-nav)] z-30 border-y border-linha bg-breu/92 backdrop-blur-md"
     >
       <ul className="mx-auto flex max-w-[1400px] snap-x gap-2 overflow-x-auto px-5 py-3 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((item) => {
@@ -48,10 +48,10 @@ export function MenuCategoryNav({ items }: { items: Item[] }) {
               <a
                 href={`#${item.id}`}
                 aria-current={isActive ? "true" : undefined}
-                className={`inline-block whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors duration-200 ${
+                className={`inline-block whitespace-nowrap rounded-[var(--radius-card)] px-4 py-2 text-sm transition-colors duration-200 ${
                   isActive
-                    ? "bg-accent text-on-accent"
-                    : "text-ink-muted hover:text-ink"
+                    ? "bg-lanterna text-sobre-acento"
+                    : "text-osso-fraco hover:text-osso"
                 }`}
               >
                 {item.title}

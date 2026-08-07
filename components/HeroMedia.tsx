@@ -28,18 +28,32 @@ export function HeroMedia() {
         style={reduce ? undefined : { y }}
       >
         <Image
-          src={photos.hero.src}
+          src={photos.fachadaNoite.src}
           alt=""
           fill
           priority
           sizes="100vw"
           className="object-cover object-center"
         />
+
+        {/*
+          Gradação nocturna, versão suave (§6.2 do plano): fachadaNoite já é
+          `luz: "noite"` em lib/images.ts, por isso leva só metade da camada
+          que uma foto diurna levaria — só o suficiente para assentar na
+          paleta, sem apagar as luzes das lanternas que já lá estão.
+        */}
+        <div className="absolute inset-0 bg-breu/22 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-lanterna/6 mix-blend-overlay" />
       </motion.div>
 
-      {/* Scrim: garante contraste do texto sobre qualquer parte da foto. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface)] via-[var(--scrim)] to-transparent" />
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[var(--scrim)] to-transparent" />
+      {/*
+        Scrim: garante contraste do texto sobre qualquer parte da foto.
+        --veu não está mapeado no @theme inline (só existe como custom
+        property crua), por isso é sintaxe de valor arbitrário, não a
+        classe de cor gerada.
+      */}
+      <div className="absolute inset-0 bg-gradient-to-t from-breu via-[var(--veu)] to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[var(--veu)] to-transparent" />
     </div>
   );
 }

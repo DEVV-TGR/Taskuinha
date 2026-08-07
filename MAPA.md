@@ -2,9 +2,9 @@
 
 Índice de navegação do projecto. Se procuras onde mexer em alguma coisa, é aqui.
 
-> **Estado:** este mapa descreve o projecto **depois** do redesenho "taberna total,
-> noite de tempestade" (ver `docs/PLANO.md`). Os ficheiros marcados com 🚧 ainda
-> não existem — são criados durante a execução do plano.
+> **Estado:** o redesenho "taberna total, noite de tempestade" (ver
+> `docs/PLANO.md`) está construído — as 10 fases feitas, incluindo a
+> passagem final de acessibilidade e desempenho.
 
 ---
 
@@ -43,8 +43,8 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Avaliações e citações | `lib/reviews.ts` |
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
-| Texturas de madeira / pergaminho / rede | 🚧 `lib/texturas.ts` |
-| Aranha, sardaniscas, barris, bandeirinhas | 🚧 `components/decor/` |
+| Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
+| Aranha, sardaniscas, barris, bandeirinhas | `components/decor/` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
 | Favicon | `app/icon.svg` |
@@ -81,12 +81,16 @@ Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/ic
 `Encontrar` + `Mapa` · `MenuCategoryNav`
 
 **Movimento**
-`Reveal` (o único primitivo, usado em todo o lado) · 🚧 `Entrada` (ecrã de abertura)
+`Reveal` (o único primitivo, usado em todo o lado) · `Entrada` (ecrã de abertura)
 
-**Decoração** 🚧 `components/decor/`
-`Tralha` (orquestrador) · `Aranha` · `Sardanisca` · `Rede` · `Bandeirinhas` ·
+**Decoração** `components/decor/` — construídos na Fase 3, ainda **não ligados**
+a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção troca
+de pele).
+`Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
+assumem-no como ancestral) · `Aranha` · `Sardanisca` · `Rede` · `Bandeirinhas` ·
 `Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
-`Pergaminho` · `Tabua`
+`Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
+dos 13 — pausa animações contínuas com a aba em segundo plano).
 
 **Componentes que recebem props** — só quatro. Todos os outros são blocos de
 zero props com o texto escrito lá dentro.
@@ -184,9 +188,19 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
 
 ## Fotografias
 
-30 ficheiros em `public/images/`, todos reais da casa. Nomes descritivos —
-`fachada-noite.jpg`, `esqueleto.jpg`, `petisco-ameijoas.jpg`. O inventário
-completo, com a origem de cada uma, está em `public/images/README.md`.
+30 ficheiros em `public/images/`, com nomes descritivos — `fachada-noite.jpg`,
+`esqueleto.jpg`, `petisco-ameijoas.jpg`. O inventário completo, com a origem de
+cada uma, está em `public/images/README.md`.
+
+**24 são da casa. 6 são ilustrações de fora** — as três naus e as três caveiras.
+O campo `origem` em `lib/images.ts` guarda a distinção, e o rodapé precisa dela:
+o aviso "as fotografias não são da casa" deixou de ser verdade para a maioria,
+mas não para todas.
+
+**Só há cinco fotografias de pratos servidos** — amêijoas, lapas, lulas,
+sardinhas e percebes. E **não há sapateira nenhuma**: a foto que o plano tomava
+por sapateira tem uma navalheira ao lado de um prato de percebes. Os seis
+destaques têm de contar com isto.
 
 **Tratamento:** as fotos diurnas levam duas camadas de gradação por cima do
 `<Image>` (`bg-breu/45 mix-blend-multiply` + `bg-lanterna/12 mix-blend-overlay`)
@@ -204,6 +218,14 @@ metade.
   `PRECOS_SAO_DEMO = true` em `lib/menu.ts` faz aparecer o aviso na página.
   Pôr a `false` quando chegarem os verdadeiros.
 - Confirmar morada e horário com o Anselmo (dono).
+- **`app/opengraph-image.tsx` está a falhar neste ambiente de desenvolvimento
+  local** com `Input buffer contains unsupported image format`, num erro do
+  WASM do Resvg que o `next/og` usa por baixo — verificado com uma rota
+  `ImageResponse` mínima, igual ao exemplo da própria documentação do
+  Next.js, sem fontes nem nada de especial: falha da mesma forma. Não é um
+  erro do código deste projecto. Confirmar num ambiente de implantação a
+  sério (Vercel) antes de assumir que está partido — pode ser específico
+  desta máquina/sandbox.
 
 ---
 
