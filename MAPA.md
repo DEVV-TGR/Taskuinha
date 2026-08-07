@@ -5,6 +5,11 @@
 > **Estado:** o redesenho "taberna total, noite de tempestade" (ver
 > `docs/PLANO.md`) está construído — as 10 fases feitas, incluindo a
 > passagem final de acessibilidade e desempenho.
+>
+> **A seguir:** o cliente já viu o site e há uma ronda de afinações a fazer
+> depois de uma reunião presencial na casa. Ver `docs/PROXIMAS-MELHORIAS.md`
+> (o que muda, o que fica) e `docs/RECURSOS-A-PROCURAR.md` (imagens e
+> texturas a fotografar ou procurar). Ainda não implementado.
 
 ---
 
