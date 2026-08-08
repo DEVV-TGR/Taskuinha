@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { REVELACAO } from "@/lib/movimento";
 
 type Props = {
   children: ReactNode;
@@ -14,8 +15,12 @@ type Props = {
 /*
   Revelação na entrada em viewport: cai e balança, como algo pendurado num
   prego. É o ficheiro mais perigoso do redesenho — usado em todos os blocos
-  de conteúdo das duas páginas. O `spring` com `damping: 14` faz *overshoot*
-  de propósito; com `rotate` isso lê-se como balanço.
+  de conteúdo das duas páginas. O `spring` faz *overshoot* de propósito;
+  com `rotate` isso lê-se como balanço.
+
+  Os números vivem em `lib/movimento.ts`, não aqui: é o ficheiro único que
+  o cliente e o Gonçalo vão mexer à mesa, e ter metade da calibração
+  espalhada pelos componentes tornava essa conversa impossível.
 
   `tilt` alterna o lado por índice para o conjunto ler como um mural
   desalinhado, não como uma fila toda inclinada para o mesmo lado.
@@ -27,7 +32,7 @@ type Props = {
 export function Reveal({ children, index = 0, className, as = "div" }: Props) {
   const reduce = useReducedMotion();
   const Component = motion[as];
-  const tilt = index % 2 === 0 ? -3 : 3;
+  const tilt = index % 2 === 0 ? -REVELACAO.rotacao : REVELACAO.rotacao;
 
   return (
     <Component
@@ -37,15 +42,17 @@ export function Reveal({ children, index = 0, className, as = "div" }: Props) {
       data-reveal=""
       className={className}
       style={{ willChange: "transform" }}
-      initial={reduce ? false : { opacity: 0, y: -14, rotate: tilt }}
+      initial={
+        reduce ? false : { opacity: 0, y: -REVELACAO.deslocamento, rotate: tilt }
+      }
       whileInView={{ opacity: 1, y: 0, rotate: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{
         type: "spring",
-        stiffness: 120,
-        damping: 14,
-        mass: 0.9,
-        delay: reduce ? 0 : Math.min(index * 0.07, 0.35),
+        ...REVELACAO.mola,
+        delay: reduce
+          ? 0
+          : Math.min(index * REVELACAO.atrasoPorItem, REVELACAO.atrasoMaximo),
       }}
     >
       {children}

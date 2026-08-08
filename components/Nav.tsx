@@ -15,6 +15,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { Cta } from "@/components/Cta";
 import { Tabua } from "@/components/decor/Tabua";
 import { site } from "@/lib/site";
+import { TABULETAS } from "@/lib/movimento";
 
 const links = [
   { label: "A casa", href: "/#a-casa" },
@@ -38,9 +39,12 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
   // As placas de madeira balançam quando se scrolla depressa, como
   // tabuletas penduradas por corda que apanham uma corrente de ar.
   const velocidadeScroll = useVelocity(scrollY);
-  const rotateBruto = useTransform(velocidadeScroll, [-1500, 0, 1500], [9, 0, -9], {
-    clamp: true,
-  });
+  const rotateBruto = useTransform(
+    velocidadeScroll,
+    [-1500, 0, 1500],
+    [TABULETAS.rotacao, 0, -TABULETAS.rotacao],
+    { clamp: true },
+  );
   const rotate = useSpring(rotateBruto, { stiffness: 300, damping: 18, mass: 0.5 });
 
   const [aberto, setAberto] = useState(false);

@@ -5,8 +5,14 @@
 > reacção, organizadas em tarefas, para levares para a reunião de **terça de
 > manhã, ~10h, na Taskuinha**, sentados os dois à mesa.
 >
-> **Ainda não implementado.** Isto é o guião da reunião, não um plano já
-> executado — ao contrário do `docs/PLANO.md`, que já está feito.
+> **Estado: quase tudo implementado.** Quando isto foi escrito não estava
+> nada feito. Entretanto foram os tópicos 1 a 7 — cada um no seu PR, à
+> espera de aprovação. O que sobra para a reunião está marcado em cada
+> ponto, e a checklist do fim já foi cortada em conformidade.
+>
+> As duas coisas que a reunião ainda tem mesmo de resolver: **os barris**
+> (precisam de fotografia nova) e **os dados verdadeiros** (preços, morada,
+> horário). Tudo o resto é para ver e aprovar, não para produzir.
 
 ---
 
@@ -157,20 +163,43 @@ Para não perder tempo a rediscutir o que já está fechado:
 
 ## Checklist para levar terça-feira
 
-Coisas para fazer **fisicamente no local**, não só para conversar:
+Três das fotografias que aqui estavam deixaram de ser precisas. Fica só o
+que ainda é.
 
-- [ ] Fotografar o esqueleto de perto, boa luz, ângulo que sirva para
-      recorte de fundo.
-- [ ] Fotografar os barris reais da fachada, de frente, luz do dia.
-- [ ] Fotografar 2–3 paredes/zonas decoradas por inteiro (para fundos de
-      secção) — enquadramento largo, não close-up.
-- [ ] Perguntar ao Anselmo os preços de cada prato da ementa.
-- [ ] Confirmar morada exacta, horário (incluindo se "segunda-feira,
-      folga" está mesmo certo) e telefone.
-- [ ] Mostrar o site ao vivo no telemóvel dele e apontar, ao vivo, qual
-      animação parece "a mais".
-- [ ] Decidir, os dois, se o ecrã de entrada aparece mesmo sempre ou se
-      volta a ser só a primeira vez do dia.
+**Fotografar no local**
+
+- [ ] **Os barris da fachada** — de frente, luz do dia, **cada um isolado**
+      contra o céu ou contra parede lisa. É a única fotografia que ainda
+      falta, e o enquadramento importa: o recortador automático não os
+      encontra numa foto da fachada inteira (procura sujeitos, e numa
+      fachada o sujeito que ele acha é sempre o esqueleto).
+
+- [x] ~~Fotografar o esqueleto~~ — feito a partir da `esqueleto-corpo.jpg`
+      que já existia, recortada com a Visão do macOS. Se ainda assim
+      quiseres tirar uma melhor, o que ela precisa de ter está no
+      `public/images/README.md`.
+- [x] ~~Fotografar 2–3 paredes decoradas~~ — as três que já existiam
+      (`sala-estatuas`, `balcao-bandeirinhas`, `tecto-nau`) chegaram.
+
+**Perguntar ao Anselmo**
+
+- [ ] Os preços de cada prato da ementa.
+- [ ] Morada exacta, horário (incluindo se "segunda-feira, folga" está
+      mesmo certo) e telefone.
+- [ ] Se algum prato está errado, em falta, ou descontinuado.
+- [ ] Se ele tem material próprio — fotos da abertura, do dia a dia,
+      vídeos. Ninguém tem mais essência do lugar do que o dono.
+
+**Decidir, os dois, a olhar para o site**
+
+- [ ] **A intensidade do movimento.** Está em 0,6 (era 1,0). O número está
+      em `lib/movimento.ts`, sozinho e comentado — muda-se um valor e
+      recarrega. Se ele disser "ainda é muito", 0,45; se disser "agora está
+      morto", 0,8. Não andar a caçar valores pelos componentes à mesa.
+- [ ] Se o ecrã de entrada aparece mesmo sempre ou se volta a ser só a
+      primeira vez do dia. Está a aparecer sempre.
+- [ ] Se o esqueleto fica onde está (sentado na junta da secção dos
+      petiscos, a sobrepor-se à moldura da foto de cima) ou muda de sítio.
 
 Leva este ficheiro (ou o `RECURSOS-A-PROCURAR.md` ao lado) aberto no
 telemóvel ou impresso — é para isso que existe.

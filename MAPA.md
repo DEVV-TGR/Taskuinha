@@ -53,6 +53,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Aranha, barris, bandeirinhas, caveiras | `components/decor/` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
+| **Quanto tudo se mexe** | `lib/movimento.ts` — muda `INTENSIDADE` e mexe nos quatro sítios de uma vez |
 | Ordem das secções da homepage | `app/page.tsx` |
 | Favicon | `app/icon.svg` |
 | Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { useAbaVisivel } from "./usarVisibilidade";
+import { BARRIS } from "@/lib/movimento";
 
 type Props = {
   /** A letra que este barril mostra — P·I·R·A·T·A na fachada. */
@@ -22,7 +23,7 @@ export function Barril({ letra, indice, className }: Props) {
   const reduce = useReducedMotion();
   const visivel = useAbaVisivel();
   const ref = useRef<HTMLDivElement>(null);
-  const [angulo, setAngulo] = useState(2);
+  const [angulo, setAngulo] = useState(BARRIS.repouso);
 
   useEffect(() => {
     if (reduce || !visivel) return;
@@ -38,7 +39,7 @@ export function Barril({ letra, indice, className }: Props) {
       const distancia = Math.abs(e.clientX - centroX);
       // Perto (< 80px): oscilação máxima. Longe (> 480px): quase parado.
       const intensidade = Math.max(0, 1 - distancia / 480);
-      bruto = 3 + intensidade * 9;
+      bruto = BARRIS.repouso + intensidade * BARRIS.extra;
     }
 
     function tique() {
@@ -66,7 +67,7 @@ export function Barril({ letra, indice, className }: Props) {
       <motion.div
         className="pendurado"
         animate={reduce ? { rotate: 0 } : { rotate: angulo * lado }}
-        transition={{ type: "spring", stiffness: 40, damping: 8, mass: 1.2 }}
+        transition={{ type: "spring", ...BARRIS.mola }}
       >
         {/* Corda */}
         <svg viewBox="0 0 4 16" className="mx-auto h-4 w-1" preserveAspectRatio="none">
