@@ -8,6 +8,7 @@ import {
 import { site } from "@/lib/site";
 import { Tralha } from "@/components/decor/Tralha";
 import { Entrada } from "@/components/Entrada";
+import { Travessia } from "@/components/Travessia";
 import "./globals.css";
 
 /*
@@ -165,11 +166,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Saltar para o conteúdo
         </a>
         <Entrada />
+        {/*
+          Portadas de transição entre páginas. Intersectam os cliques em
+          ligações internas — por isso montam-se aqui, ao lado do {children},
+          e não dentro de nenhuma página: têm de apanhar a Nav também.
+        */}
+        <Travessia />
         {children}
         {/*
-          Camada de tralha decorativa: aranha, rede, bandeirinhas,
-          sardaniscas. Uma vez, aqui, depois de {children} — fixed inset-0,
-          por isso a ordem no DOM não afecta o layout, só o empilhamento.
+          Camada de tralha decorativa: aranha e rede. Uma vez, aqui, depois
+          de {children} — fixed inset-0, por isso a ordem no DOM não afecta
+          o layout, só o empilhamento.
         */}
         <Tralha />
       </body>
