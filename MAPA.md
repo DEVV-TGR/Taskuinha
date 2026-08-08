@@ -91,17 +91,22 @@ Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/ic
 abertura, em todas as chegadas ao site) · `Travessia` (portadas de madeira
 entre páginas — intersecta os cliques em ligações internas)
 
-**Decoração** `components/decor/` — construídos na Fase 3, ainda **não ligados**
-a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção troca
-de pele).
+**Decoração** `components/decor/`
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
 assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
 `Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
 dos 12 — pausa animações contínuas com a aba em segundo plano).
 
-> `Sardanisca` foi apagada na ronda de afinações com o cliente. A casa real
-> tem-nas; o desenho no site não convenceu.
+Da ronda de afinações com o cliente:
+`Caveira` (a caveira da casa, num sítio só — antes estava desenhada três
+vezes) · `SeloDeSeccao` (a caveira pregada na junta entre secções) ·
+`SeloDeLacre` (o selo vermelho que fecha a ementa) · `FundoDeSeccao` (a
+fotografia da casa por trás da secção, com tecto de opacidade imposto por
+contraste).
+
+> `Sardanisca` foi apagada na mesma ronda. A casa real tem-nas; o desenho no
+> site não convenceu.
 
 **Componentes que recebem props** — só quatro. Todos os outros são blocos de
 zero props com o texto escrito lá dentro.

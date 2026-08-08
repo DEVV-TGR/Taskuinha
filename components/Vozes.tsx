@@ -2,6 +2,8 @@ import { Star } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
 import { Pergaminho } from "@/components/decor/Pergaminho";
 import { SeloDeSeccao } from "@/components/decor/SeloDeSeccao";
+import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
+import { photos } from "@/lib/images";
 import { ratings, quotes } from "@/lib/reviews";
 
 /*
@@ -45,8 +47,13 @@ const sementes = [4, 9, 12];
 export function Vozes() {
   return (
     <section className="relative border-y border-linha bg-breu-fundo py-24 sm:py-32">
+      <FundoDeSeccao
+        foto={photos.tectoNau}
+        posicao="center 30%"
+        cor="var(--breu-fundo)"
+      />
       <SeloDeSeccao semente={9} />
-      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
+      <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <Reveal className="max-w-2xl">
           <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
             O que dizem

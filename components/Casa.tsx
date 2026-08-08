@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Tabua } from "@/components/decor/Tabua";
 import { Lanterna } from "@/components/decor/Lanterna";
+import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
 import { photos } from "@/lib/images";
 
 export function Casa() {
@@ -10,7 +11,12 @@ export function Casa() {
       id="a-casa"
       className="relative mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32"
     >
-      <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <FundoDeSeccao foto={photos.salaEstatuas} posicao="center 40%" />
+
+      {/* `relative` no conteúdo, não z-index: dois irmãos posicionados
+          pintam por ordem do DOM, e o conteúdo vem depois do fundo. Sem
+          isto, o fundo (que é `absolute`) tapava a secção inteira. */}
+      <div className="relative grid gap-12 lg:grid-cols-12 lg:gap-16">
         <Reveal className="lg:col-span-5 lg:pt-10">
           <Tabua semente={2} className="p-6 sm:p-8">
             <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
