@@ -49,6 +49,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
+| Grão de fibra do pergaminho | `public/images/textura-papel.webp`, gerado por `ferramentas/gerar-grao-papel.mjs` |
 | Aranha, barris, bandeirinhas, caveiras | `components/decor/` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
@@ -201,7 +202,13 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
 7. **Texturas geram-se com semente determinística** — nunca `Math.random()`
    durante a renderização, senão o HTML do servidor não bate certo com o do
    cliente e o React dá erro de hidratação. As sementes vêm do índice do
-   elemento.
+   elemento. Vale também para as texturas geradas fora do site, em
+   `ferramentas/`: mesma semente, mesmo ficheiro.
+
+8. **O `--textura-pergaminho` precisa de `background-size: 100% 100%`** — o
+   SVG tem 100×100 e sem isso repete-se de 100 em 100 pixels. A regra está
+   em `.pergaminho` (globals.css); qualquer sítio novo que use a textura
+   tem de a levar também.
 
 8. **Não versionar `.claude/worktrees/` nem `.claude/skills/`** — os primeiros
    são cópias de trabalho, os segundos são symlinks para instalações globais

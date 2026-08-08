@@ -109,10 +109,35 @@ body {
   box-shadow: inset 0 0 60px rgb(0 0 0 / 0.55);
 }
 
-/* Pergaminho com bordas rasgadas e queimadas. */
+/*
+  Pergaminho com bordas rasgadas e queimadas.
+
+  Duas camadas de textura, e a ordem importa (a primeira fica por cima):
+
+  1. `--textura-pergaminho` — manchas, queimadura de borda e vincos,
+     gerados por instância em lib/texturas.ts. Em `multiply`, porque uma
+     nódoa escurece o papel, não o pinta.
+     `background-size: 100% 100%` NÃO É OPCIONAL: sem isso o SVG de 100×100
+     repete-se de 100 em 100 pixels, e um painel largo fica com a mesma
+     mancha doze vezes. Era assim, e era metade da razão por que o
+     pergaminho se lia como ilustração.
+  2. `textura-papel.webp` — o grão de fibra, um mosaico sem emendas de
+     512px gerado por ferramentas/gerar-grao-papel.mjs. Em `overlay`, e
+     centrado no cinzento médio, para modular a cor em vez de a substituir.
+     É um ficheiro e não mais um SVG porque fibra é ruído, e ruído a sério
+     são pixels — nenhuma composição de formas geométricas lá chega.
+
+  420px de mosaico contra 512 de ficheiro: mostra-o ligeiramente reduzido,
+  o que aperta o grão e o afasta de parecer uma parede rebocada.
+*/
 .pergaminho {
   background-color: var(--pergaminho);
-  background-image: var(--textura-pergaminho);
+  background-image: var(--textura-pergaminho), url("/images/textura-papel.webp");
+  background-size:
+    100% 100%,
+    420px 420px;
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: multiply, overlay;
   color: var(--pergaminho-tinta);
   filter: drop-shadow(0 8px 24px rgb(0 0 0 / 0.7));
   /* A borda rasgada é feita por mask-image, não por border-radius. */

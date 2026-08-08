@@ -88,40 +88,98 @@ export function veioMadeira(opts?: { cor?: string; semente?: number }): string {
 }
 
 /**
- * Borda rasgada + manchas de queimado, para o `Pergaminho`.
+ * Manchas, queimadura de borda e vincos de dobra + borda rasgada, para o
+ * `Pergaminho`.
+ *
  * `mascara` vai para `mask-image` (a transparência fora do rasgão vem do
  * alfa do SVG, não de preto/branco); `fundo` vai para `background-image`,
- * por cima da cor base do pergaminho.
+ * em `multiply` por cima da cor base e do grão de papel.
+ *
+ * **O `fundo` tem de ser esticado com `background-size: 100% 100%`.** Sem
+ * isso repete-se de 100 em 100 pixels — era o que acontecia, e um padrão
+ * de manchas a repetir-se doze vezes num painel é metade da razão por que
+ * o pergaminho se lia como ilustração em vez de papel.
  */
 export function bordaPergaminho(semente: number): { fundo: string; mascara: string } {
   const rnd = pseudoAleatorio(semente);
   const queimado = "#6B4517"; // --pergaminho-queimado
 
-  // Manchas de queimado: blobs irregulares de opacidade baixa, mais densos
-  // nas bordas — como se o lume tivesse lambido o pergaminho por fora.
+  /*
+    Manchas: contornos fechados irregulares, não círculos. Uma nódoa de
+    café ou de água nunca tem raio constante, e doze círculos de opacidade
+    baixa lêem-se como doze círculos, por mais desmaiados que estejam.
+
+    Cada uma é um polígono de 9 lados com o raio a variar 45% em cada
+    vértice, fechado com curvas. O desfoque vem do filtro, não de um
+    gradiente por mancha.
+  */
+  function manchaIrregular(cx: number, cy: number, raio: number): string {
+    const lados = 9;
+    const pontos: string[] = [];
+    for (let i = 0; i < lados; i++) {
+      const ang = (i / lados) * Math.PI * 2;
+      const r = raio * (0.72 + rnd() * 0.56);
+      pontos.push(`${(cx + Math.cos(ang) * r).toFixed(1)},${(cy + Math.sin(ang) * r).toFixed(1)}`);
+    }
+    return `M${pontos[0]} ` + pontos.slice(1).map((p) => `L${p}`).join(" ") + " Z";
+  }
+
   const manchas: string[] = [];
   const numManchas = 10 + Math.floor(rnd() * 6);
   for (let i = 0; i < numManchas; i++) {
     const naBorda = rnd() > 0.4;
-    const cx = naBorda
-      ? rnd() > 0.5
-        ? rnd() * 14
-        : 100 - rnd() * 14
-      : rnd() * 100;
-    const cy = naBorda
-      ? rnd() > 0.5
-        ? rnd() * 14
-        : 100 - rnd() * 14
-      : rnd() * 100;
-    const r = 3 + rnd() * 9;
+    const cx = naBorda ? (rnd() > 0.5 ? rnd() * 14 : 100 - rnd() * 14) : rnd() * 100;
+    const cy = naBorda ? (rnd() > 0.5 ? rnd() * 14 : 100 - rnd() * 14) : rnd() * 100;
+    const raio = 3 + rnd() * 9;
     manchas.push(
-      `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" ` +
-        `fill="${queimado}" opacity="${(0.05 + rnd() * 0.12).toFixed(2)}" />`,
+      `<path d="${manchaIrregular(cx, cy, raio)}" fill="${queimado}" ` +
+        `opacity="${(0.05 + rnd() * 0.12).toFixed(2)}" />`,
     );
   }
+
+  /*
+    Queimadura de borda: quatro faixas em gradiente a escurecer para fora.
+    A borda rasgada da máscara corta o papel, mas um corte limpo não chega
+    — papel velho escurece na margem antes de se desfazer.
+  */
+  const queimaduraBordas =
+    `<rect width="100" height="100" fill="url(#qv)" />` +
+    `<rect width="100" height="100" fill="url(#qh)" />`;
+
+  /*
+    Vincos: duas dobras verticais, como um papel guardado dobrado em três.
+    Cada uma é uma sombra fina com um fio de luz ao lado — é o par
+    escuro/claro que faz ler como relevo em vez de risco.
+  */
+  const vincos = [30 + rnd() * 8, 64 + rnd() * 8]
+    .map(
+      (x) =>
+        `<rect x="${(x - 0.5).toFixed(1)}" y="0" width="0.5" height="100" fill="${queimado}" opacity="0.1" />` +
+        `<rect x="${x.toFixed(1)}" y="0" width="0.4" height="100" fill="#FFFFFF" opacity="0.14" />`,
+    )
+    .join("");
+
   const fundo = paraDataUri(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">` +
-      `${manchas.join("")}</svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">` +
+      `<defs>` +
+      `<linearGradient id="qv" x1="0" y1="0" x2="0" y2="1">` +
+      `<stop offset="0" stop-color="${queimado}" stop-opacity="0.22" />` +
+      `<stop offset="0.12" stop-color="${queimado}" stop-opacity="0" />` +
+      `<stop offset="0.88" stop-color="${queimado}" stop-opacity="0" />` +
+      `<stop offset="1" stop-color="${queimado}" stop-opacity="0.22" />` +
+      `</linearGradient>` +
+      `<linearGradient id="qh" x1="0" y1="0" x2="1" y2="0">` +
+      `<stop offset="0" stop-color="${queimado}" stop-opacity="0.2" />` +
+      `<stop offset="0.1" stop-color="${queimado}" stop-opacity="0" />` +
+      `<stop offset="0.9" stop-color="${queimado}" stop-opacity="0" />` +
+      `<stop offset="1" stop-color="${queimado}" stop-opacity="0.2" />` +
+      `</linearGradient>` +
+      `<filter id="esbater" x="-20%" y="-20%" width="140%" height="140%">` +
+      `<feGaussianBlur stdDeviation="1.6" />` +
+      `</filter>` +
+      `</defs>` +
+      `<g filter="url(#esbater)">${manchas.join("")}</g>` +
+      `${queimaduraBordas}${vincos}</svg>`,
   );
 
   // Máscara: um rectângulo com entalhes aleatórios em cada lado, para o
@@ -134,9 +192,15 @@ export function bordaPergaminho(semente: number): { fundo: string; mascara: stri
   // margem esquerda tornavam texto ilegível (ficava sobre o fundo escuro
   // da página, exposto pelo recorte). Entalhes rasos + padding generoso em
   // Pergaminho.tsx é o par que resolve isto.
+  //
+  // Passou de 7 pontos por lado para 18, com a MESMA amplitude. Sete
+  // pontos ao longo de um painel de 1200px dão um entalhe a cada 170px, e
+  // a essa distância o olho lê um polígono, não um rasgão. Dezoito dão um
+  // a cada 65px. A amplitude não sobe justamente por causa do parágrafo
+  // acima: mais frequência é de graça, mais profundidade não é.
   function ladoEntalhado(fixo: number, eixoFixo: "x" | "y", inicio: number, fim: number) {
     const pontos: number[] = [];
-    const passos = 7;
+    const passos = 18;
     for (let i = 0; i <= passos; i++) {
       const t = inicio + ((fim - inicio) * i) / passos;
       const jitter = i === 0 || i === passos ? 0 : (rnd() * 2 - 1) + (rnd() > 0.85 ? rnd() * 1.5 : 0);
