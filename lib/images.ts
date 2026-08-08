@@ -74,6 +74,23 @@ export const photos = {
     luz: "dia",
     origem: "casa",
   },
+  /*
+    O recorte do mascote, com fundo transparente. Derivado da
+    `esqueleto-corpo.jpg` — não é uma fotografia nova, é a mesma sem a
+    parede, a calçada e a floreira atrás. Ver public/images/README.md para
+    como foi feito e para o que a foto de substituição precisa de ter.
+
+    `luz: "dia"` mas nunca leva a gradação nocturna: é um autocolante por
+    cima do layout, e escurecê-lo dava-lhe o ar de estar por trás.
+  */
+  esqueletoRecorte: {
+    src: "/images/esqueleto-recorte.webp",
+    alt: "",
+    width: 708,
+    height: 968,
+    luz: "dia",
+    origem: "casa",
+  },
 
   /* ------------------------------------------------------------------- casa */
 

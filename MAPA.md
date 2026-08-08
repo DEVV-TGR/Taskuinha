@@ -105,6 +105,12 @@ vezes) · `SeloDeSeccao` (a caveira pregada na junta entre secções) ·
 fotografia da casa por trás da secção, com tecto de opacidade imposto por
 contraste).
 
+O `Esqueleto` deixou de ser um SVG desenhado e passou a ser a estátua real
+recortada do fundo (`esqueleto-recorte.webp`), colada por cima da junta da
+`Petiscos`. Nunca tinha estado montado em página nenhuma — não é uma
+substituição, é a estreia do mascote no site. A ferramenta que fez o
+recorte está em `ferramentas/recortar-sujeito.swift`.
+
 > `Sardanisca` foi apagada na mesma ronda. A casa real tem-nas; o desenho no
 > site não convenceu.
 

@@ -81,6 +81,51 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | `caveira-lenco.webp` | 410×500 | Decoração. |
 | `caveira-mesa.webp` | 500×500 | Decoração. |
 
+## Derivadas (1)
+
+Não chegaram assim: foram feitas a partir de outra que já cá estava.
+
+| Ficheiro | Dim. | O que é |
+|---|---|---|
+| `esqueleto-recorte.webp` | 708×968 | **O mascote recortado do fundo**, com alfa. Feito a partir da `esqueleto-corpo.jpg`. |
+
+### Como foi feito, e como refazer
+
+```bash
+swift ferramentas/recortar-sujeito.swift \
+  public/images/esqueleto-corpo.jpg /tmp/esqueleto.png
+# depois converter para WebP com alfa — o PNG fica 3 a 4× maior
+```
+
+A ferramenta usa a Visão do macOS (o motor do "Copiar Sujeito" do Preview).
+A máscara saiu limpa à primeira: os vãos entre os braços e o tronco, e
+entre as pernas, ficaram transparentes. Sobra um resto pequeno de
+folhagem da floreira por trás da arca, invisível ao tamanho a que é
+mostrado.
+
+### Se aparecer uma fotografia melhor
+
+O plano contava com uma fotografia nova tirada de propósito na reunião. Já
+não é preciso, mas se for tirada uma melhor, o que ela tem de ter:
+
+- **A figura inteira dentro do enquadramento.** É por isso que a
+  `esqueleto.jpg` não serviu, apesar de ter mais resolução: o braço da
+  garrafa sai fora da margem direita e o recorte fica com um corte a
+  direito no meio do braço.
+- **Luz de dia difusa**, sem sol duro — sombras marcadas colam-se à figura
+  e entram no recorte.
+- Depois de trocar o ficheiro, reajustar o `ASSENTO` em
+  `components/decor/Esqueleto.tsx`: é a fracção da altura onde ele se
+  senta, e é o que faz a junta da secção passar-lhe pelo assento.
+
+### Os barris continuam a precisar de fotografia
+
+Item 4 do `docs/PROXIMAS-MELHORIAS.md`. O mesmo recortador **não serve**:
+barris pendurados numa fachada não são um "sujeito" aos olhos do modelo —
+testado nas duas fotografias da fachada, e nas duas ele encontra o
+esqueleto em vez dos barris. Fotografar cada barril de frente, isolado
+contra o céu ou contra a parede lisa.
+
 ## Formato
 
 Ficam em JPEG e WebP como chegaram, sem reconversão. O `next/image` já serve

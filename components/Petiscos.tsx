@@ -3,6 +3,7 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
 import { SeloDeSeccao } from "@/components/decor/SeloDeSeccao";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
+import { Esqueleto } from "@/components/decor/Esqueleto";
 import { photos } from "@/lib/images";
 import { highlights, formatPrice } from "@/lib/menu";
 
@@ -54,6 +55,14 @@ export function Petiscos() {
         cor="var(--breu-fundo)"
       />
       <SeloDeSeccao semente={3} />
+      {/*
+        O mascote sentado na junta, à direita — a caveira do selo fica ao
+        centro, por isso não se estorvam. O canto superior direito desta
+        secção está vazio (o título é `max-w-2xl` e encosta à esquerda), e
+        a grelha só começa ~280px abaixo da régua: as pernas dele descem
+        ~150px, com folga.
+      */}
+      <Esqueleto className="right-[5%]" largura={300} />
       <div className="relative mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 sm:px-8">
         <Reveal>
           <h2 className="display max-w-2xl text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
