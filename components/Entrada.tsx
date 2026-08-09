@@ -5,11 +5,10 @@ import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { photos } from "@/lib/images";
 
-const CHAVE = "tsk-entrada";
 const DURACAO_TOTAL_MS = 1500;
 
 /*
-  Ecrã de entrada. Uma vez por dia, sem som, sem cursor de gancho.
+  Ecrã de entrada. Em todas as chegadas ao site, sem som, sem cursor de gancho.
 
   t=0.0s  ecrã a --breu
   t=0.2s  lanterna acende
@@ -21,6 +20,11 @@ const DURACAO_TOTAL_MS = 1500;
   conteúdo por baixo já está no HTML e indexado antes de qualquer JS
   correr. Se o JavaScript falhar, este componente nunca chega a mostrar
   nada; não é um portão, é uma camada por cima.
+
+  Aparecia uma vez por dia, guardado em localStorage. Deixou de aparecer:
+  agora é em todas as chegadas ao site. A navegação interna não passa por
+  aqui — é uma transição de cliente, o layout não remonta —, por isso quem
+  anda entre a inicial e a ementa vê as portadas da `Travessia`, não isto.
 */
 export function Entrada() {
   const reduce = useReducedMotion();
@@ -29,21 +33,9 @@ export function Entrada() {
   useEffect(() => {
     if (reduce) return; // nunca com movimento reduzido
 
-    // A leitura do localStorage é síncrona, mas o setState que a segue
-    // fica num microtask — não porque precise de esperar nada, mas para
-    // nunca disparar um setState directamente dentro do corpo do efeito
-    // (react-hooks/set-state-in-effect: evita a cascata de renders).
-    queueMicrotask(() => {
-      try {
-        const hoje = new Date().toDateString();
-        if (window.localStorage.getItem(CHAVE) === hoje) return;
-        window.localStorage.setItem(CHAVE, hoje);
-        setVisivel(true);
-      } catch {
-        // localStorage indisponível (navegação privada, cookies bloqueados):
-        // não é motivo para bloquear nada — simplesmente não mostra.
-      }
-    });
+    // Num microtask, não directamente no corpo do efeito — evita a cascata
+    // de renders que o react-hooks/set-state-in-effect assinala.
+    queueMicrotask(() => setVisivel(true));
   }, [reduce]);
 
   useEffect(() => {

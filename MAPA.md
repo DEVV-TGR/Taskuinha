@@ -86,7 +86,9 @@ Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/ic
 `Encontrar` + `Mapa` · `MenuCategoryNav`
 
 **Movimento**
-`Reveal` (o único primitivo, usado em todo o lado) · `Entrada` (ecrã de abertura)
+`Reveal` (o único primitivo, usado em todo o lado) · `Entrada` (ecrã de
+abertura, em todas as chegadas ao site) · `Travessia` (as portadas de
+madeira entre páginas — intersecta os cliques em ligações internas)
 
 **Decoração** `components/decor/` — construídos na Fase 3, ainda **não ligados**
 a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção troca
