@@ -24,7 +24,7 @@ dados e sem CMS.
 ```
 app/               layout com fontes, metadata e JSON-LD; página inicial e /ementa
 components/        uma secção por ficheiro; as que animam são client components
-components/decor/  a camada de tralha — aranha, sardaniscas, barris, lanternas…
+components/decor/  a camada de tralha — aranha, rede, barris, lanternas…
 lib/site.ts        morada, telefone, horário, coordenadas e redes
 lib/menu.ts        ementa e destaques
 lib/images.ts       fotografia local, com origem e tratamento de cada ficheiro
@@ -43,8 +43,8 @@ canto: 4px em tudo — nada é pílula, tudo é madeira serrada.
 
 O movimento é contido e sempre justificado: revelação em scroll ("cair e
 balançar", com spring e inclinação alternada), parallax curto na fotografia
-do cabeçalho, uma camada de tralha decorativa (aranha, sardaniscas, rede,
-lanternas) que reage ao rato e ao scroll. Tudo colapsa com
+do cabeçalho, uma camada de tralha decorativa (aranha, rede, lanternas) que
+reage ao rato e ao scroll. Tudo colapsa com
 `prefers-reduced-motion` e o conteúdo continua visível sem JavaScript.
 
 ## O que falta para publicar

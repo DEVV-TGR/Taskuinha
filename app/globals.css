@@ -189,8 +189,9 @@ body {
   }
 
   /*
-    A aranha e as sardaniscas não congelam — desaparecem. Uma aranha parada
-    a meio do ecrã é pior do que aranha nenhuma.
+    A aranha não congela — desaparece. Uma aranha parada a meio do ecrã é
+    pior do que aranha nenhuma. A marca é partilhada: qualquer tralha em
+    movimento que venha a existir usa-a.
   */
   [data-tralha-movel] {
     display: none !important;

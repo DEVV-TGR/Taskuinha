@@ -42,7 +42,7 @@ Analisei 7 fotografias enviadas pelo Gonçalo e 24 descarregadas do Facebook da 
 - Tecto de tábuas turquesa com um **mural de nau à vela em tempestade** pintado por cima
 - Lemes de madeira, lanternas, conchas de vieira (Caminho de Santiago), sóis em relevo
 - Aros salva-vidas "WELCOME ABOARD", bandeirinhas de países, redes de pesca, cordas
-- **Aranhas peludas penduradas do tecto**, sardaniscas de borracha
+- **Aranhas peludas penduradas do tecto**, sardaniscas de borracha †
 - **Um esqueleto pirata sentado à porta a beber uma cerveja** — é o mascote, aparece em quase todas as fotos de visitantes
 - Bandeira negra com caveira de chapéu e sabres cruzados
 - Arca do tesouro, Captain Morgan, estátuas de piratas em tamanho real
@@ -61,7 +61,7 @@ Analisei 7 fotografias enviadas pelo Gonçalo e 24 descarregadas do Facebook da 
 | Tipografia | **Tabuleta pintada** | Rye + Alegreya Sans + Special Elite. |
 | Ementa | **Pergaminho pregado na madeira** | Estilo Kalóz Étterem sobre parede de tábuas. |
 | Hero | **A fachada de noite** | Barris oscilam, lanternas piscam. |
-| Partidas | **As quatro** | Aranha, sardaniscas, esqueleto+mar, corda/rede/bandeirinhas. |
+| Partidas | **Três** | Aranha, esqueleto+mar, corda/rede/bandeirinhas. Eram quatro; as sardaniscas saíram †. |
 | Extra | **Ecrã de entrada** | Sem som de ambiente. Sem cursor de gancho. |
 
 Referência visual da ementa: **https://kalozetterem.hu/etlap** — pergaminho de bordas queimadas sobre fundo preto, duas colunas, serif antiga em versaletes, preços alinhados à direita, ingredientes em letra pequena por baixo. A deles é uma imagem PNG estática de 1100×1545; **a nossa é HTML a sério** — indexável, adaptável, editável no `lib/menu.ts`.
@@ -288,7 +288,7 @@ Manter tal e qual, só a variável muda. **Atenção:** sobre o pergaminho claro
 }
 ```
 
-`[data-tralha-movel]` é para a aranha e as sardaniscas: com movimento reduzido não devem aparecer paradas no ecrã (uma aranha imóvel a meio da página é pior do que aranha nenhuma) — desaparecem por completo.
+`[data-tralha-movel]` é para a aranha: com movimento reduzido não deve aparecer parada no ecrã (uma aranha imóvel a meio da página é pior do que aranha nenhuma) — desaparece por completo. A marca é partilhada, para qualquer tralha em movimento que venha a existir.
 
 ---
 
@@ -457,9 +457,9 @@ Pasta nova, 13 ficheiros. **Regras que se aplicam a todos:**
 
 | Ficheiro | Especificação |
 |---|---|
-| `Tralha.tsx` | Orquestrador. `fixed inset-0 z-[60] pointer-events-none`. Monta `Rede`, `Bandeirinhas`, `Aranha`, e 2–3 `Sardanisca`. Faz o *scheduling* da aranha. |
+| `Tralha.tsx` | Orquestrador. `fixed inset-0 z-[60] pointer-events-none`. Monta `Rede` e `Aranha`, e faz o *scheduling* desta. Montava também 2–3 `Sardanisca` †. |
 | `Aranha.tsx` | SVG de aranha peluda + fio de seda. Desce de `y: -120` a `y: 220` em ~1.2 s com `ease: [0.34, 1.56, 0.64, 1]`, abana com `rotate` ±6° em loop de 2.4 s, e sobe em 0.5 s quando o cursor entra num raio de 140 px. Dispara: (a) ao entrar em `#a-casa`, (b) depois em intervalos aleatórios de 45–120 s, no máximo 3 vezes por sessão. |
-| `Sardanisca.tsx` | Lagartixa SVG com 4 patas animadas. Percurso restrito a uma faixa de **48 px** junto às bordas do viewport — nunca sobre texto. Ciclo: correr 1–3 s → parar 2–5 s (cabeça a rodar) → fugir se o cursor entrar a menos de 120 px. Props: `borda: "cima" \| "baixo" \| "esquerda" \| "direita"`, `atraso`. |
+| ~~`Sardanisca.tsx`~~ † | Lagartixa SVG com 4 patas animadas, numa faixa de 48 px junto às bordas do viewport. **Apagada** — ver a nota no fim. |
 | `Rede.tsx` | Rede em losango via `malhaRede()`, nos 4 cantos, com conchas de vieira e nós. `opacity: 0.28`. Estática. |
 | `Bandeirinhas.tsx` | As bandeiras reais da casa, pela ordem em que estão penduradas: **Brasil, Espanha, Alemanha, Gana, Argentina, Costa Rica, Camarões, Chile, Austrália, Coreia do Sul** (lidas em `balcao-bandeirinhas.jpg`). Cada uma abana com `rotate` ±4°, desfasadas em `i * 0.12 s`, período 3.2 s. |
 | `Barril.tsx` | Barril de madeira em SVG, pendurado por corda. Pêndulo amortecido: `rotate` de ±(3 + intensidade)° com `spring` `{ stiffness: 40, damping: 8, mass: 1.2 }`. Props: `letra`, `indice`. Reage à posição horizontal do rato: quanto mais perto, mais oscila. |
@@ -729,7 +729,7 @@ Este redesenho põe o site inteiro a depender de animação e textura. É aí qu
 |---|---|---|
 | 1 | Com `prefers-reduced-motion: reduce`, **todo** o conteúdo visível e nada em movimento | DevTools → Rendering → Emulate CSS media feature. Percorrer as duas rotas de cima a baixo. |
 | 2 | Sem JavaScript, todo o conteúdo visível | DevTools → Settings → Debugger → Disable JavaScript. O `<noscript>` em `layout.tsx` cobre `[data-reveal]`; **acrescentar as novas marcas ao mesmo bloco.** |
-| 3 | Aranha e sardaniscas **desaparecem** com movimento reduzido, não congelam | Uma aranha parada a meio do ecrã é pior do que aranha nenhuma. |
+| 3 | A aranha **desaparece** com movimento reduzido, não congela | Uma aranha parada a meio do ecrã é pior do que aranha nenhuma. Vale para qualquer tralha em movimento. |
 | 4 | Contraste ≥ 4.5:1 em todo o texto | Tabela da §3.1. **Vigiar o texto sobre fotografia** — os scrims têm de garantir o mínimo em cima de qualquer zona da foto. |
 | 5 | O wordmark anuncia "Taskuinha", não "T-A-S-K-U-I-Ê-N-H-A" | VoiceOver no macOS. |
 | 6 | Toda a tralha é `aria-hidden` | Inspeccionar a árvore de acessibilidade. |
@@ -786,11 +786,31 @@ Estas são as decisões onde não tenho certeza. Não são retóricas.
 
 5. **§7 — quantidade de tralha simultânea.** Rede nos 4 cantos + bandeirinhas no topo + aranha + 2–3 sardaniscas + lanterna, tudo em simultâneo por cima de qualquer secção. "Taberna total" foi pedido explicitamente, mas há um ponto em que isto deixa de ser imersivo e passa a ser ilegível. Onde é que cortarias?
 
+   **Respondido depois:** pelas sardaniscas †. O cliente viu o site e foram
+   a primeira coisa que apontou.
+
 6. **§8 — `spring` no `Reveal`.** `stiffness: 120, damping: 14` faz overshoot com rotação, o que é o efeito pretendido. Mas isto corre em **todos** os blocos de conteúdo das duas páginas. Em telemóveis fracos, dezenas de springs simultâneos com `rotate`? Devia usar `tween` com `ease` de mola simulada?
 
 7. **Preços inventados.** O site vai para o ar com preços falsos e um aviso a dizê-lo. Aceitável, ou devia esconder os preços por completo até haver os verdadeiros?
 
 8. **Qualquer coisa que não vi.** É o que mais me interessa.
+
+---
+
+## † As sardaniscas saíram
+
+Este documento é o registo do que foi **especificado** no redesenho, e as
+sardaniscas faziam parte dele. Foram construídas e montadas: três, a correr
+nas bordas de baixo, da direita e da esquerda do ecrã.
+
+Depois de o cliente ver o site, saíram. Não gostou do desenho. O
+`components/decor/Sardanisca.tsx` foi apagado, as três instâncias saíram do
+`Tralha.tsx`, e **nada entrou no lugar delas**.
+
+A casa real tem sardaniscas de borracha — as menções a isso ficaram no
+documento porque são verdade. O que não convenceu foi o desenho no ecrã,
+não a ideia. Se algum dia houver um desenho melhor, o histórico do git
+tem o antigo.
 
 ---
 

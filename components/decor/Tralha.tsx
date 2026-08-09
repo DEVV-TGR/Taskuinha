@@ -1,6 +1,5 @@
 import { Rede } from "./Rede";
 import { Aranha } from "./Aranha";
-import { Sardanisca } from "./Sardanisca";
 
 /*
   Orquestrador da camada de tralha. Monta uma vez em app/layout.tsx, depois
@@ -19,13 +18,16 @@ import { Sardanisca } from "./Sardanisca";
   página toda. Ficam disponíveis para montagem contextual, não fixa, dentro
   de uma secção específica (Casa.tsx, Fase 7).
 
-  Nenhuma Sardanisca usa `borda="cima"` por omissão — verificado na Fase 8:
-  a faixa de 48px do topo cai exactamente onde os cabeçalhos das páginas
-  (H1 + parágrafo de abertura) costumam começar, sobretudo em ecrãs
-  estreitos. A regra "nunca sobre texto" só se cumpre se o conteúdo nunca
-  chegar perto da borda — e o topo da página é precisamente onde isso é
-  menos garantido. Baixo, esquerda e direita têm muito menos conteúdo a
-  roçar a margem.
+  As sardaniscas saíram na ronda de afinações com o cliente — não gostou do
+  desenho. Eram três, a correr nas bordas de baixo, da direita e da
+  esquerda. O componente foi apagado, não desligado, e nada entrou no lugar
+  delas.
+
+  A casa real tem-nas, de borracha. Não é razão para as pôr de volta: o que
+  não convenceu foi o desenho no ecrã, não a ideia.
+
+  `[data-tralha-movel]` fica em globals.css — a aranha continua a precisar
+  dele para desaparecer com movimento reduzido.
 */
 export function Tralha() {
   return (
@@ -36,9 +38,6 @@ export function Tralha() {
     >
       <Rede />
       <Aranha className="left-[15%] sm:left-[20%]" />
-      <Sardanisca borda="baixo" atraso={0} />
-      <Sardanisca borda="direita" atraso={0.6} />
-      <Sardanisca borda="esquerda" atraso={1.1} />
     </div>
   );
 }

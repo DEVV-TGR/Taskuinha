@@ -23,6 +23,11 @@ tecto de tábuas turquesa com um mural de nau em tempestade, redes de pesca,
 caveiras, aranhas que descem do tecto, sardaniscas, e um esqueleto pirata
 sentado à porta a beber uma cerveja.
 
+> Isto descreve a **casa**, não o site. As sardaniscas de borracha existem
+> lá; no site não — o componente que as desenhava foi apagado na ronda de
+> afinações, porque o desenho não convenceu o cliente. Não voltar a
+> pô-las só por lerem aqui.
+
 **Stack:** Next.js 16.3 (App Router) · React 19.2 · Tailwind v4.3 (CSS-first,
 sem ficheiro de config) · `motion` v13 (importado de `motion/react`) ·
 Phosphor Icons (`@phosphor-icons/react/dist/ssr`) · TypeScript strict.
@@ -49,7 +54,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
-| Aranha, sardaniscas, barris, bandeirinhas | `components/decor/` |
+| Aranha, barris, bandeirinhas, rede | `components/decor/` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
 | Favicon | `app/icon.svg` |
@@ -92,10 +97,13 @@ Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/ic
 a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção troca
 de pele).
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
-assumem-no como ancestral) · `Aranha` · `Sardanisca` · `Rede` · `Bandeirinhas` ·
+assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
 `Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
-dos 13 — pausa animações contínuas com a aba em segundo plano).
+dos 12 — pausa animações contínuas com a aba em segundo plano).
+
+> `Sardanisca` foi apagada. Eram três, a correr nas bordas de baixo, direita
+> e esquerda; o cliente não gostou do desenho e nada entrou no lugar delas.
 
 **Componentes que recebem props** — só quatro. Todos os outros são blocos de
 zero props com o texto escrito lá dentro.
@@ -174,8 +182,9 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
    duas.
 
 5. **Toda a decoração é `aria-hidden` e some com movimento reduzido** — a
-   aranha e as sardaniscas **desaparecem**, não congelam. Uma aranha parada a
-   meio do ecrã é pior do que aranha nenhuma.
+   aranha **desaparece**, não congela. Uma aranha parada a meio do ecrã é
+   pior do que aranha nenhuma. A marca `[data-tralha-movel]` é partilhada:
+   qualquer tralha em movimento que venha a existir tem de a usar.
 
 6. **Fotografias são todas locais** — não há `remotePatterns` no
    `next.config.ts` e não deve voltar a haver.

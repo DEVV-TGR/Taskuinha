@@ -167,9 +167,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Entrada />
         {children}
         {/*
-          Camada de tralha decorativa: aranha, rede, bandeirinhas,
-          sardaniscas. Uma vez, aqui, depois de {children} — fixed inset-0,
-          por isso a ordem no DOM não afecta o layout, só o empilhamento.
+          Camada de tralha decorativa: aranha e rede. Uma vez, aqui, depois
+          de {children} — fixed inset-0, por isso a ordem no DOM não afecta
+          o layout, só o empilhamento.
         */}
         <Tralha />
       </body>
