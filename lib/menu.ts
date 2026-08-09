@@ -191,6 +191,36 @@ export type Highlight = {
 };
 
 /*
+  O preço de um prato, ido buscar à ementa.
+
+  Os destaques tinham o preço escrito outra vez, à mão. Duas fontes de
+  verdade para o mesmo número, e o momento em que isso rebenta é
+  exactamente o que aí vem: chegam os preços reais do Anselmo, alguém
+  actualiza a ementa, e a página inicial fica a anunciar os de
+  demonstração. Agora há um sítio só.
+
+  Leva o `id` da categoria porque o nome sozinho não chega — "Lulas
+  grelhadas" está em duas, com preços diferentes de propósito (petisco em
+  `do-mar`, prato em `pratos`). Deixar isso à sorte da primeira ocorrência
+  era um erro à espera de acontecer.
+
+  Rebenta em tempo de compilação se o par não existir: um destaque a
+  apontar para um prato que foi renomeado ou removido tem de parar o
+  `next build`, não de aparecer sem preço na página.
+*/
+function precoDe(categoriaId: string, nome: string): number {
+  const categoria = menu.find((c) => c.id === categoriaId);
+  if (!categoria) {
+    throw new Error(`Categoria "${categoriaId}" não existe na ementa.`);
+  }
+  const prato = categoria.dishes.find((d) => d.name === nome);
+  if (!prato) {
+    throw new Error(`"${nome}" não existe na categoria "${categoriaId}".`);
+  }
+  return prato.price;
+}
+
+/*
   Seis pratos-âncora para a página inicial: os que as avaliações mais citam.
   Seis, e não mais, porque é o número que fecha a grelha do bento sem sobras.
 
@@ -207,38 +237,38 @@ export const highlights: Highlight[] = [
     name: "Amêijoas ao alho",
     description:
       "O prato que mais aparece nas avaliações. Vem com pão, e o pão serve para o molho.",
-    price: 12.5,
+    price: precoDe("do-mar", "Amêijoas ao alho"),
     photo: photos.petiscoAmeijoas,
   },
   {
     name: "Lapas ao alho",
     description: "Grelhadas com alho e coentros, sobre pão torrado.",
-    price: 9,
+    price: precoDe("do-mar", "Lapas ao alho"),
     photo: photos.petiscoLapas,
   },
   {
     name: "Lulas grelhadas",
     description:
       "Grelhadas na hora, com alho. Sabem melhor na esplanada, com uma imperial.",
-    price: 11,
+    price: precoDe("do-mar", "Lulas grelhadas"),
     photo: photos.petiscoLulas,
   },
   {
     name: "Sardinhas no pão",
     description: "Assadas na hora, sobre uma fatia de pão torrado.",
-    price: 7.5,
+    price: precoDe("do-mar", "Sardinhas no pão"),
     photo: photos.petiscoSardinhas,
   },
   {
     name: "Percebes",
     description: "Só há quando o mar deixa apanhar. Quando há, acabam cedo.",
-    price: 19,
+    price: precoDe("do-mar", "Percebes"),
     photo: photos.petiscoPercebes,
   },
   {
     name: "Bacalhau à Brás",
     description: "Lascas desfiadas, batata palha e azeitona preta. Para quem chega com fome a sério.",
-    price: 14,
+    price: precoDe("pratos", "Bacalhau à Brás"),
   },
 ];
 

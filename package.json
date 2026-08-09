@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "folha-de-reuniao": "node --experimental-strip-types --import ./ferramentas/registar.mjs ferramentas/folha-de-reuniao.mjs",
+    "grao-papel": "node ferramentas/gerar-grao-papel.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
