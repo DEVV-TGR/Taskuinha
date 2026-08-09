@@ -49,7 +49,8 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
-| Aranha, sardaniscas, barris, bandeirinhas | `components/decor/` |
+| Aranha, barris, bandeirinhas, caveiras | `components/decor/` |
+| Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
 | Favicon | `app/icon.svg` |
@@ -86,16 +87,21 @@ Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/ic
 `Encontrar` + `Mapa` · `MenuCategoryNav`
 
 **Movimento**
-`Reveal` (o único primitivo, usado em todo o lado) · `Entrada` (ecrã de abertura)
+`Reveal` (o único primitivo, usado em todo o lado) · `Entrada` (ecrã de
+abertura, em todas as chegadas ao site) · `Travessia` (portadas de madeira
+entre páginas — intersecta os cliques em ligações internas)
 
 **Decoração** `components/decor/` — construídos na Fase 3, ainda **não ligados**
 a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção troca
 de pele).
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
-assumem-no como ancestral) · `Aranha` · `Sardanisca` · `Rede` · `Bandeirinhas` ·
+assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
 `Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
-dos 13 — pausa animações contínuas com a aba em segundo plano).
+dos 12 — pausa animações contínuas com a aba em segundo plano).
+
+> `Sardanisca` foi apagada na ronda de afinações com o cliente. A casa real
+> tem-nas; o desenho no site não convenceu.
 
 **Componentes que recebem props** — só quatro. Todos os outros são blocos de
 zero props com o texto escrito lá dentro.
@@ -174,8 +180,9 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
    duas.
 
 5. **Toda a decoração é `aria-hidden` e some com movimento reduzido** — a
-   aranha e as sardaniscas **desaparecem**, não congelam. Uma aranha parada a
-   meio do ecrã é pior do que aranha nenhuma.
+   aranha **desaparece**, não congela. Uma aranha parada a meio do ecrã é
+   pior do que aranha nenhuma. O mesmo vale para a `Entrada` e a `Travessia`:
+   com movimento reduzido não montam de todo, e os links voltam a ser links.
 
 6. **Fotografias são todas locais** — não há `remotePatterns` no
    `next.config.ts` e não deve voltar a haver.

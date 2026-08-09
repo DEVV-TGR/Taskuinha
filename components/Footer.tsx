@@ -1,6 +1,7 @@
 import { InstagramLogo } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
 import { Mar } from "@/components/decor/Mar";
+import { Caveira } from "@/components/decor/Caveira";
 import { site, fullAddress } from "@/lib/site";
 import { PRECOS_SAO_DEMO } from "@/lib/menu";
 
@@ -76,8 +77,17 @@ export function Footer() {
           </div>
         </div>
 
+        {/* A marca da casa a fechar o casco, entre os contactos e a letra
+            pequena. Grande e apagada: é uma marca de água, não um logótipo
+            a competir com o wordmark que está três blocos acima. */}
+        <div aria-hidden="true" className="mt-16 flex items-center gap-6">
+          <span className="h-px flex-1 bg-linha" />
+          <Caveira className="h-12 w-16 text-osso-fraco opacity-40" ossos />
+          <span className="h-px flex-1 bg-linha" />
+        </div>
+
         {PRECOS_SAO_DEMO ? (
-          <p className="mt-16 border-t border-linha pt-6 text-xs leading-relaxed text-osso-fraco">
+          <p className="mt-8 text-xs leading-relaxed text-osso-fraco">
             Os preços da ementa são exemplos de demonstração, à espera dos
             verdadeiros.
           </p>
