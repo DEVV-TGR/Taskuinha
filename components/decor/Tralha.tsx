@@ -19,9 +19,15 @@ import { Aranha } from "./Aranha";
   de uma secção específica (Casa.tsx, Fase 7).
 
   As sardaniscas saíram na ronda de afinações com o cliente — não gostou do
-  resultado. O componente foi apagado, não desligado: uma lagartixa SVG que
-  ninguém quer não vale a manutenção. O `[data-tralha-movel]` mantém-se em
-  globals.css porque a aranha continua a precisar dele.
+  desenho. Eram três, a correr nas bordas de baixo, da direita e da
+  esquerda. O componente foi apagado, não desligado, e nada entrou no lugar
+  delas.
+
+  A casa real tem-nas, de borracha. Não é razão para as pôr de volta: o que
+  não convenceu foi o desenho no ecrã, não a ideia.
+
+  `[data-tralha-movel]` fica em globals.css — a aranha continua a precisar
+  dele para desaparecer com movimento reduzido.
 */
 export function Tralha() {
   return (

@@ -5,7 +5,6 @@ import { Reveal } from "@/components/Reveal";
 import { Cta } from "@/components/Cta";
 import { MenuCategoryNav } from "@/components/MenuCategoryNav";
 import { Pergaminho } from "@/components/decor/Pergaminho";
-import { SeloDeLacre } from "@/components/decor/SeloDeLacre";
 import { menu, formatPrice, PRECOS_SAO_DEMO } from "@/lib/menu";
 import { site } from "@/lib/site";
 
@@ -116,10 +115,7 @@ export default function EmentaPage() {
               ) : null}
             </div>
 
-            <div className="flex items-center gap-6">
-              <SeloDeLacre className="h-20 w-20 shrink-0 sm:h-24 sm:w-24" />
-              <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>
-            </div>
+            <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>
           </div>
         </section>
       </main>

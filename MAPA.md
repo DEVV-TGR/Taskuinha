@@ -49,7 +49,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
-| Aranha, barris, bandeirinhas, caveiras | `components/decor/` |
+| Aranha, barris, bandeirinhas, rede | `components/decor/` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
@@ -102,6 +102,12 @@ dos 12 — pausa animações contínuas com a aba em segundo plano).
 
 > `Sardanisca` foi apagada na ronda de afinações com o cliente. A casa real
 > tem-nas; o desenho no site não convenceu.
+>
+> Houve uma ronda em que apareceram um `Caveira.tsx` partilhado, um
+> `SeloDeSeccao` nas juntas e um `SeloDeLacre` na ementa. **Foram todos
+> retirados** — trabalho decidido sem o Gonçalo, que é o que o `CLAUDE.md`
+> agora proíbe. A caveira da casa voltou a viver dentro da `BandeiraNegra`
+> e do `Wordmark`, cada uma com o seu desenho.
 
 **Componentes que recebem props** — só quatro. Todos os outros são blocos de
 zero props com o texto escrito lá dentro.
