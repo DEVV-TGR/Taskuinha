@@ -1,6 +1,5 @@
 import { InstagramLogo } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
-import { Mar } from "@/components/decor/Mar";
 import { site, fullAddress } from "@/lib/site";
 import { PRECOS_SAO_DEMO } from "@/lib/menu";
 
@@ -13,9 +12,12 @@ const nav = [
 ];
 
 /*
-  O casco do rodapé: fundo afundado, o mar a bater por baixo (mesmo
-  componente do Hero), e o nome do barco da ementa real — RUMOCEANO — como
-  legenda por baixo do wordmark.
+  O casco do rodapé: fundo afundado e o nome do barco da ementa real —
+  RUMOCEANO — como legenda por baixo do wordmark.
+
+  Havia aqui uma faixa de 64/96px com três camadas de onda a deslizar em loop
+  (`decor/Mar.tsx`). Saiu a pedido do Gonçalo, e o componente foi apagado — o
+  rodapé fecha agora a direito.
 */
 export function Footer() {
   return (
@@ -82,11 +84,6 @@ export function Footer() {
             verdadeiros.
           </p>
         ) : null}
-      </div>
-
-      {/* O mar a bater no casco, por baixo de tudo. */}
-      <div aria-hidden="true" className="relative h-16 sm:h-24">
-        <Mar />
       </div>
     </footer>
   );
