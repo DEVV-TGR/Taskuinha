@@ -98,9 +98,17 @@ a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção tro
 de pele).
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
 assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
-`Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
+`Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `Tronco` · `Tabuleta` ·
+`BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
 dos 12 — pausa animações contínuas com a aba em segundo plano).
+
+> `Tronco` e `Tabuleta` são os dois mais recentes, e vivem os dois na junta
+> entre o Hero e a secção "A casa": a trave atravessa a página de aresta a
+> aresta e passa à frente do `Esqueleto`, a apoiar-lhe o baú; a tabuleta
+> pendura-se dela por correntes e leva o texto da casa por cima. A `Tabuleta`
+> é a única peça do site feita em `border-image` de nove fatias — é o que lhe
+> permite crescer com o texto sem esticar as correntes nem os rebites.
 
 > `Sardanisca` foi apagada na ronda de afinações com o cliente. A casa real
 > tem-nas; o desenho no site não convenceu.

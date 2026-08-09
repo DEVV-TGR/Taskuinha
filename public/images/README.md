@@ -1,6 +1,6 @@
 # Fotografias
 
-Trinta e um ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
+Trinta e três ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
 do Facebook. O registo em código, com texto alternativo e dimensões, é o
 `lib/images.ts`; este ficheiro guarda a proveniência.
 
@@ -80,7 +80,7 @@ Cinco são pratos servidos à mesa. Dois são produto acabado de chegar.
 > `petisco-percebes.jpg` fosse uma — é uma navalheira pequena, ao lado de um
 > prato de percebes. A escolha dos seis destaques tem de contar com isto.
 
-## Ilustrações de fora (6)
+## Ilustrações de fora (8)
 
 Não são da casa. São imagens externas usadas como decoração, e é por isso que
 `lib/images.ts` marca cada fotografia com `origem`.
@@ -93,6 +93,20 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | `caveira-madeira.jpg` | 570×713 | **Ecrã de entrada.** Já vem com fundo preto. |
 | `caveira-lenco.webp` | 410×500 | Decoração. |
 | `caveira-mesa.webp` | 500×500 | Decoração. |
+| **`tronco.png`** | 6000×1563 | **A trave da junta.** Recorte transparente; a madeira ocupa só a faixa dos 33% aos 68% da altura. |
+| **`tableta.webp`** | 1800×1800 | **A tabuleta do "A casa".** Tábua, ferragens e correntes na mesma imagem, recortadas. |
+
+> **A `tableta.webp` tem uma marca de água da Dreamstime** gravada nas ripas
+> do meio — lê-se por baixo do texto. Precisa de ser trocada pela versão
+> licenciada antes de isto ir para o ar.
+>
+> **Se for trocada:** remedir as sete fronteiras que o
+> `components/decor/Tabuleta.tsx` tem escritas no comentário do topo. São as
+> únicas coisas que esse componente sabe da imagem, e é delas que sai o
+> recorte em nove fatias.
+>
+> A `tronco.png` tem o mesmo tipo de dependência: os 35,5% de madeira estão
+> escritos no `Tronco.tsx` e é de lá que sai a espessura da trave.
 
 ## Formato
 
@@ -101,3 +115,9 @@ WebP redimensionado em tempo de execução, por isso o visitante não descarrega
 estes ficheiros; voltar a comprimir os originais só acrescentava uma geração de
 perda ao que já é material comprimido, para poupar cerca de 5 MB num
 repositório que os aguenta bem.
+
+**A `tableta.webp` é a excepção, e o motivo é o que confirma a regra.** Não
+passa pelo `next/image`: é consumida por `url()` dentro de um `border-image`,
+e o CSS não tem optimizador nenhum — o que estiver no ficheiro é o que o
+visitante descarrega. Chegou com 6000×6000 e **39 MB**. Está aqui a 1800 px em
+WebP, 418 KB, que é o triplo da maior caixa em que alguma vez aparece.

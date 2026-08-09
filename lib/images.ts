@@ -102,6 +102,35 @@ export const photos = {
     origem: "casa",
   },
 
+  /* ----------------------------------------------------------------- tronco */
+
+  /*
+    A trave que atravessa a página na junta entre o Hero e a secção "A casa".
+    Recorte com fundo transparente: a madeira ocupa a faixa dos 33% aos 68%
+    da altura do ficheiro, e o resto é transparente — é desse 35,5% que sai a
+    espessura visível da trave (ver `components/decor/Tronco.tsx`).
+
+    Chega a `object-fill` e não a `object-cover`: a trave é esticada em
+    largura de uma aresta à outra do ecrã, e é isso que lhe dá o aspecto de
+    viga longa em vez de cepo curto. `cover` cortava-lhe o cimo e o fundo e
+    matava a silhueta redonda.
+
+    `alt: ""` porque é decoração pura, e o contentor do componente é
+    `aria-hidden`.
+
+    **Não leva a gradação nocturna** — as duas camadas (`--breu` multiply +
+    `--lanterna` overlay) existem para assentar fotografias que estão *dentro*
+    da página; esta está colada *por cima* dela.
+  */
+  tronco: {
+    src: "/images/tronco.png",
+    alt: "",
+    width: 6000,
+    height: 1563,
+    luz: "dia",
+    origem: "ilustracao",
+  },
+
   /* ------------------------------------------------------------------- casa */
 
   bandeiraCaveira: {

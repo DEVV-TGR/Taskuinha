@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { Tabua } from "@/components/decor/Tabua";
+import { Tabuleta } from "@/components/decor/Tabuleta";
 import { Lanterna } from "@/components/decor/Lanterna";
 import { Esqueleto } from "@/components/decor/Esqueleto";
 import { photos } from "@/lib/images";
@@ -25,16 +25,35 @@ export function Casa() {
         da fotografia. Fica por baixo dos barris (z-20) e do texto (z-30)
         do Hero, que estão longe dele.
       */}
-      <Esqueleto className="top-0 right-5 sm:right-8" />
+      <Esqueleto className="top-0 right-5 z-10 sm:right-8" />
 
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <Reveal className="lg:col-span-5 lg:pt-10">
-          <Tabua semente={2} className="p-6 sm:p-8">
-            <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
+        {/*
+          `-mt-24 sm:-mt-32` anula exactamente o `py` da secção e leva o topo
+          da tabuleta até à linha da junta, que é onde o tronco está. Sem isto
+          as correntes começavam 96px abaixo da trave, penduradas do nada.
+
+          As pontas das correntes ficam 2,7% da largura abaixo dessa linha (é a
+          margem transparente do ficheiro) — meia espessura de trave, portanto
+          escondidas por trás dela.
+
+          Só esta coluna sobe: a fotografia do lado direito fica onde estava, e
+          é essa diferença de altura que dá a leitura de coisa pendurada.
+        */}
+        {/*
+          O `max-w` só existe entre os 640px e o `lg`: aí a grelha ainda é de
+          uma coluna e a tabuleta ia dos 640 aos 960px de largura, com as
+          correntes a crescer na mesma proporção — um painel de estrada, não
+          uma tabuleta. No telemóvel ocupa a largura toda (é o que está no
+          mockup) e em `lg` manda a coluna da grelha.
+        */}
+        <Reveal className="-mt-24 sm:-mt-32 sm:max-w-[520px] lg:col-span-5 lg:max-w-none">
+          <Tabuleta className="px-4 py-2 sm:px-6">
+            <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
               A casa
             </h2>
 
-            <div className="mt-8 space-y-5 text-base leading-relaxed text-osso-fraco">
+            <div className="letra-na-madeira mt-6 space-y-4 text-[0.95rem] leading-relaxed text-osso">
               <p>
                 Chamam-lhe o Pirata. O nome pegou-se e ficou, como se pega tudo
                 numa terra pequena.
@@ -51,7 +70,7 @@ export function Casa() {
                 do sol contigo.
               </p>
             </div>
-          </Tabua>
+          </Tabuleta>
         </Reveal>
 
         <Reveal index={1} className="relative lg:col-span-7">
