@@ -1,13 +1,13 @@
 # Fotografias
 
-Trinta ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
+Trinta e um ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
 do Facebook. O registo em código, com texto alternativo e dimensões, é o
 `lib/images.ts`; este ficheiro guarda a proveniência.
 
 Não há imagens remotas. O `next.config.ts` já não tem `remotePatterns` e não
 deve voltar a ter.
 
-## Da casa (24)
+## Da casa (25)
 
 Fotografadas na Taskuinha, vindas do Facebook da casa e de fotografias enviadas
 pelo Gonçalo.
@@ -24,8 +24,21 @@ pelo Gonçalo.
 
 | Ficheiro | Dim. | O que tem |
 |---|---|---|
-| `esqueleto.jpg` | 1536×2048 | O esqueleto pirata sentado na arca, de perto. Base do recorte. |
+| `esqueleto.jpg` | 1536×2048 | O esqueleto pirata sentado na arca, de perto. |
 | `esqueleto-corpo.jpg` | 1080×1440 | Corpo inteiro, com as ripas da ementa manuscrita atrás. |
+| **`esqueleto-grande.png`** | 1200×1367 | **A que está no site.** Recortada, com fundo transparente. Fornecida já assim. |
+
+> As duas primeiras têm a parede, a calçada e a floreira atrás — servem de
+> galeria e de referência, não de autocolante. É a terceira que o
+> `components/decor/Esqueleto.tsx` monta.
+>
+> Chegou com 3228×3678 e 8,8 MB, reduzida a 1200 px. O git guarda ficheiros
+> grandes para sempre, mesmo depois de apagados.
+>
+> **Se um dia for substituída:** reconfirmar o `ASSENTO` nesse componente.
+> É a fracção da altura por onde a régua da secção lhe passa (86% nesta — a
+> arca fica pousada em cima da linha). Um recorte com outro enquadramento
+> muda o número.
 
 ### Interior
 

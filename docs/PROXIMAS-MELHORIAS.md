@@ -75,9 +75,12 @@ vez do SVG genérico que está no site:
 
 ### 4. Barris reais, não ilustrados
 
-- [ ] Fotografar os barris reais da fachada (ou usar as fotos que já
-      existem em `public/images/fachada-noite.jpg` e semelhantes) para
-      substituir os SVGs de `components/decor/Barril.tsx`.
+- [x] ~~Fotografar os barris reais da fachada para substituir os SVGs de
+      `components/decor/Barril.tsx`.~~ **Riscado.** Foi feito — com uma
+      fotografia que o Gonçalo forneceu — e não convenceu. Os barris
+      saíram do Hero por completo, e o componente foi apagado. A fotografia
+      da fachada que serve de fundo já tem os barris reais dela; a fila
+      decorativa estava a duplicá-los.
 - [ ] Provavelmente recortados (como o esqueleto) para poderem ser
       reposicionados livremente, mantendo a física do pêndulo que já existe
       no componente — só troca o desenho, não o comportamento.
@@ -159,9 +162,10 @@ Para não perder tempo a rediscutir o que já está fechado:
 
 Coisas para fazer **fisicamente no local**, não só para conversar:
 
-- [ ] Fotografar o esqueleto de perto, boa luz, ângulo que sirva para
-      recorte de fundo.
-- [ ] Fotografar os barris reais da fachada, de frente, luz do dia.
+- [x] ~~Fotografar o esqueleto.~~ Resolvido — o Gonçalo forneceu o recorte
+      (`esqueleto-grande.png`) e está no site.
+- [x] ~~Fotografar os barris reais da fachada.~~ Resolvido e depois
+      descartado: os barris saíram do Hero por completo.
 - [ ] Fotografar 2–3 paredes/zonas decoradas por inteiro (para fundos de
       secção) — enquadramento largo, não close-up.
 - [ ] Perguntar ao Anselmo os preços de cada prato da ementa.

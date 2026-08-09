@@ -2,38 +2,40 @@ import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Cta } from "@/components/Cta";
 import { Relampago } from "@/components/decor/Relampago";
-import { Barril } from "@/components/decor/Barril";
 import { site } from "@/lib/site";
 
-const LETRAS_PIRATA = ["P", "I", "R", "A", "T", "A"];
+/*
+  Havia aqui uma fila de seis barris pendurados a soletrar P·I·R·A·T·A,
+  primeiro desenhados em SVG e depois trocados pela fotografia do barril
+  real da casa. Saíram os dois: o cliente não gostou de nenhuma das
+  versões.
 
+  Não ficou nada no lugar, e é uma decisão defensável por si: a fotografia
+  da fachada que está por trás **já tem os barris reais dela**, pendurados
+  ao longo do beiral. A fila decorativa estava a duplicar um objecto que a
+  fotografia já mostrava.
+
+  `items-start` até aos 1024px, `items-end` a partir daí. Abaixo de `lg` o
+  conteúdo sobe para o topo e deixa o fundo do Hero livre — é lá que o
+  esqueleto se senta, na régua com a secção "A casa". Num ecrã estreito não
+  há margem lateral onde ele caiba ao lado do texto; a única folga possível
+  é por baixo. Em `lg` e acima o texto vive num `max-w-3xl` encostado à
+  esquerda e sobram ~600px à direita, por isso o desenho original — texto
+  assente no fundo, por cima da fachada — fica intacto onde funciona.
+*/
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100dvh] items-end overflow-hidden bg-gradient-to-b from-breu to-breu-raso">
+    <section className="relative flex min-h-[100dvh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
       <HeroMedia />
       <Relampago className="z-20" />
 
       {/*
-        Seis barris pendurados, a soletrar PIRATA — mas NÃO sobrepostos aos
-        barris reais da fotografia. O plano (§9.1) pedia alinhamento
-        pixel-a-pixel com os barris fotografados; a foto é um retrato
-        (1536×2048) atravessado por `object-cover` num herói que muda de
-        paisagem larga (1440px) a quase quadrado (390px) — a mesma
-        percentagem não aponta para o mesmo sítio da foto nos dois casos.
-        Fica a fila decorativa própria que o plano já previa como
-        alternativa mais segura: perde-se o truque do alinhamento exacto,
-        ganha-se robustez nos três tamanhos que a Fase 6 pede para verificar.
+        O `pt` só existe enquanto o conteúdo está alinhado ao topo: a Nav é
+        `fixed` e tem 68px (`--altura-nav`), por isso sem isto o wordmark
+        ficava por baixo dela. Em `lg` volta a zero, que é quando o
+        `items-end` assume e o `pb` passa a mandar.
       */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-[calc(var(--altura-nav)+0.5rem)] z-20 flex justify-center gap-3 px-4 sm:gap-6"
-      >
-        {LETRAS_PIRATA.map((letra, i) => (
-          <Barril key={i} letra={letra} indice={i} />
-        ))}
-      </div>
-
-      <div className="relative z-30 mx-auto w-full max-w-[1400px] px-5 pb-16 sm:px-8 sm:pb-24">
+      <div className="relative z-30 mx-auto w-full max-w-[1400px] px-5 pt-[calc(var(--altura-nav)+1.5rem)] pb-16 sm:px-8 sm:pb-24 lg:pt-0">
         <div className="max-w-3xl">
           <p className="display gravado text-[clamp(2.75rem,11vw,6rem)] leading-[0.88] text-osso">
             <span aria-hidden="true">
