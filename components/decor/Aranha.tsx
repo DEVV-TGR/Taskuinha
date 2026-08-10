@@ -2,27 +2,61 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { useAbaVisivel } from "./usarVisibilidade";
 
 const MAX_APARICOES = 3;
-const RAIO_FUGA = 140;
+
+/*
+  Quanto o fio cresce, em píxeis, do topo do ecrã até ao corpo da aranha. É o
+  mesmo número em dois sítios: a altura do fio (que anima em `scaleY`) e o
+  deslocamento do corpo (que anima em `y`). Se os dois se separarem, o corpo
+  descola da ponta do fio.
+*/
+const DESCIDA = 420;
 
 type Estado = "escondida" | "descendo" | "pousada" | "subindo";
 
 /*
   A aranha peluda do tecto (referência real: tecto-nau-aranha.jpg). Desce ao
   entrar em #a-casa, depois reaparece em intervalos aleatórios de 45–120s,
-  no máximo 3 vezes por sessão. Foge se o rato chegar perto — detectado por
-  um listener em `window`, nunca por uma hit area (regra 2 do §7): a aranha
-  nunca rouba um clique.
+  no máximo 3 vezes por sessão.
 
   Com movimento reduzido, desaparece por completo — não fica pendurada a
   meio do ecrã sem se mexer.
+
+  ## O fio nasce no topo do ecrã
+
+  Era o conjunto fio+corpo a deslocar-se inteiro, como uma peça rígida, de
+  `y: -260` a `y: 220`. O fio tinha 240px fixos, por isso em repouso a ponta de
+  cima dele ficava a 220px do topo: a aranha parecia sair do ar a meio da
+  página. O Gonçalo viu-a a descer do tronco e disse que a queria a descer da
+  barra de navegação.
+
+  Agora o fio tem o percurso todo (`DESCIDA`) e está ancorado em `top-0` do
+  contentor da tralha, que é `fixed inset-0` — o topo do ecrã. Cresce em
+  `scaleY` a partir do topo (é o `transform-origin` que a classe `.pendurado`
+  do globals.css já dá), e o corpo desce em `y` na mesma duração e curva, para
+  chegar sempre à ponta.
+
+  O fio passa **à frente** da barra de navegação, não por trás: a camada da
+  tralha é `z-[60]` e a Nav é `z-40`. É a consequência de nascer no topo, e
+  está assim de propósito.
+
+  As duas animações são transformações. Nada disto toca em layout.
+
+  ## O clique despacha-a
+
+  Havia aqui uma regra — "a aranha nunca rouba um clique" — e uma fuga: se o
+  rato entrasse num raio de 140px, ela subia sozinha. As duas coisas saíram a
+  pedido dele, que a quer despachada com o dedo ou com o rato. Não davam para
+  conciliar: com 140px de raio, no computador o ponteiro nunca lhe chegava
+  perto o suficiente para a clicar.
+
+  Só o **corpo** é clicável, e é um `<button>` com `tabIndex={-1}`: o contentor
+  da tralha é `aria-hidden`, e um elemento focável lá dentro seria uma
+  armadilha para quem navega por teclado.
 */
 export function Aranha({ className }: { className?: string }) {
   const reduce = useReducedMotion();
-  const visivel = useAbaVisivel();
-  const ref = useRef<HTMLDivElement>(null);
   const [estado, setEstado] = useState<Estado>("escondida");
   const aparicoes = useRef(0);
   const temporizadores = useRef<number[]>([]);
@@ -50,6 +84,9 @@ export function Aranha({ className }: { className?: string }) {
       agendar(1200 + tempoPousada, () =>
         setEstado((actual) => (actual === "pousada" ? "subindo" : actual)),
       );
+      /* Corre mesmo que ela já tenha sido despachada com um clique — nesse
+         caso o estado já é "escondida" e isto só serve para agendar a
+         próxima aparição. */
       agendar(1200 + tempoPousada + 500, () => {
         setEstado("escondida");
         agendarProxima();
@@ -77,57 +114,70 @@ export function Aranha({ className }: { className?: string }) {
     };
   }, [reduce]);
 
-  // Foge se o rato entrar no raio, só enquanto está pousada.
-  useEffect(() => {
-    if (reduce || !visivel || estado !== "pousada") return;
-
-    function aoMoverRato(e: MouseEvent) {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const distancia = Math.hypot(e.clientX - cx, e.clientY - cy);
-      if (distancia < RAIO_FUGA) {
-        setEstado("subindo");
-        window.setTimeout(() => setEstado("escondida"), 500);
-      }
-    }
-
-    window.addEventListener("mousemove", aoMoverRato);
-    return () => window.removeEventListener("mousemove", aoMoverRato);
-  }, [estado, reduce, visivel]);
+  /* Sobe já e desaparece. O caminho é o mesmo por onde ela sairia sozinha ao
+     fim do tempo de pousada. */
+  function despachar() {
+    if (estado !== "descendo" && estado !== "pousada") return;
+    setEstado("subindo");
+    const id = window.setTimeout(() => setEstado("escondida"), 500);
+    temporizadores.current.push(id);
+  }
 
   if (reduce) return null;
 
   const descendoOuPousada = estado === "descendo" || estado === "pousada";
-  // O plano fala em "y: -120 a y: 220" para o percurso da descida — mas o fio
-  // sozinho já tem 240px, por isso -120 deixava uma pontinha visível mesmo
-  // em repouso. -260 esconde o conjunto todo (fio + corpo) sem tocar no
-  // ponto de chegada nem na duração descrita.
-  const y = descendoOuPousada ? 220 : -260;
   const aSubir = estado === "subindo";
+
+  /* A subida é rápida e seca; a descida tem um `overshoot` na curva, que é o
+     que lhe dá o repique de coisa pendurada num fio. */
+  const transicao = {
+    duration: aSubir ? 0.5 : 1.2,
+    ease: aSubir ? ([0.4, 0, 0.2, 1] as const) : ([0.34, 1.56, 0.64, 1] as const),
+  };
 
   return (
     <div
-      ref={ref}
-      data-tralha-movel=""
       aria-hidden="true"
+      data-tralha-movel=""
       className={`pointer-events-none absolute top-0 ${className ?? ""}`}
     >
-      <motion.div
-        className="pendurado"
-        animate={{ y }}
-        transition={{
-          duration: aSubir ? 0.5 : 1.2,
-          ease: aSubir ? [0.4, 0, 0.2, 1] : [0.34, 1.56, 0.64, 1],
-        }}
-      >
-        {/* Fio de seda */}
-        <svg viewBox="0 0 2 240" className="mx-auto h-60 w-0.5" preserveAspectRatio="none">
-          <line x1="1" y1="0" x2="1" y2="240" stroke="var(--osso-fraco)" strokeWidth="1" opacity="0.5" />
-        </svg>
+      {/* Fio de seda. Tem o percurso todo de altura e cresce do topo para
+          baixo — é por isso que nunca se vê uma ponta solta no ar.
 
+          O `initial` é obrigatório, e não decorativo: sem ele o servidor
+          renderiza o fio sem `transform` nenhuma, ou seja em `scaleY: 1`, e
+          via-se um fio de 420px esticado no ecrã até a hidratação o recolher. */}
+      <motion.svg
+        viewBox="0 0 2 100"
+        preserveAspectRatio="none"
+        className="pendurado mx-auto w-0.5"
+        style={{ height: DESCIDA }}
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: descendoOuPousada ? 1 : 0 }}
+        transition={transicao}
+      >
+        <line
+          x1="1"
+          y1="0"
+          x2="1"
+          y2="100"
+          stroke="var(--osso-fraco)"
+          strokeWidth="1"
+          opacity="0.5"
+        />
+      </motion.svg>
+
+      {/* O corpo desce até à ponta do fio. `top-0` mais `y` — e não `top`
+          animado — para ser uma transformação e não um recálculo de layout. */}
+      <motion.button
+        type="button"
+        tabIndex={-1}
+        onClick={despachar}
+        className="pointer-events-auto absolute top-0 left-1/2 -ml-4 block cursor-pointer sm:-ml-5"
+        initial={{ y: 0 }}
+        animate={{ y: descendoOuPousada ? DESCIDA : 0 }}
+        transition={transicao}
+      >
         <motion.svg
           viewBox="0 0 40 40"
           className="-mt-2 h-8 w-8 sm:h-10 sm:w-10"
@@ -156,7 +206,7 @@ export function Aranha({ className }: { className?: string }) {
           <circle cx="18" cy="12" r="1" fill="var(--lanterna)" />
           <circle cx="22" cy="12" r="1" fill="var(--lanterna)" />
         </motion.svg>
-      </motion.div>
+      </motion.button>
     </div>
   );
 }

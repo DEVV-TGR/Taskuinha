@@ -14,6 +14,24 @@ import { site } from "@/lib/site";
   ao longo do beiral. A fila decorativa estava a duplicar um objecto que a
   fotografia já mostrava.
 
+  ## Porque é `100vh` e não `100dvh`
+
+  Era `dvh`, e o `dvh` é dinâmico de propósito: acompanha a barra de endereço
+  do telemóvel a recolher-se. Só que os navegadores fazem isso **em degraus**,
+  não continuamente — e a cada degrau o Hero mudava de altura e arrastava
+  consigo tudo o que está ancorado ao fundo dele: a junta com "A casa", a
+  trave, o esqueleto que se senta nela. O Gonçalo descreveu-o como o site a
+  travar, "como se fossem três frames". Eram três degraus.
+
+  O `vh` é a altura do ecrã com a barra recolhida, e não muda enquanto se rola.
+  A contrapartida, que é preciso saber antes de alguém achar que isto é um bug:
+  com a barra de endereço **à vista**, os últimos ~80px do Hero ficam por baixo
+  dela. Não se perde nada — abaixo de `lg` o conteúdo está encostado ao topo, e
+  o que fica lá em baixo é a junta, a um dedo de scroll.
+
+  Não voltar ao `dvh`. Nem ao `svh`, que resolve o tremor mas encolhe o Hero
+  para a altura *com* a barra à vista e deixa a secção seguinte a espreitar.
+
   `items-start` até aos 1024px, `items-end` a partir daí. Abaixo de `lg` o
   conteúdo sobe para o topo e deixa o fundo do Hero livre — é lá que o
   esqueleto se senta, na régua com a secção "A casa". Num ecrã estreito não
@@ -24,7 +42,7 @@ import { site } from "@/lib/site";
 */
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100dvh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
+    <section className="relative flex min-h-[100vh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
       <HeroMedia />
 
       {/*

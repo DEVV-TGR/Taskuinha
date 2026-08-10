@@ -52,13 +52,26 @@ import { photos } from "@/lib/images";
 
   | Ecrã | Largura | Altura | Acima da junta | Abaixo | Espaço na `Casa` |
   |---|---|---|---|---|---|
-  | telemóvel 390 | 240px | 273px | 235px | 38px | 96px |
+  | telemóvel 390 | 360px | 410px | 372px | 38px | 96px |
   | tablet | 300px | 342px | 294px | 48px | 128px |
   | `lg` 1024 | 389px | 443px | 381px | 62px | 128px |
   | ≥1632 | 620px | 706px | 607px | 99px | 128px |
 
   O que fica abaixo da junta cabe sempre no espaçamento da secção "A casa" —
   nunca toca em texto.
+
+  **O telemóvel está a 1,5× do que esteve**, por pedido do Gonçalo: era
+  `62vw`/240px e passou a `93vw`/360px, os dois números multiplicados pelo
+  mesmo factor para a régua não mudar de forma. É por isso que a linha do
+  telemóvel é agora maior do que a do tablet — não é engano.
+
+  Os 137px que o esqueleto ganhou em altura vão **todos para cima**, para o
+  vazio do Hero: no telemóvel a coluna "Abaixo" fica presa nos 38px que ele
+  tinha antes de crescer. Ver a nota do ancoramento, mais abaixo.
+
+  Que cabe, na horizontal: com o `right-5` do sítio onde está montado, a caixa
+  vai de x=10 a x=370 num ecrã de 390. Num iPhone SE (375) os `93vw` dão 349px
+  e sobram 6px. Não abre scroll lateral em nenhum dos dois.
 
   **Em `lg` a largura é `38vw` com tecto em 620px, e não um valor fixo.** O
   620 foi escolhido a olhar para um ecrã de 1764px, onde o contentor está no
@@ -73,18 +86,40 @@ import { photos } from "@/lib/images";
   ficar à direita do texto do Hero, que é `max-w-3xl` mas na prática mede o
   wordmark, ~536px.
 
-  **Em telemóvel é `62vw` e não 240px fixos** pela mesma família de razões:
+  **Em telemóvel é `93vw` e não 360px fixos** pela mesma família de razões:
   num iPhone SE (375×667) um valor fixo não caberia.
 */
 
 /*
-  Fracção da altura onde a régua da secção lhe passa. A 86% a arca fica
-  pousada em cima da linha e só os pés e a perna de pau balançam por baixo.
+  Onde é que a régua da secção lhe passa. Há duas maneiras de ancorar isto, e
+  a diferença entre elas só se vê quando o tamanho muda.
 
-  Medido NESTA fotografia. Trocar o ficheiro implica reconfirmar o número —
-  o recorte anterior tinha outro enquadramento e usava 63%.
+  ## `sm` e acima: 86% da altura acima da linha
+
+  A arca fica pousada em cima da linha e só os pés e a perna de pau balançam
+  por baixo. Medido NESTA fotografia — trocar o ficheiro implica reconfirmar o
+  número, que o recorte anterior tinha outro enquadramento e usava 63%.
+
+  ## Telemóvel: 38px de perna abaixo da linha, e ponto
+
+  Ancorar por percentagem tem uma consequência que passou despercebida quando
+  o esqueleto foi a 1,5× no telemóvel: **ele cresceu para os dois lados**.
+  Subiu 118px para dentro do Hero, como se queria, mas desceu também 19px para
+  dentro da secção "A casa", empurrando as pernas para cima das correntes da
+  tabuleta. O Gonçalo apanhou-o e disse o que queria: a base quieta, e o
+  crescimento todo para cima, a ocupar o vazio do Hero.
+
+  É isso que o `calc(-100% + 38px)` faz. Não é uma fracção da altura: é a
+  aresta de baixo do recorte a ficar sempre 38px abaixo da linha, cresça o
+  esqueleto o que crescer. Os 38px são os que ele tinha antes de ser ampliado,
+  e são o "um pouco das pernas" que ele quer à vista.
+
+  A trave e a tabuleta **não se mexem**: a divisória continua onde estava, que
+  foi o outro lado do pedido dele.
+
+  Ambos os valores vão em classes e não no `style`: um `style` inline ganha a
+  qualquer classe, e o `sm:` nunca chegaria a aplicar-se.
 */
-const ASSENTO = "86%";
 
 export function Esqueleto({ className }: { className?: string }) {
   const foto = photos.esqueletoRecorte;
@@ -92,8 +127,7 @@ export function Esqueleto({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute w-[62vw] max-w-[240px] sm:w-[300px] sm:max-w-none lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
-      style={{ transform: `translateY(-${ASSENTO})` }}
+      className={`pointer-events-none absolute translate-y-[calc(-100%_+_38px)] w-[93vw] max-w-[360px] sm:w-[300px] sm:max-w-none sm:translate-y-[-86%] lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
     >
       <Reveal>
         <Image
@@ -104,7 +138,7 @@ export function Esqueleto({ className }: { className?: string }) {
           /* Tem de acompanhar as três larguras do contentor, senão o
              telemóvel descarrega a versão de ecrã grande para uma caixa de
              240px. */
-          sizes="(min-width: 1632px) 620px, (min-width: 1024px) 38vw, (min-width: 640px) 300px, 62vw"
+          sizes="(min-width: 1632px) 620px, (min-width: 1024px) 38vw, (min-width: 640px) 300px, 93vw"
           className="h-auto w-full"
           /*
             A sombra vai no filtro e não em `box-shadow`: o `box-shadow`
