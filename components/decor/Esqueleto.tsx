@@ -52,13 +52,22 @@ import { photos } from "@/lib/images";
 
   | Ecrã | Largura | Altura | Acima da junta | Abaixo | Espaço na `Casa` |
   |---|---|---|---|---|---|
-  | telemóvel 390 | 240px | 273px | 235px | 38px | 96px |
+  | telemóvel 390 | 360px | 410px | 353px | 57px | 96px |
   | tablet | 300px | 342px | 294px | 48px | 128px |
   | `lg` 1024 | 389px | 443px | 381px | 62px | 128px |
   | ≥1632 | 620px | 706px | 607px | 99px | 128px |
 
   O que fica abaixo da junta cabe sempre no espaçamento da secção "A casa" —
   nunca toca em texto.
+
+  **O telemóvel está a 1,5× do que esteve**, por pedido do Gonçalo: era
+  `62vw`/240px e passou a `93vw`/360px, os dois números multiplicados pelo
+  mesmo factor para a régua não mudar de forma. É por isso que a linha do
+  telemóvel é agora maior do que a do tablet — não é engano.
+
+  Que cabe, na horizontal: com o `right-5` do sítio onde está montado, a caixa
+  vai de x=10 a x=370 num ecrã de 390. Num iPhone SE (375) os `93vw` dão 349px
+  e sobram 6px. Não abre scroll lateral em nenhum dos dois.
 
   **Em `lg` a largura é `38vw` com tecto em 620px, e não um valor fixo.** O
   620 foi escolhido a olhar para um ecrã de 1764px, onde o contentor está no
@@ -73,7 +82,7 @@ import { photos } from "@/lib/images";
   ficar à direita do texto do Hero, que é `max-w-3xl` mas na prática mede o
   wordmark, ~536px.
 
-  **Em telemóvel é `62vw` e não 240px fixos** pela mesma família de razões:
+  **Em telemóvel é `93vw` e não 360px fixos** pela mesma família de razões:
   num iPhone SE (375×667) um valor fixo não caberia.
 */
 
@@ -92,7 +101,7 @@ export function Esqueleto({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute w-[62vw] max-w-[240px] sm:w-[300px] sm:max-w-none lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
+      className={`pointer-events-none absolute w-[93vw] max-w-[360px] sm:w-[300px] sm:max-w-none lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
       style={{ transform: `translateY(-${ASSENTO})` }}
     >
       <Reveal>
@@ -104,7 +113,7 @@ export function Esqueleto({ className }: { className?: string }) {
           /* Tem de acompanhar as três larguras do contentor, senão o
              telemóvel descarrega a versão de ecrã grande para uma caixa de
              240px. */
-          sizes="(min-width: 1632px) 620px, (min-width: 1024px) 38vw, (min-width: 640px) 300px, 62vw"
+          sizes="(min-width: 1632px) 620px, (min-width: 1024px) 38vw, (min-width: 640px) 300px, 93vw"
           className="h-auto w-full"
           /*
             A sombra vai no filtro e não em `box-shadow`: o `box-shadow`
