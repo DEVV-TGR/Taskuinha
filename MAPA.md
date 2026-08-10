@@ -67,7 +67,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Rota | Ficheiro | Conteúdo |
 |---|---|---|
 | `/` | `app/page.tsx` | Hero → Casa → Petiscos → Galeria → Vozes → Encontrar |
-| `/ementa` | `app/ementa/page.tsx` | Ementa completa em pergaminho |
+| `/ementa` | `app/ementa/page.tsx` | Ementa completa num rolo só |
 
 Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/icon.svg`.
 
@@ -100,8 +100,8 @@ de pele).
 assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
 `Lanterna` · `Esqueleto` · `Tronco` · `Tabuleta` · `FundoDeSeccao` ·
 `BandeiraNegra` ·
-`Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
-dos 12 — pausa animações contínuas com a aba em segundo plano).
+`Pergaminho` · `RoloEmenta` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
+dos 13 — pausa animações contínuas com a aba em segundo plano).
 
 > `Tronco` e `Tabuleta` são os dois mais recentes, e vivem os dois na junta
 > entre o Hero e a secção "A casa": a trave atravessa a página de aresta a
@@ -182,7 +182,7 @@ e uma versão diurna tornaria-o incoerente.
 | `--sangue` | `#A81E22` | acento secundário (Super Bock, lenço) |
 | `--osso` | `#E8DCC4` | texto |
 | `--osso-fraco` | `#9A8F7C` | texto secundário |
-| `--pergaminho` | `#D9C7A0` | só na ementa |
+| `--pergaminho` | `#D9C7A0` | o papel gerado das `Vozes` e do `Encontrar` |
 
 **Regra de raio:** tudo a 4 px (`--radius-card`). Tudo é madeira serrada,
 nada é pílula.
