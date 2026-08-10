@@ -135,6 +135,50 @@ export const photos = {
     origem: "ilustracao",
   },
 
+  /* ---------------------------------------------------------------- portadas */
+
+  /*
+    As duas folhas do portão, uma por metade do ecrã. Tapam a página à chegada
+    ao site (`components/Chegada.tsx`) e nas trocas entre a inicial e a ementa
+    (`components/Travessia.tsx`); as duas passam pela mesma
+    `components/decor/Portada.tsx`.
+
+    São a mesma porta espelhada, e é o espelho que as faz funcionar como par:
+    a ferragem com o aro cai na aresta **interior** de cada uma, por isso
+    encostadas os dois aros encontram-se na junta ao meio. Trocá-las de lado
+    punha as ferragens nas arestas do ecrã e a junta ficava lisa.
+
+    960×1080 é meio ecrã de 1920 por altura toda — o rácio exacto de uma folha
+    num monitor comum. Noutros formatos o `object-cover` corta, que é o que se
+    quer: a madeira não pode esticar.
+
+    `alt: ""` porque são decoração e o contentor é `aria-hidden`.
+
+    **Não levam a gradação nocturna** — como o `tronco` e o esqueleto, estão
+    coladas *por cima* da página e não dentro dela.
+
+    `origem: "ilustracao"`: não são a porta da Taskuinha, que tem outro feitio
+    nas fotografias da fachada. Se forem mesmo da casa, é uma palavra a trocar.
+  */
+  portaEsquerda: {
+    src: "/images/porta-esquerda.png",
+    alt: "",
+    width: 960,
+    height: 1080,
+    luz: "noite",
+    origem: "ilustracao",
+  },
+  /* O nome do ficheiro tem gralha — "diretia". Ficou como chegou: renomeá-lo
+     é uma linha, mas o ficheiro é dele e o nome não muda nada do que se vê. */
+  portaDireita: {
+    src: "/images/porta-diretia.png",
+    alt: "",
+    width: 960,
+    height: 1080,
+    luz: "noite",
+    origem: "ilustracao",
+  },
+
   /* ------------------------------------------------------------------- casa */
 
   bandeiraCaveira: {

@@ -17,29 +17,42 @@ export default function Home() {
       <main id="conteudo" tabIndex={-1} className="flex-1 focus:outline-none">
         <Hero />
         {/*
-          A régua da junta. `h-0` para não ocupar espaço nenhum: serve só de
-          linha, e o tronco centra-se nela com um `-translate-y-1/2`.
+          A trave da primeira junta é a única diferente das seis, e por duas
+          razões que só ela tem.
 
-          Está aqui, e não dentro do Hero nem da Casa, porque é o único sítio
-          com largura total — o Hero corta (`overflow-hidden`) e a Casa é
-          `max-w-[1400px]`.
+          `acimaDaLinha="56%"` — a aresta de baixo da madeira tem de ficar
+          abaixo da linha para tapar as pontas das correntes da tabuleta, que
+          nascem exactamente nela. Nas outras não há nada pendurado e o valor
+          por omissão (50%, centrado) é o que serve.
 
-          `z-10` põe a trave **por trás** do esqueleto (z-20, dentro da Casa) e
-          continua a deixá-la atrás da Nav (z-40). A tabuleta fica em camada
-          automática, por isso as correntes sobem por trás dos dois.
-
-          Os dois números já foram ao contrário. Trocaram-se por pedido do
-          Gonçalo: o esqueleto passa à frente da madeira, não atrás.
+          A camada `z-10` do componente põe-na **por trás** do esqueleto
+          (z-20, dentro da Casa) e à frente de tudo o resto, sem deixar de
+          estar atrás da Nav (z-40). A tabuleta fica em camada automática, por
+          isso as correntes sobem por trás dos dois. Os dois números já foram
+          ao contrário; trocaram-se por pedido do Gonçalo, que quis o esqueleto
+          à frente da madeira.
         */}
-        <div className="relative z-10 h-0">
-          <Tronco />
-        </div>
+        <Tronco acimaDaLinha="56%" />
         <Casa />
+
+        {/*
+          As outras quatro, uma por divisória entre secções. `espelhada`
+          alternada por posição, para a mesma casca não repetir o desenho de
+          divisória em divisória — a primeira conta como não espelhada, por
+          isso a seguir vem espelhada.
+        */}
+        <Tronco espelhada />
         <Petiscos />
+        <Tronco />
         <Galeria />
+        <Tronco espelhada />
         <Vozes />
+        <Tronco />
         <Encontrar />
       </main>
+
+      {/* Sem trave antes do rodapé: chegou a haver uma e o Gonçalo mandou-a
+          tirar. O rodapé ficou a separar-se pela linha fina que sempre teve. */}
       <Footer />
     </>
   );

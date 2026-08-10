@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import { veioMadeira, ripasMadeira } from "@/lib/texturas";
+import { AnimatePresence, useReducedMotion } from "motion/react";
+import { Portada } from "@/components/decor/Portada";
 
 /* Quanto tempo as portadas ficam fechadas depois de a rota já ter mudado.
    Curto de propósito: é uma batida, não uma espera. */
@@ -15,11 +15,8 @@ const PAUSA_MS = 160;
    preso atrás de duas tábuas. */
 const TEMPO_MAXIMO_MS = 2500;
 
-/* Texturas geradas uma vez no módulo, não por render: são deterministas e
-   iguais em todas as travessias. Sementes diferentes para as duas portadas,
-   senão a junta ao meio lê-se como um espelho. */
-const TEXTURA_ESQUERDA = `${ripasMadeira(11)}, ${veioMadeira({ semente: 12 })}`;
-const TEXTURA_DIREITA = `${ripasMadeira(23)}, ${veioMadeira({ semente: 24 })}`;
+/* O tempo que cada folha demora a atravessar meio ecrã. */
+const FOLHA_S = 0.34;
 
 /*
   Loader de transição entre páginas — as portadas da taberna a fechar e a
@@ -40,6 +37,11 @@ const TEXTURA_DIREITA = `${ripasMadeira(23)}, ${veioMadeira({ semente: 24 })}`;
   Com movimento reduzido não intersecta nada: os links voltam a ser links, e
   a navegação é imediata. Sem JavaScript idem — este componente nunca corre e
   os `<a>` funcionam como sempre funcionaram.
+
+  Entre as folhas fechadas não há nada. Havia um halo de lanterna na junta e a
+  caveira da casa em SVG por cima dele, como marca de espera; saíram os dois a
+  pedido do Gonçalo. As fotografias do portão são o assunto todo, e qualquer
+  coisa colada ao meio delas tira-lhes o lugar. **Não voltar a pôr.**
 */
 export function Travessia() {
   const reduce = useReducedMotion();
@@ -144,97 +146,39 @@ export function Travessia() {
       {fechado && (
         <div
           aria-hidden="true"
-          /* z-[90]: por cima da tralha (60) e do skip link (70), por baixo do
-             ecrã de entrada (100) — se os dois coincidissem, a entrada ganha.
+          /* z-[90]: por cima da tralha (60) e do skip link (70), por baixo da
+             `Chegada` (100) — se as duas coincidissem numa carga de raiz, a
+             chegada é que tem de ganhar.
              `pointer-events-auto` enquanto está fechado: engolir cliques é
              metade do trabalho, senão dá para carregar duas vezes no mesmo
              link e disparar duas navegações. */
           className="pointer-events-auto fixed inset-0 z-[90] overflow-hidden"
         >
-          <Portada lado="esquerda" aoTerminar={aoFechar} />
-          <Portada lado="direita" />
-
-          {/* Luz de lanterna na junta, como se estivesse alguém do outro
-              lado com o candeeiro. Entra depois de as portadas encostarem. */}
-          <motion.div
-            className="pointer-events-none absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, var(--lanterna) 0%, transparent 70%)",
+          {/* O `onAnimationComplete` só vai na folha da esquerda: as duas têm
+              a mesma duração, e chamar o router duas vezes seria pedir
+              sarilhos. Dispara também no fim da saída, por isso a guarda do
+              `x === 0` — navegar no fim da abertura mandava a pessoa outra vez
+              para a página que acabou de deixar. */}
+          <Portada
+            lado="esquerda"
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: FOLHA_S, ease: [0.76, 0, 0.24, 1] }}
+            onAnimationComplete={(definicao) => {
+              if ((definicao as { x?: number | string })?.x !== 0) return;
+              aoFechar();
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            exit={{ opacity: 0 }}
-            transition={{ delay: 0.3, duration: 0.25 }}
           />
-
-          {/*
-            A caveira da casa como marca de espera.
-
-            É a mesma da `BandeiraNegra` — as coordenadas estão copiadas de
-            lá, sem o pano preto por trás, sem os sabres e sem os ossos, que
-            a fariam ler como a bandeira outra vez em vez de uma marca de
-            espera. Não é um desenho novo: o símbolo da casa já existe no
-            projecto e não se inventa um segundo.
-          */}
-          <motion.svg
-            viewBox="0 0 100 70"
-            className="absolute top-1/2 left-1/2 h-16 w-24 -translate-x-1/2 -translate-y-1/2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ delay: 0.34, duration: 0.22 }}
-          >
-            <path d="M25,28 Q50,8 75,28 Q60,20 50,24 Q40,20 25,28 Z" fill="var(--osso)" />
-            <circle cx="50" cy="34" r="13" fill="var(--osso)" />
-            <path d="M39,40 Q50,52 61,40 L58,44 Q50,48 42,44 Z" fill="var(--osso)" />
-            {/* Os olhos levam a cor da madeira das portadas, não a do fundo
-                da página: o que está por trás desta caveira é a junta das
-                duas folhas, não o breu. */}
-            <circle cx="45" cy="34" r="3" fill="var(--madeira)" />
-            <circle cx="55" cy="34" r="3" fill="var(--madeira)" />
-            <path d="M47,41 L50,44 L53,41" fill="none" stroke="var(--madeira)" strokeWidth="1.2" />
-          </motion.svg>
+          <Portada
+            lado="direita"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: FOLHA_S, ease: [0.76, 0, 0.24, 1] }}
+          />
         </div>
       )}
     </AnimatePresence>
-  );
-}
-
-/* Uma folha da portada. `aoTerminar` só vai na da esquerda — as duas têm a
-   mesma duração, e chamar o router duas vezes seria pedir sarilhos. */
-function Portada({
-  lado,
-  aoTerminar,
-}: {
-  lado: "esquerda" | "direita";
-  aoTerminar?: () => void;
-}) {
-  const esquerda = lado === "esquerda";
-
-  return (
-    <motion.div
-      className={`tabua absolute inset-y-0 w-1/2 ${
-        esquerda
-          ? "left-0 border-r-2 border-[var(--madeira-borda)]"
-          : "right-0 border-l-2 border-[var(--madeira-borda)]"
-      }`}
-      style={
-        {
-          "--textura-madeira": esquerda ? TEXTURA_ESQUERDA : TEXTURA_DIREITA,
-        } as React.CSSProperties
-      }
-      initial={{ x: esquerda ? "-100%" : "100%" }}
-      animate={{ x: 0 }}
-      exit={{ x: esquerda ? "-100%" : "100%" }}
-      transition={{ duration: 0.34, ease: [0.76, 0, 0.24, 1] }}
-      /* O `onAnimationComplete` dispara também no fim da saída. Só nos
-         interessa a chegada ao meio (x: 0) — navegar no fim da abertura
-         mandaria a pessoa outra vez para a página que acabou de deixar. */
-      onAnimationComplete={(definicao) => {
-        if ((definicao as { x?: number | string })?.x !== 0) return;
-        aoTerminar?.();
-      }}
-    />
   );
 }

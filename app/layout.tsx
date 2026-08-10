@@ -7,7 +7,7 @@ import {
 } from "next/font/google";
 import { site } from "@/lib/site";
 import { Tralha } from "@/components/decor/Tralha";
-import { Entrada } from "@/components/Entrada";
+import { Chegada } from "@/components/Chegada";
 import { Travessia } from "@/components/Travessia";
 import "./globals.css";
 
@@ -149,8 +149,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           balança ou fica dependurada. Sem JavaScript nada disso corre, por
           isso repomos o estado final de todas as marcas que dependem dele.
         */}
+        {/*
+          O `[data-chegada]` é o portão da entrada, servido **fechado** no
+          HTML. Quem abre as folhas é o JavaScript; sem ele ficavam fechadas
+          para sempre e o site era duas tábuas. Aqui desaparece de todo.
+        */}
         <noscript>
-          <style>{`[data-reveal],[data-pendurado],[data-tralha]{opacity:1!important;transform:none!important;animation:none!important}[data-tralha-movel]{display:none!important}`}</style>
+          <style>{`[data-reveal],[data-pendurado],[data-tralha]{opacity:1!important;transform:none!important;animation:none!important}[data-tralha-movel],[data-chegada]{display:none!important}`}</style>
         </noscript>
         <StructuredData />
       </head>
@@ -165,11 +170,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Saltar para o conteúdo
         </a>
-        <Entrada />
         {/*
-          Portadas de transição entre páginas. Intersectam os cliques em
-          ligações internas — por isso montam-se aqui, ao lado do {children},
-          e não dentro de nenhuma página: têm de apanhar a Nav também.
+          O portão à chegada: as folhas vêm fechadas no HTML e o cliente
+          abre-as. Monta uma vez — o layout persiste entre navegações de
+          cliente, por isso não reaparece a cada página.
+        */}
+        <Chegada />
+        {/*
+          As mesmas folhas, outro movimento: transição entre páginas.
+          Intersectam os cliques em ligações internas — por isso montam-se
+          aqui, ao lado do {children}, e não dentro de nenhuma página: têm de
+          apanhar a Nav também.
         */}
         <Travessia />
         {children}

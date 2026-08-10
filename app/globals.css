@@ -209,4 +209,15 @@ body {
   [data-tralha-movel] {
     display: none !important;
   }
+
+  /*
+    O portão da entrada é servido fechado no HTML, a tapar o ecrã, e o
+    JavaScript é que o abre. Com movimento reduzido não há abertura para ver,
+    e a regra tem de ser esta e não uma condição no componente: o CSS vale
+    antes de o JavaScript correr, e assim não há sequer um frame de portas na
+    cara de quem pediu para não haver movimento.
+  */
+  [data-chegada] {
+    display: none !important;
+  }
 }
