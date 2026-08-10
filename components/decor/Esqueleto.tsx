@@ -11,6 +11,11 @@ import { photos } from "@/lib/images";
   descrição da `fachadaNoite` em lib/images.ts), e é o lado livre — o texto
   do Hero vive num `max-w-3xl` encostado à esquerda.
 
+  Fica **à frente da trave** (`z-20` no `Casa.tsx`, contra o `z-10` do
+  `Tronco`): a madeira entra e sai por detrás do baú, e a `drop-shadow` daqui
+  de baixo cai em cima dela — é essa sombra na madeira que faz a sobreposição
+  ler-se como profundidade e não como recorte colado.
+
   Era um SVG desenhado à mão que **nunca chegou a ser montado em página
   nenhuma**. Ninguém o viu, por isso isto não é uma substituição: é a
   estreia do mascote no site. Perde-se o braço articulado que levava a

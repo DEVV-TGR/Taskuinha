@@ -24,11 +24,14 @@ export default function Home() {
           com largura total — o Hero corta (`overflow-hidden`) e a Casa é
           `max-w-[1400px]`.
 
-          `z-20` é o que põe a trave à frente do esqueleto (z-10, dentro da
-          Casa) sem deixar de estar atrás da Nav (z-40). A tabuleta fica em
-          camada automática, por isso as correntes sobem por trás dos dois.
+          `z-10` põe a trave **por trás** do esqueleto (z-20, dentro da Casa) e
+          continua a deixá-la atrás da Nav (z-40). A tabuleta fica em camada
+          automática, por isso as correntes sobem por trás dos dois.
+
+          Os dois números já foram ao contrário. Trocaram-se por pedido do
+          Gonçalo: o esqueleto passa à frente da madeira, não atrás.
         */}
-        <div className="relative z-20 h-0">
+        <div className="relative z-10 h-0">
           <Tronco />
         </div>
         <Casa />

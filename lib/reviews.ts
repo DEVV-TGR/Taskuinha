@@ -51,32 +51,51 @@ export type Quote = {
 };
 
 /*
-  As sete que aparecem na secção "O que dizem".
+  Quatro, e fecham a grelha de duas colunas em duas linhas certas. Eram sete e
+  sobrava uma célula vazia; o Gonçalo pediu quatro e deixou a escolha comigo.
 
-  ## Duas proveniências, e não são iguais
+  ## Porque estas
 
-  As **três primeiras** vieram da recolha de Agosto de 2026 e parte delas foi
-  lida através de agregadores — é a elas que o aviso do topo do ficheiro se
-  aplica. Não têm autor porque a recolha não o guardou.
+  Havia sete candidatas. As quatro que ficam cobrem coisas diferentes — comida,
+  serviço, casa, sítio — em vez de repetirem "muito bom" de maneiras
+  diferentes, e duas delas trazem autor.
 
-  As **quatro últimas** foram passadas pelo Gonçalo, tiradas por ele da página
-  do TripAdvisor da casa. Levam o nome de utilizador e o mês no `source`: é
-  público, está ao lado da avaliação na plataforma, e é o que torna a citação
-  verificável — que é exactamente o que o aviso do topo pede.
+  | Fica | Porquê |
+  |---|---|
+  | Sherpa58221185901 | A mais completa das sete: cliente repetente, comida, gente e decoração numa só. |
+  | Paradise43784871060 | A única que fala do **sítio** — praia, pôr do sol — que é a promessa do cabeçalho da página. |
+  | Restaurant Guru (en) | "Fisherman's pub with a lot of character": descreve o que a casa é, não só se gostou. |
+  | TripAdvisor (fr) | Marisco fresco e o mar, em três palavras. |
 
-  ## Literais, incluindo o que incomoda
+  **As duas de fora são de propósito.** O parágrafo de entrada da secção diz
+  que "chegam avaliações em várias línguas" — ficar só com portuguesas
+  transformava uma frase verdadeira numa frase por provar. É a razão de as duas
+  sem autor terem sobrevivido a duas que o têm.
 
-  Vão como foram escritas, com a pontuação e as maiúsculas de cada um.
-  A do "A voltar novamente" traz *"a sangria podiam melhorar"*. Cortar essa
-  frase e manter o resto entre aspas era pôr na boca de alguém uma coisa que
-  essa pessoa não disse — ou se cita inteira, ou não se cita. Fica inteira, e
-  o Gonçalo sabe que está lá.
+  ## E as três que saíram
+
+  - *"Bar super agradável!"* — três palavras que não dizem nada de concreto.
+  - **veram916** — boa, mas diz o mesmo que a da Sherpa, com menos, e é a mais
+    antiga das quatro do Gonçalo (2020).
+  - **Journey42940693153** — é a mais recente (2025), e traz *"a sangria podiam
+    melhorar"*. Não a cortei a meio: ou se cita inteira, ou não se cita, e
+    havia quatro melhores para o lugar. Se ele a quiser de volta, volta
+    **inteira**.
+
+  ## Proveniência
+
+  As duas estrangeiras vieram da recolha de Agosto de 2026, parte dela lida
+  através de agregadores — é a elas que o aviso do topo do ficheiro se aplica,
+  e não têm autor porque a recolha não o guardou. As duas portuguesas foram
+  passadas pelo Gonçalo, tiradas da página do TripAdvisor da casa; o nome de
+  utilizador e o mês estão no `source` porque são públicos e é o que torna a
+  citação verificável.
 */
 export const quotes: Quote[] = [
   {
-    text: "Bar super agradável!",
+    text: "Vou imensas vezes por ano! Recomendo! É uma experiência que não pode perder! Comida muito bem confeccionada, gente super atenciosa, e a casa em si, a decoração é espetacular!",
     lang: "pt",
-    source: "Avaliação no Google",
+    source: "Sherpa58221185901, TripAdvisor, janeiro de 2024",
   },
   {
     text: "A very charming fisherman's pub with a lot of character and very friendly staff.",
@@ -84,28 +103,13 @@ export const quotes: Quote[] = [
     source: "Avaliação no Restaurant Guru",
   },
   {
-    text: "Bon manger frais près de la mer. Service impeccable.",
-    lang: "fr",
-    source: "Avaliação no TripAdvisor",
-  },
-  {
-    text: "Vou imensas vezes por ano! Recomendo! É uma experiência que não pode perder! Comida muito bem confeccionada, gente super atenciosa, e a casa em si, a decoração é espetacular!",
-    lang: "pt",
-    source: "Sherpa58221185901, TripAdvisor, janeiro de 2024",
-  },
-  {
     text: "Ambiente relaxado, boa música, vinho engarrafado bonzinho, junto à praia, Sunset, tudo somado, é o ideal para estar com amigos.",
     lang: "pt",
     source: "Paradise43784871060, TripAdvisor, abril de 2023",
   },
   {
-    text: "Empregados muito prestáveis, simpáticos. Serviço rápido! Comida ótima!! Bom preço para a qualidade. Recomendo!!",
-    lang: "pt",
-    source: "veram916, TripAdvisor, junho de 2020",
-  },
-  {
-    text: "Adorei o atendimento, relação preço qualidade bom. A sangria podiam melhorar. Mas a voltar certamente. O espaço é acolhedor e diferente.",
-    lang: "pt",
-    source: "Journey42940693153, TripAdvisor, junho de 2025",
+    text: "Bon manger frais près de la mer. Service impeccable.",
+    lang: "fr",
+    source: "Avaliação no TripAdvisor",
   },
 ];

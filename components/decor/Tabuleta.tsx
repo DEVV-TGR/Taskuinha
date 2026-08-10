@@ -83,6 +83,10 @@ type Props = {
 
   **Se o ficheiro for substituído:** remedir as sete fronteiras acima. É a
   única coisa que este componente sabe da imagem.
+
+  Já aconteceu uma vez, na passagem da tábua clara para a escura, e as sete
+  bateram certo ao centésimo — é o mesmo recorte, só escurecido. Não é razão
+  para não remedir da próxima: dois ficheiros iguais foram sorte, não regra.
 */
 
 /* Fatias, em pixéis do ficheiro: cima, direita, baixo, esquerda. */
@@ -112,7 +116,7 @@ export function Tabuleta({ children, className }: Props) {
         style={{
           marginTop: MARGEM_DAS_CORRENTES,
           borderWidth: AROS,
-          borderImageSource: "url(/images/tableta.webp)",
+          borderImageSource: "url(/images/tableta-escura.webp)",
           /* `fill` pinta também o miolo — sem isto o meio da tábua ficava vazio. */
           borderImageSlice: `${FATIAS} fill`,
           /*

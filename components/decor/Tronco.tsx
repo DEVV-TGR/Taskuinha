@@ -3,9 +3,10 @@ import { photos } from "@/lib/images";
 
 /*
   A trave que atravessa a página de aresta a aresta, na junta entre o Hero e a
-  secção "A casa" — a mesma linha onde o esqueleto já se senta. Passa à frente
-  dele: apoia-lhe o baú e deixa-lhe as pernas a cair por baixo. É dela que a
-  tabuleta do "A casa" fica pendurada.
+  secção "A casa" — a mesma linha onde o esqueleto já se senta. Passa **por
+  trás** dele: entra e sai por detrás do baú, e é o esqueleto inteiro, pernas
+  incluídas, que fica à vista por cima da madeira. É dela que a tabuleta do
+  "A casa" fica pendurada.
 
   ## Porque é que a caixa é muito mais alta do que a trave
 
@@ -50,22 +51,26 @@ import { photos } from "@/lib/images";
 
   Os extremos vêm dos dois mockups do Gonçalo: ~42 px de trave no telemóvel,
   ~82 px no ecrã largo. Trocar o ficheiro implica reconfirmar os 35,5% — é
-  medido NESTE recorte.
+  medido NESTE recorte. Na passagem da madeira clara para a escura foram
+  remedidos e não mudaram: as duas têm a faixa nos mesmos 32,8%–69,3%.
 */
 const ALTURA_CAIXA = "clamp(112px, 13vw, 230px)";
 
 /*
-  Quanto da caixa fica acima da junta. A 50% a trave ficava centrada na linha
-  — e nessa posição comia as pernas do esqueleto, que só descem 14% da altura
-  dele abaixo da junta (é o `ASSENTO = 86%` do `Esqueleto.tsx`). No telemóvel
-  sobravam 18px de perna à vista; nos mockups do Gonçalo pendura bem mais.
+  Quanto da caixa fica acima da junta. A 56% a trave sobe um sexto da própria
+  espessura acima da linha, e cruza o baú a meio — que é o que o Gonçalo pediu.
 
-  A 56% a trave sobe um sexto da própria espessura: continua a apoiar o baú —
-  cruza-o a meio, que é o que ele pediu — e devolve as pernas.
+  O número nasceu de um problema que já não existe: com a trave à frente do
+  esqueleto, os 50% que a centravam na junta comiam-lhe as pernas, que só
+  descem 14% da altura dele abaixo da linha (é o `ASSENTO = 86%` do
+  `Esqueleto.tsx`). Agora que ele passou para a frente, a madeira já não lhe
+  tapa nada. Os 56% ficam à mesma, por decisão dele — é onde a trave cruza o
+  baú a meio.
 
-  Não pode subir muito mais: a aresta de baixo da madeira tem de ficar sempre
-  abaixo da junta, senão as pontas das correntes da tabuleta, que nascem
-  exactamente nessa linha, aparecem à vista em vez de virem de trás da trave.
+  Não pode subir muito mais, e essa razão continua de pé: a aresta de baixo da
+  madeira tem de ficar sempre abaixo da junta, senão as pontas das correntes da
+  tabuleta, que nascem exactamente nessa linha, aparecem à vista em vez de
+  virem de trás da trave.
 */
 const ACIMA_DA_JUNTA = "56%";
 

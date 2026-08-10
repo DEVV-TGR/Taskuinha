@@ -93,20 +93,25 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | `caveira-madeira.jpg` | 570×713 | **Ecrã de entrada.** Já vem com fundo preto. |
 | `caveira-lenco.webp` | 410×500 | Decoração. |
 | `caveira-mesa.webp` | 500×500 | Decoração. |
-| **`tronco.png`** | 6000×1563 | **A trave da junta.** Recorte transparente; a madeira ocupa só a faixa dos 33% aos 68% da altura. |
-| **`tableta.webp`** | 1800×1800 | **A tabuleta do "A casa".** Tábua, ferragens e correntes na mesma imagem, recortadas. |
+| **`tronco-escuro.png`** | 6000×1563 | **A trave da junta.** Recorte transparente; a madeira ocupa só a faixa dos 33% aos 68% da altura. |
+| **`tableta-escura.webp`** | 1800×1800 | **A tabuleta do "A casa".** Tábua, ferragens e correntes na mesma imagem, recortadas. |
 
-> **A `tableta.webp` tem uma marca de água da Dreamstime** gravada nas ripas
-> do meio — lê-se por baixo do texto. Precisa de ser trocada pela versão
-> licenciada antes de isto ir para o ar.
+> **As duas são as versões escuras**, pedidas pelo Gonçalo, e substituíram uma
+> `tronco.png` e uma `tableta.webp` claras. A tábua clara tinha uma marca de
+> água da Dreamstime gravada nas ripas do meio; esta é a licenciada, e o aviso
+> que estava aqui deixou de fazer falta.
 >
-> **Se for trocada:** remedir as sete fronteiras que o
+> **Se voltarem a ser trocadas:** remedir as sete fronteiras que o
 > `components/decor/Tabuleta.tsx` tem escritas no comentário do topo. São as
 > únicas coisas que esse componente sabe da imagem, e é delas que sai o
 > recorte em nove fatias.
 >
-> A `tronco.png` tem o mesmo tipo de dependência: os 35,5% de madeira estão
-> escritos no `Tronco.tsx` e é de lá que sai a espessura da trave.
+> A `tronco-escuro.png` tem o mesmo tipo de dependência: os 35,5% de madeira
+> estão escritos no `Tronco.tsx` e é de lá que sai a espessura da trave.
+>
+> Nesta troca foram remedidas as duas, e nenhuma medida mudou — as escuras são
+> os mesmos recortes, só escurecidos. Foi sorte, não regra: a próxima troca
+> volta a precisar da medição.
 
 ## Fundos de secção
 
@@ -145,8 +150,19 @@ estes ficheiros; voltar a comprimir os originais só acrescentava uma geração 
 perda ao que já é material comprimido, para poupar cerca de 5 MB num
 repositório que os aguenta bem.
 
-**A `tableta.webp` é a excepção, e o motivo é o que confirma a regra.** Não
-passa pelo `next/image`: é consumida por `url()` dentro de um `border-image`,
-e o CSS não tem optimizador nenhum — o que estiver no ficheiro é o que o
-visitante descarrega. Chegou com 6000×6000 e **39 MB**. Está aqui a 1800 px em
-WebP, 418 KB, que é o triplo da maior caixa em que alguma vez aparece.
+**A `tableta-escura.webp` é a excepção, e o motivo é o que confirma a regra.**
+Não passa pelo `next/image`: é consumida por `url()` dentro de um
+`border-image`, e o CSS não tem optimizador nenhum — o que estiver no ficheiro
+é o que o visitante descarrega. Chegou com 6000×6000 e **30 MB**. Está aqui a
+1800 px em WebP, 345 KB, que é o triplo da maior caixa em que alguma vez
+aparece. (A clara que ela substituiu tinha chegado a 39 MB e ficado em 418 KB,
+pelo mesmo caminho.)
+
+O PNG original de 30 MB fica **fora do repositório** — está ignorado no
+`.gitignore` e vive só na máquina do Gonçalo. Se for preciso regerar o WebP:
+
+```
+node -e "require('sharp')('public/images/tableta-escura.png')
+  .resize(1800,1800,{fit:'fill'}).webp({quality:90})
+  .toFile('public/images/tableta-escura.webp')"
+```
