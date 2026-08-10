@@ -1,7 +1,6 @@
 import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Cta } from "@/components/Cta";
-import { Relampago } from "@/components/decor/Relampago";
 import { site } from "@/lib/site";
 
 /*
@@ -27,7 +26,6 @@ export function Hero() {
   return (
     <section className="relative flex min-h-[100dvh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
       <HeroMedia />
-      <Relampago className="z-20" />
 
       {/*
         O `pt` só existe enquanto o conteúdo está alinhado ao topo: a Nav é

@@ -48,7 +48,6 @@
   --linha: rgb(232 220 196 / 0.14);
   --linha-forte: rgb(232 220 196 / 0.28);
   --veu: rgb(5 8 10 / 0.72);
-  --relampago: #cfe6f0;
 
   --radius-card: 4px;
 
@@ -124,6 +123,20 @@ body {
 .pendurado {
   transform-origin: 50% 0%;
   will-change: transform;
+}
+
+/*
+  Letra de osso por cima de madeira clara — a tabuleta do "A casa".
+
+  O `--osso` foi escolhido para fundo preto, e sobre as ripas da tabuleta o
+  contraste cai. A sombra dupla resolve-o sem tocar na cor que ele pediu: uma
+  sombra curta e opaca a colar a letra à madeira, e um halo largo e difuso a
+  escurecer o veio por trás dela.
+*/
+.letra-na-madeira {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.85),
+    0 0 14px rgb(0 0 0 / 0.7);
 }
 
 /* Letra entalhada na madeira. */
