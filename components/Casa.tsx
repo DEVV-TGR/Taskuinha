@@ -33,11 +33,11 @@ export function Casa() {
           da fachada sem ser recortado, porque o `overflow-hidden` do Hero só
           se aplica aos descendentes do Hero.
 
-          `z-10` põe-no à frente da tabuleta (camada automática) e por baixo do
-          tronco (z-20, montado em `app/page.tsx`) — é o que dá a leitura de
-          trave à frente do esqueleto e correntes por trás dela.
+          `z-20` põe-no à frente da tabuleta (camada automática) e à frente do
+          tronco (z-10, montado em `app/page.tsx`) — ele senta-se **em cima** da
+          trave, e as correntes continuam a subir por trás dela.
         */}
-        <Esqueleto className="top-0 right-5 z-10 sm:right-8" />
+        <Esqueleto className="top-0 right-5 z-20 sm:right-8" />
 
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/*

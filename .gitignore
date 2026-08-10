@@ -40,6 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# imagens
+# O original da tabuleta tem 6000×6000 e 30 MB. O que vai para o site é a
+# tableta-escura.webp a 1800px, gerada dele — ver public/images/README.md.
+/public/images/tableta-escura.png
+
 # claude code
 # worktrees são cópias de trabalho; skills são symlinks para instalações
 # globais e ficariam quebrados noutra máquina.

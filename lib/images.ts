@@ -110,6 +110,10 @@ export const photos = {
     da altura do ficheiro, e o resto é transparente — é desse 35,5% que sai a
     espessura visível da trave (ver `components/decor/Tronco.tsx`).
 
+    É a versão escura do recorte. A clara (`tronco.png`) tinha exactamente a
+    mesma faixa de madeira — 32,8% a 69,3%, medido nas duas — por isso a troca
+    não mexeu em número nenhum do componente.
+
     Chega a `object-fill` e não a `object-cover`: a trave é esticada em
     largura de uma aresta à outra do ecrã, e é isso que lhe dá o aspecto de
     viga longa em vez de cepo curto. `cover` cortava-lhe o cimo e o fundo e
@@ -123,7 +127,7 @@ export const photos = {
     da página; esta está colada *por cima* dela.
   */
   tronco: {
-    src: "/images/tronco.png",
+    src: "/images/tronco-escuro.png",
     alt: "",
     width: 6000,
     height: 1563,
