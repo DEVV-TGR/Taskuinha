@@ -3,11 +3,6 @@ import type { Photo } from "@/lib/images";
 
 type Props = {
   foto: Photo;
-  /**
-   * Desfoque assumido, para fotografias pequenas de mais para o tamanho a que
-   * são esticadas. Ver a `naus-frota` em baixo.
-   */
-  desfoque?: boolean;
 };
 
 /*
@@ -45,18 +40,27 @@ type Props = {
   foram escolha dele antes de haver problema de contraste nenhum, e são o que
   dá à página o ar de coisa pregada em madeira.
 
-  ## O desfoque leva escala
+  ## O desfoque é de todas
 
-  Um `blur` sozinho esbate as arestas da imagem **para dentro**, e aparece uma
-  orla clara à volta da secção onde o fundo se vê através. O `scale-105`
-  empurra essa orla para fora do enquadramento.
+  Era uma opção — `desfoque?: boolean` — e só a `naus-frota.jpg` a usava, por
+  ser pequena de mais (630×420) para o tamanho a que é esticada. O Gonçalo
+  pediu-o para as cinco, por isso deixou de ser opção: a prop saiu e o
+  desfoque passou a fazer parte do que este componente é.
 
-  Só a `naus-frota.jpg` o usa, e não é correcção de estilo: tem 630×420, é a
-  mais pequena da pasta, e num ecrã largo é ampliada quase 3×. O desfoque
-  assume a falta de nitidez em vez de a tentar esconder. Decisão do Gonçalo,
-  depois de eu lhe dizer o problema.
+  **8px e não 3px.** Os 3px que a `naus-frota` levava eram para disfarçar
+  ampliação, e a essa força já não se distinguiam de uma fotografia nítida
+  quando a opacidade desceu para 15%. A 8px lê-se como profundidade: percebe-se
+  que há uma sala por trás sem se conseguir fixar nada nela.
+
+  **O `scale-105` não é enfeite.** Um `blur` sozinho esbate as arestas da
+  imagem *para dentro*, e aparece uma orla clara à volta da secção por onde o
+  fundo se vê através. A escala empurra essa orla para fora do enquadramento.
+
+  O desfoque é CSS e não uma segunda cópia dos ficheiros. É rasterizado uma
+  vez — nada aqui anima nem se move com o scroll — e assim o dia em que o
+  valor mudar não obriga a reprocessar cinco imagens.
 */
-export function FundoDeSeccao({ foto, desfoque = false }: Props) {
+export function FundoDeSeccao({ foto }: Props) {
   return (
     <div
       aria-hidden="true"
@@ -67,7 +71,7 @@ export function FundoDeSeccao({ foto, desfoque = false }: Props) {
         alt=""
         fill
         sizes="100vw"
-        className={`object-cover ${desfoque ? "scale-105 blur-[3px]" : ""}`}
+        className="scale-105 object-cover blur-[8px]"
         style={{ opacity: 0.15 }}
       />
     </div>

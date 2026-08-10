@@ -21,7 +21,7 @@ import { photos } from "@/lib/images";
 export function Casa() {
   return (
     <section id="a-casa" className="relative scroll-mt-20 bg-breu">
-      <FundoDeSeccao foto={photos.nausFrota} desfoque />
+      <FundoDeSeccao foto={photos.nausFrota} />
 
       <div className="relative mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 sm:py-32">
         {/*

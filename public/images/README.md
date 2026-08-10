@@ -111,7 +111,8 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 ## Fundos de secção
 
 Cinco fotografias deixaram de ser só conteúdo e passaram a ser o fundo de uma
-secção inteira, a 15% de opacidade (`components/decor/FundoDeSeccao.tsx`).
+secção inteira, a 15% de opacidade e desfocadas a 8px
+(`components/decor/FundoDeSeccao.tsx`).
 
 | Secção | Ficheiro |
 |---|---|
@@ -121,15 +122,15 @@ secção inteira, a 15% de opacidade (`components/decor/FundoDeSeccao.tsx`).
 | O que dizem | `sala-estatuas.jpg` |
 | Encontrar-nos | `mar-por-do-sol.jpg` |
 
-> A `naus-frota.jpg` vai **desfocada de propósito**. Tem 630×420, é a mais
-> pequena da pasta, e como fundo de secção num ecrã largo é ampliada quase 3×.
-> O desfoque assume a falta de nitidez em vez de a tentar esconder — foi
-> decisão do Gonçalo, com o problema em cima da mesa. Uma versão maior deste
-> ficheiro deixa tirar o `desfoque` no `Casa.tsx`.
+> **Vão as cinco desfocadas**, a 8px, por pedido do Gonçalo. O desfoque é
+> CSS, não uma segunda cópia dos ficheiros — mudar o valor não obriga a
+> reprocessar nada.
 >
-> A opacidade desceu de 75% para 15% depois desta decisão, e a essa altura a
-> falta de nitidez já quase não se vê — o `desfoque` ficou por não ser meu o
-> voto que o pôs lá.
+> Começou por ser só a `naus-frota.jpg`, que tem 630×420, é a mais pequena da
+> pasta e como fundo num ecrã largo é ampliada quase 3× — o desfoque assumia a
+> falta de nitidez em vez de a tentar esconder. Deixou de ser um caso especial:
+> agora que todas o levam, o tamanho pequeno deste ficheiro deixou de ter
+> consequência nenhuma.
 >
 > A `sala-estatuas.jpg` aparece **duas vezes**: é o fundo da secção "O que
 > dizem" e é uma das quatro molduras da galeria, em "O sítio". Como as duas

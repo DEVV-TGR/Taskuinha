@@ -111,9 +111,10 @@ dos 12 — pausa animações contínuas com a aba em segundo plano).
 > permite crescer com o texto sem esticar as correntes nem os rebites.
 
 > `FundoDeSeccao` acabou com o preto liso: todas as secções menos o Hero
-> levam agora uma fotografia de fundo **a 15% de opacidade**. Começou em 75%,
-> que era o número dado; montado, a fotografia competia com os pratos, e o
-> Gonçalo escolheu os 15 depois de ver quatro versões lado a lado.
+> levam agora uma fotografia de fundo **a 15% de opacidade e desfocada a
+> 8px**. Começou em 75% e nítida, que era o pedido inicial; montado, a
+> fotografia competia com os pratos. O Gonçalo escolheu os 15 depois de ver
+> quatro versões lado a lado, e depois pediu o desfoque para as cinco.
 >
 > Os cabeçalhos foram para dentro de uma `Tabua` quando o fundo ainda estava a
 > 75% e texto solto não se lia. Ficaram: a tábua era escolha dele antes de
