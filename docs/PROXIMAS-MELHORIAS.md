@@ -48,7 +48,7 @@ haver dois momentos distintos, não confundir:
 
 | Elemento | Decisão |
 |---|---|
-| **Sardaniscas** (as lagartixas) | **Sai.** Não gostaste do resultado. Removo o componente `Sardanisca.tsx` e as três instâncias no `Tralha.tsx`. |
+| **Sardaniscas** (as lagartixas) | ✅ **Feito.** Componente apagado e as três instâncias fora do `Tralha.tsx`. Nada entrou no lugar. |
 | **Aranha** | **Fica, mas re-desenhada.** Gostas da ideia, não do desenho actual (é um SVG simples, geométrico). Substituir por uma ilustração mais realista — ver `RECURSOS-A-PROCURAR.md`. |
 | **Esqueleto** | **Fica, mas passa a ser a fotografia real da casa**, não o SVG desenhado à mão que está lá agora. Ver ponto 3. |
 | **Barris** | **Ficam, mas passam a fotografia real**, não SVG. Ver ponto 4. |

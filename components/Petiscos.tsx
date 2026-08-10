@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
-import { SeloDeSeccao } from "@/components/decor/SeloDeSeccao";
 import { highlights, formatPrice } from "@/lib/menu";
 
 /*
@@ -44,9 +43,8 @@ export function Petiscos() {
   return (
     <section
       id="petiscos"
-      className="relative border-y border-[var(--madeira-borda)] bg-breu-fundo py-24 sm:py-32"
+      className="border-y border-[var(--madeira-borda)] bg-breu-fundo py-24 sm:py-32"
     >
-      <SeloDeSeccao semente={3} />
       <div className="mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 sm:px-8">
         <Reveal>
           <h2 className="display max-w-2xl text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
