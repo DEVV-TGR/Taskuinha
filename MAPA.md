@@ -111,10 +111,14 @@ dos 12 — pausa animações contínuas com a aba em segundo plano).
 > permite crescer com o texto sem esticar as correntes nem os rebites.
 
 > `FundoDeSeccao` acabou com o preto liso: todas as secções menos o Hero
-> levam agora uma fotografia de fundo **a 75% de opacidade**, e é por causa
-> disso que os cabeçalhos passaram a viver dentro de uma `Tabua`. A
-> legibilidade vem de uma superfície opaca por baixo da letra, não de
-> escurecer a fotografia — escurecê-la desfazia os 75% que o Gonçalo pediu.
+> levam agora uma fotografia de fundo **a 15% de opacidade**. Começou em 75%,
+> que era o número dado; montado, a fotografia competia com os pratos, e o
+> Gonçalo escolheu os 15 depois de ver quatro versões lado a lado.
+>
+> Os cabeçalhos foram para dentro de uma `Tabua` quando o fundo ainda estava a
+> 75% e texto solto não se lia. Ficaram: a tábua era escolha dele antes de
+> haver problema de contraste, e é o que dá à página o ar de coisa pregada em
+> madeira.
 >
 > | Secção | Fundo |
 > |---|---|

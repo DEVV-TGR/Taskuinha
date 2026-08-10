@@ -111,7 +111,7 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 ## Fundos de secção
 
 Cinco fotografias deixaram de ser só conteúdo e passaram a ser o fundo de uma
-secção inteira, a 75% de opacidade (`components/decor/FundoDeSeccao.tsx`).
+secção inteira, a 15% de opacidade (`components/decor/FundoDeSeccao.tsx`).
 
 | Secção | Ficheiro |
 |---|---|
@@ -126,6 +126,10 @@ secção inteira, a 75% de opacidade (`components/decor/FundoDeSeccao.tsx`).
 > O desfoque assume a falta de nitidez em vez de a tentar esconder — foi
 > decisão do Gonçalo, com o problema em cima da mesa. Uma versão maior deste
 > ficheiro deixa tirar o `desfoque` no `Casa.tsx`.
+>
+> A opacidade desceu de 75% para 15% depois desta decisão, e a essa altura a
+> falta de nitidez já quase não se vê — o `desfoque` ficou por não ser meu o
+> voto que o pôs lá.
 >
 > A `sala-estatuas.jpg` aparece **duas vezes**: é o fundo da secção "O que
 > dizem" e é uma das quatro molduras da galeria, em "O sítio". Como as duas
