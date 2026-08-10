@@ -40,9 +40,13 @@ function Estrelas({ score }: { score: string }) {
   );
 }
 
-/* Deslocamentos diferentes por citação, para o bloco ler como um mural. */
-const offsets = ["sm:mr-auto", "sm:ml-auto", "sm:mx-auto"];
-const sementes = [4, 9, 12];
+/*
+  Semente da borda rasgada, uma por citação. Era uma lista de três à mão
+  (`[4, 9, 12]`), o que obrigava a inventar um número novo sempre que
+  entrasse uma citação — e a repetir recortes assim que passassem de três.
+  Uma conta a partir do índice serve qualquer quantidade.
+*/
+const semente = (i: number) => 4 + i * 5;
 
 export function Vozes() {
   return (
@@ -105,18 +109,29 @@ export function Vozes() {
           ))}
         </div>
 
-        <div className="mt-16 flex flex-col gap-10 sm:gap-8">
+        {/*
+          Grelha de duas colunas em todas as resoluções, a pedido do Gonçalo.
+          Eram três pergaminhos soltos numa coluna, cada um encostado a um lado
+          diferente (`mr-auto`, `ml-auto`, `mx-auto`) para lerem como um mural
+          espalhado — era isso que ele não queria.
+
+          `items-stretch` é o que faz a uniformidade: sem ele cada pergaminho
+          tinha a altura do seu texto e a linha ficava desalinhada em baixo. O
+          `h-full` tem de descer até ao `Pergaminho`, senão quem estica é só a
+          `<figure>` e o papel fica a meio dela.
+        */}
+        <div className="mt-16 grid grid-cols-2 items-stretch gap-4 sm:gap-6">
           {quotes.map((quote, i) => (
-            <Reveal
-              key={quote.text}
-              index={i}
-              as="figure"
-              className={`max-w-xl ${offsets[i % offsets.length]}`}
-            >
-              <Pergaminho semente={sementes[i % sementes.length]}>
+            <Reveal key={quote.text} index={i} as="figure" className="h-full">
+              <Pergaminho semente={semente(i)} className="h-full">
                 <blockquote
                   lang={quote.lang}
-                  className="text-[clamp(1.1rem,2.2vw,1.35rem)] leading-snug"
+                  /*
+                    O mínimo desceu de 1,1rem para 0,9rem. Em duas colunas de
+                    telemóvel a caixa de texto mede ~125px, e a 1,1rem cabiam
+                    dez caracteres por linha.
+                  */
+                  className="text-[clamp(0.9rem,2.2vw,1.35rem)] leading-snug"
                   style={{ fontFamily: "var(--font-imfell)" }}
                 >
                   <span aria-hidden className="text-[var(--pergaminho-queimado)]">
@@ -127,7 +142,7 @@ export function Vozes() {
                     ”
                   </span>
                 </blockquote>
-                <figcaption className="mt-4 text-sm opacity-70">
+                <figcaption className="mt-4 text-xs opacity-70 sm:text-sm">
                   {quote.source}
                 </figcaption>
               </Pergaminho>
