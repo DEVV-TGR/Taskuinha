@@ -191,16 +191,21 @@ export type Highlight = {
 };
 
 /*
-  Seis pratos-âncora para a página inicial: os que as avaliações mais citam.
-  Seis, e não mais, porque é o número que fecha a grelha do bento sem sobras.
+  Cinco pratos-âncora para a página inicial: os que as avaliações mais citam.
+  São cinco porque são cinco os que têm fotografia real, servida à mesa
+  (amêijoas, lapas, lulas, sardinhas, percebes) — não há uma sexta, e não há
+  sapateira nenhuma, ao contrário do que a primeira versão do plano supunha
+  (ver public/images/README.md).
 
-  Cinco têm fotografia real, servida à mesa (amêijoas, lapas, lulas,
-  sardinhas, percebes) — não há uma sexta, e não há sapateira nenhuma,
-  ao contrário do que a primeira versão do plano supunha (ver
-  public/images/README.md). O sexto lugar fica com o Bacalhau à Brás, sem
-  foto, o que mantém viva a célula "sem fotografia" do componente
-  `Petiscos.tsx` — a Fase 1 já tinha corrigido a expectativa de que esse
-  ramo fosse desaparecer.
+  Eram seis. O Bacalhau à Brás ocupava o sexto lugar sem fotografia, para
+  fechar a grelha do bento sem sobras. O bento saiu — a grelha passou a
+  células todas iguais, a pedido do Gonçalo — e um prato que só lá estava para
+  encher um buraco que já não existe não tinha razão para ficar. A grelha de
+  três colunas fica com uma folga na segunda linha, e foi decisão dele.
+
+  `photo` continua opcional no tipo `Highlight`, mesmo com os cinco a terem
+  fotografia. Apertar o tipo ao conteúdo de hoje era obrigar a alargá-lo outra
+  vez no dia em que entre um prato sem foto.
 */
 export const highlights: Highlight[] = [
   {
@@ -234,11 +239,6 @@ export const highlights: Highlight[] = [
     description: "Só há quando o mar deixa apanhar. Quando há, acabam cedo.",
     price: 19,
     photo: photos.petiscoPercebes,
-  },
-  {
-    name: "Bacalhau à Brás",
-    description: "Lascas desfiadas, batata palha e azeitona preta. Para quem chega com fome a sério.",
-    price: 14,
   },
 ];
 

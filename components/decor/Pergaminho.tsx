@@ -27,6 +27,26 @@ type Props = {
   em lib/texturas.ts tem um limite de profundidade menor do que o
   `padding` desta camada, e o padding aqui é generoso o suficiente para
   nunca deixar texto entrar nessa faixa.
+
+  ## Porque é que o padding passou a `clamp`
+
+  Era `p-12 sm:p-14` — 48 ou 56px fixos. Enquanto o pergaminho foi um painel
+  largo, isso servia. Deixou de servir quando as citações passaram a uma
+  grelha de duas colunas: num telemóvel a caixa mede ~170px, e 48px de cada
+  lado deixavam 74px para o texto.
+
+  O erro era o padding ser fixo quando o **rasgão não é**. A máscara estica a
+  `100% 100%` da caixa, por isso o entalhe mede uma percentagem da largura
+  real — nunca um número de píxeis. Um padding em percentagem acompanha-o
+  sozinho, que é o que mantém a regra de cima verdadeira em qualquer tamanho.
+
+  Os 8% são o dobro do entalhe mais fundo que o gerador produz (~4% no pior
+  caso de jitter). Os extremos do `clamp` são os que interessam:
+
+  - **1,25rem** — em caixas estreitas 8% seriam poucos píxeis para o texto
+    não encostar ao papel. A 170px o entalhe são ~7px e o mínimo dá 20px.
+  - **3,5rem** — é exactamente o `sm:p-14` de antes, e existe para o painel
+    largo do mapa não passar a ter 112px de margem num ecrã grande.
 */
 export function Pergaminho({ children, semente = 0, className }: Props) {
   const { fundo, mascara } = bordaPergaminho(semente);
@@ -49,7 +69,7 @@ export function Pergaminho({ children, semente = 0, className }: Props) {
       {Prego("bottom-2 left-2")}
       {Prego("bottom-2 right-2")}
 
-      <div className="relative p-12 text-[var(--pergaminho-tinta)] sm:p-14">
+      <div className="relative p-[clamp(1.25rem,8%,3.5rem)] text-[var(--pergaminho-tinta)]">
         {children}
       </div>
     </div>

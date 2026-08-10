@@ -98,7 +98,8 @@ a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção tro
 de pele).
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
 assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
-`Lanterna` · `Esqueleto` · `Tronco` · `Tabuleta` · `BandeiraNegra` ·
+`Lanterna` · `Esqueleto` · `Tronco` · `Tabuleta` · `FundoDeSeccao` ·
+`BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
 dos 12 — pausa animações contínuas com a aba em segundo plano).
 
@@ -108,6 +109,30 @@ dos 12 — pausa animações contínuas com a aba em segundo plano).
 > pendura-se dela por correntes e leva o texto da casa por cima. A `Tabuleta`
 > é a única peça do site feita em `border-image` de nove fatias — é o que lhe
 > permite crescer com o texto sem esticar as correntes nem os rebites.
+
+> `FundoDeSeccao` acabou com o preto liso: todas as secções menos o Hero
+> levam agora uma fotografia de fundo **a 15% de opacidade e desfocada a
+> 8px**. Começou em 75% e nítida, que era o pedido inicial; montado, a
+> fotografia competia com os pratos. O Gonçalo escolheu os 15 depois de ver
+> quatro versões lado a lado, e depois pediu o desfoque para as cinco.
+>
+> Os cabeçalhos foram para dentro de uma `Tabua` quando o fundo ainda estava a
+> 75% e texto solto não se lia. Ficaram: a tábua era escolha dele antes de
+> haver problema de contraste, e é o que dá à página o ar de coisa pregada em
+> madeira.
+>
+> | Secção | Fundo |
+> |---|---|
+> | A casa | `naus-frota.jpg` (desfocada de propósito — 630×420) |
+> | Petiscos | `balcao-bandeirinhas.jpg` |
+> | O sítio | `tecto-nau.jpg` |
+> | O que dizem | `sala-estatuas.jpg` |
+> | Encontrar-nos | `mar-por-do-sol.jpg` |
+>
+> A `Casa`, a `Galeria` e o `Encontrar` tiveram de passar a duas camadas —
+> `<section>` larga com o fundo, `<div>` de dentro com o `max-w` e o
+> espaçamento. Eram o próprio contentor, e um fundo lá dentro nunca chegava
+> às arestas do ecrã.
 
 > `Relampago` e `Mar` foram apagados a pedido do Gonçalo. O primeiro era o
 > flash de tempestade no Hero, o segundo as três camadas de onda a deslizar no
