@@ -1,6 +1,9 @@
 import { Star } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
 import { Pergaminho } from "@/components/decor/Pergaminho";
+import { Tabua } from "@/components/decor/Tabua";
+import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
+import { photos } from "@/lib/images";
 import { ratings, quotes } from "@/lib/reviews";
 
 /*
@@ -43,16 +46,21 @@ const sementes = [4, 9, 12];
 
 export function Vozes() {
   return (
-    <section className="border-y border-linha bg-breu-fundo py-24 sm:py-32">
-      <div className="mx-auto w-full max-w-[1400px] px-5 sm:px-8">
+    <section className="relative border-y border-linha bg-breu py-24 sm:py-32">
+      <FundoDeSeccao foto={photos.salaEstatuas} />
+
+      {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
+      <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <Reveal className="max-w-2xl">
-          <h2 className="display text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-            O que dizem
-          </h2>
-          <p className="mt-5 text-base leading-relaxed text-osso-fraco">
-            Chegam avaliações em várias línguas, o que faz sentido numa casa
-            onde há sempre alguém a caminho de Santiago.
-          </p>
+          <Tabua semente={7} className="p-6 sm:p-8">
+            <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
+              O que dizem
+            </h2>
+            <p className="letra-na-madeira mt-5 text-base leading-relaxed text-osso">
+              Chegam avaliações em várias línguas, o que faz sentido numa casa
+              onde há sempre alguém a caminho de Santiago.
+            </p>
+          </Tabua>
         </Reveal>
 
         <div className="mt-12 flex flex-wrap gap-4">

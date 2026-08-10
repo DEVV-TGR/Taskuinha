@@ -89,7 +89,7 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 |---|---|---|
 | `nau-cruz.jpg` | 401×453 | Nau portuguesa com a cruz de Cristo. |
 | `nau-armada.webp` | 800×547 | Nau das armadas do século XVI. |
-| `naus-frota.jpg` | 630×420 | Frota à vela. |
+| **`naus-frota.jpg`** | 630×420 | **Fundo da secção "A casa".** Frota à vela. |
 | `caveira-madeira.jpg` | 570×713 | **Ecrã de entrada.** Já vem com fundo preto. |
 | `caveira-lenco.webp` | 410×500 | Decoração. |
 | `caveira-mesa.webp` | 500×500 | Decoração. |
@@ -107,6 +107,30 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 >
 > A `tronco.png` tem o mesmo tipo de dependência: os 35,5% de madeira estão
 > escritos no `Tronco.tsx` e é de lá que sai a espessura da trave.
+
+## Fundos de secção
+
+Cinco fotografias deixaram de ser só conteúdo e passaram a ser o fundo de uma
+secção inteira, a 75% de opacidade (`components/decor/FundoDeSeccao.tsx`).
+
+| Secção | Ficheiro |
+|---|---|
+| A casa | `naus-frota.jpg` |
+| Petiscos | `balcao-bandeirinhas.jpg` |
+| O sítio | `tecto-nau.jpg` |
+| O que dizem | `sala-estatuas.jpg` |
+| Encontrar-nos | `mar-por-do-sol.jpg` |
+
+> A `naus-frota.jpg` vai **desfocada de propósito**. Tem 630×420, é a mais
+> pequena da pasta, e como fundo de secção num ecrã largo é ampliada quase 3×.
+> O desfoque assume a falta de nitidez em vez de a tentar esconder — foi
+> decisão do Gonçalo, com o problema em cima da mesa. Uma versão maior deste
+> ficheiro deixa tirar o `desfoque` no `Casa.tsx`.
+>
+> A `sala-estatuas.jpg` aparece **duas vezes**: é o fundo da secção "O que
+> dizem" e é uma das quatro molduras da galeria, em "O sítio". Como as duas
+> secções são vizinhas, vale a pena confirmar no ecrã se não fica a repetir-se
+> de mais.
 
 ## Formato
 

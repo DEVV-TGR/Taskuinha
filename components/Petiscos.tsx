@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
+import { Tabua } from "@/components/decor/Tabua";
+import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
+import { photos } from "@/lib/images";
 import { highlights, formatPrice } from "@/lib/menu";
 
 /*
@@ -27,17 +30,22 @@ export function Petiscos() {
   return (
     <section
       id="petiscos"
-      className="border-y border-[var(--madeira-borda)] bg-breu-fundo py-24 sm:py-32"
+      className="relative border-y border-[var(--madeira-borda)] bg-breu py-24 sm:py-32"
     >
-      <div className="mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 sm:px-8">
-        <Reveal>
-          <h2 className="display max-w-2xl text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-            O que sai mais da cozinha
-          </h2>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-osso-fraco">
-            Estes são os pratos que mais aparecem nas avaliações de quem cá
-            esteve.
-          </p>
+      <FundoDeSeccao foto={photos.balcaoBandeirinhas} />
+
+      {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
+      <div className="relative mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 sm:px-8">
+        <Reveal className="max-w-2xl">
+          <Tabua semente={3} className="p-6 sm:p-8">
+            <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
+              O que sai mais da cozinha
+            </h2>
+            <p className="letra-na-madeira mt-5 text-base leading-relaxed text-osso">
+              Estes são os pratos que mais aparecem nas avaliações de quem cá
+              esteve.
+            </p>
+          </Tabua>
         </Reveal>
 
         {/*
