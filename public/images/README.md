@@ -90,11 +90,23 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | `nau-cruz.jpg` | 401×453 | Nau portuguesa com a cruz de Cristo. |
 | `nau-armada.webp` | 800×547 | Nau das armadas do século XVI. |
 | **`naus-frota.jpg`** | 630×420 | **Fundo da secção "A casa".** Frota à vela. |
-| `caveira-madeira.jpg` | 570×713 | **Ecrã de entrada.** Já vem com fundo preto. |
+| `caveira-madeira.jpg` | 570×713 | Sem uso. Era o **ecrã de entrada**, que deixou de existir. |
 | `caveira-lenco.webp` | 410×500 | Decoração. |
 | `caveira-mesa.webp` | 500×500 | Decoração. |
 | **`tronco-escuro.png`** | 6000×1563 | **A trave da junta.** Recorte transparente; a madeira ocupa só a faixa dos 33% aos 68% da altura. |
 | **`tableta-escura.webp`** | 1800×1800 | **A tabuleta do "A casa".** Tábua, ferragens e correntes na mesma imagem, recortadas. |
+| **`porta-esquerda.png`** | 960×1080 | **A folha esquerda do portão.** Tapa meio ecrã à chegada ao site e nas trocas de página. |
+| **`porta-diretia.png`** | 960×1080 | **A folha direita.** A mesma porta espelhada. O nome tem gralha e ficou como chegou. |
+
+> **As duas portas são um par, e a ordem não é indiferente.** A ferragem com o
+> aro cai na aresta **interior** de cada folha, por isso encostadas os dois
+> aros encontram-se na junta ao meio; trocadas de lado, as ferragens iam para
+> as arestas do ecrã e a junta ficava lisa. Quem as monta é o
+> `components/decor/Portada.tsx`.
+>
+> 960×1080 é meio ecrã de 1920 por altura toda — o rácio exacto de uma folha
+> num monitor comum. Noutros formatos o `object-cover` corta, que é o que se
+> quer: madeira esticada denuncia-se.
 
 > **As duas são as versões escuras**, pedidas pelo Gonçalo, e substituíram uma
 > `tronco.png` e uma `tableta.webp` claras. A tábua clara tinha uma marca de

@@ -26,12 +26,15 @@ const tilts = [
   "rotate-[-0.75deg]",
 ] as const;
 
+/*
+  Tinha `border-y border-[var(--madeira-borda)]` a marcar onde começava e onde
+  acabava. As traves passaram a fazer esse trabalho em todas as divisórias da
+  página, e duas divisórias no mesmo sítio — madeira e um fio de 1px — lêem
+  como sobra. O `bg-breu` fica: tirou-se o traço, não a mudança de fundo.
+*/
 export function Petiscos() {
   return (
-    <section
-      id="petiscos"
-      className="relative border-y border-[var(--madeira-borda)] bg-breu py-24 sm:py-32"
-    >
+    <section id="petiscos" className="relative bg-breu py-24 sm:py-32">
       <FundoDeSeccao foto={photos.balcaoBandeirinhas} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}

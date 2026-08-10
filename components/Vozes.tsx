@@ -50,7 +50,8 @@ const semente = (i: number) => 4 + i * 5;
 
 export function Vozes() {
   return (
-    <section className="relative border-y border-linha bg-breu py-24 sm:py-32">
+    /* O `border-y border-linha` saiu: as traves passaram a ser a divisória. */
+    <section className="relative bg-breu py-24 sm:py-32">
       <FundoDeSeccao foto={photos.salaEstatuas} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}

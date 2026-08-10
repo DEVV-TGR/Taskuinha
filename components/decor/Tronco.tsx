@@ -1,12 +1,34 @@
 import Image from "next/image";
 import { photos } from "@/lib/images";
 
+type Props = {
+  /**
+   * Fracção da caixa que fica acima da linha da divisória. `50%` centra a
+   * trave nela, que é o que serve em qualquer sítio onde não haja nada
+   * pendurado. Ver a nota do `ACIMA_DA_LINHA` para a única excepção.
+   */
+  acimaDaLinha?: string;
+  /**
+   * Espelha a trave na horizontal, para o padrão da casca não se repetir de
+   * divisória em divisória.
+   */
+  espelhada?: boolean;
+  /** Camada, quando o valor por omissão não serve. */
+  className?: string;
+};
+
 /*
-  A trave que atravessa a página de aresta a aresta, na junta entre o Hero e a
-  secção "A casa" — a mesma linha onde o esqueleto já se senta. Passa **por
-  trás** dele: entra e sai por detrás do baú, e é o esqueleto inteiro, pernas
-  incluídas, que fica à vista por cima da madeira. É dela que a tabuleta do
-  "A casa" fica pendurada.
+  A trave que atravessa a página de aresta a aresta a separar duas secções.
+
+  Começou por ser uma só, na junta entre o Hero e a secção "A casa", onde o
+  esqueleto se senta e a tabuleta se pendura. O Gonçalo pediu-a para todas as
+  divisórias, e com isso deixou de ser um adereço de um sítio: é o sistema de
+  divisórias da página. Onde havia um fio de 1px a separar secções, há madeira
+  — as linhas que faziam esse trabalho saíram todas.
+
+  Na junta do Hero passa **por trás** do esqueleto: entra e sai por detrás do
+  baú, e é o esqueleto inteiro, pernas incluídas, que fica à vista por cima da
+  madeira.
 
   ## Porque é que a caixa é muito mais alta do que a trave
 
@@ -27,16 +49,35 @@ import { photos } from "@/lib/images";
   repete ao longo dos 6000 px, por isso a distorção não tem nada onde se
   denunciar.
 
-  ## Onde está montada
+  ## Onde está montada, e porque traz a régua consigo
 
-  Não é filha do Hero — o Hero é `overflow-hidden` e cortava-a nas pontas — nem
-  da `Casa`, que é `max-w-[1400px]` e nunca chega às arestas do ecrã sem
-  `w-screen` (que conta a barra de scroll e abre scroll horizontal). Vive num
-  irmão directo do `<main>`, em `app/page.tsx`, que já é largura total.
+  Não é filha de secção nenhuma. O Hero é `overflow-hidden` e cortava-a nas
+  pontas; a `Casa` e as outras são `max-w-[1400px]` e nunca chegam às arestas
+  do ecrã sem `w-screen` (que conta a barra de scroll e abre scroll
+  horizontal). Vive entre secções, como irmã delas, que já é largura total.
 
-  O `-translate-y-1/2` é que a **centra** na junta em vez de a pendurar dela.
+  A régua — o `relative z-10 h-0` que a segura — está **dentro** deste
+  componente e não em quem o monta. Era escrita à mão quando havia uma só
+  trave; com seis passava a ser copiada seis vezes, e é ela que tem as
+  decisões todas: a altura zero (a divisória é uma linha, não ocupa espaço) e
+  a camada.
+
+  `shrink-0` porque a última trave da página fica entre o `</main>` e o
+  `<Footer />`, e aí é um item de um `flex flex-col` (o `<body>`, em
+  `app/layout.tsx`). Um item de altura zero não tem nada que entrar na conta
+  de encolhimento.
 
   Sem `Reveal`: uma trave que cai a balançar contradiz o que uma trave é.
+
+  ## Porquê espelhar
+
+  Seis vezes a mesma casca dá um padrão que se reconhece de divisória em
+  divisória — a mesma nódoa no mesmo sítio, seis vezes. Alternar o sentido por
+  posição quebra isso sem precisar de um segundo ficheiro.
+
+  É quem monta que decide, e não um `Math.random()` aqui dentro: aleatoriedade
+  no render dá marcação diferente no servidor e no cliente, e rebenta a
+  hidratação.
 */
 
 /*
@@ -57,46 +98,49 @@ import { photos } from "@/lib/images";
 const ALTURA_CAIXA = "clamp(112px, 13vw, 230px)";
 
 /*
-  Quanto da caixa fica acima da junta. A 56% a trave sobe um sexto da própria
-  espessura acima da linha, e cruza o baú a meio — que é o que o Gonçalo pediu.
+  Quanto da caixa fica acima da linha, por omissão. **50% centra a trave na
+  divisória**, e é o que serve em cinco das seis.
 
-  O número nasceu de um problema que já não existe: com a trave à frente do
-  esqueleto, os 50% que a centravam na junta comiam-lhe as pernas, que só
-  descem 14% da altura dele abaixo da linha (é o `ASSENTO = 86%` do
-  `Esqueleto.tsx`). Agora que ele passou para a frente, a madeira já não lhe
-  tapa nada. Os 56% ficam à mesma, por decisão dele — é onde a trave cruza o
-  baú a meio.
-
-  Não pode subir muito mais, e essa razão continua de pé: a aresta de baixo da
-  madeira tem de ficar sempre abaixo da junta, senão as pontas das correntes da
-  tabuleta, que nascem exactamente nessa linha, aparecem à vista em vez de
-  virem de trás da trave.
+  A sexta — a junta do Hero — pede `56%` a quem a monta, e a excepção fica à
+  vista lá em vez de virar a regra aqui. A razão é dela só: a aresta de baixo
+  da madeira tem de ficar abaixo da linha para tapar as pontas das correntes da
+  tabuleta, que nascem exactamente nessa linha. Um valor mais alto punha-as à
+  vista, penduradas do nada. Nas outras cinco não há nada pendurado, e o valor
+  honesto é o que centra.
 */
-const ACIMA_DA_JUNTA = "56%";
+const ACIMA_DA_LINHA = "50%";
 
-export function Tronco() {
+export function Tronco({
+  acimaDaLinha = ACIMA_DA_LINHA,
+  espelhada = false,
+  className,
+}: Props = {}) {
   const foto = photos.tronco;
 
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0"
-      style={{ height: ALTURA_CAIXA, transform: `translateY(-${ACIMA_DA_JUNTA})` }}
-    >
-      <Image
-        src={foto.src}
-        alt=""
-        fill
-        sizes="100vw"
-        className="object-fill"
-        /*
-          A sombra vai no filtro e não em `box-shadow`, pela mesma razão que
-          está escrita no `Esqueleto.tsx`: o `box-shadow` desenha o rectângulo
-          da caixa, e a caixa aqui é quase três vezes a trave — desenhava uma
-          mancha muito acima e muito abaixo dela. O `drop-shadow` segue o alfa.
-        */
-        style={{ filter: "drop-shadow(0 12px 20px rgb(0 0 0 / 0.55))" }}
-      />
+    /* A régua da divisória: uma linha sem altura, e a trave centrada nela. */
+    <div className={`relative z-10 h-0 shrink-0 ${className ?? ""}`}>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0"
+        style={{ height: ALTURA_CAIXA, transform: `translateY(-${acimaDaLinha})` }}
+      >
+        <Image
+          src={foto.src}
+          alt=""
+          fill
+          sizes="100vw"
+          className={`object-fill ${espelhada ? "scale-x-[-1]" : ""}`}
+          /*
+            A sombra vai no filtro e não em `box-shadow`, pela mesma razão que
+            está escrita no `Esqueleto.tsx`: o `box-shadow` desenha o
+            rectângulo da caixa, e a caixa aqui é quase três vezes a trave —
+            desenhava uma mancha muito acima e muito abaixo dela. O
+            `drop-shadow` segue o alfa.
+          */
+          style={{ filter: "drop-shadow(0 12px 20px rgb(0 0 0 / 0.55))" }}
+        />
+      </div>
     </div>
   );
 }

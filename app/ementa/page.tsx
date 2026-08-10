@@ -32,6 +32,9 @@ export default function EmentaPage() {
           </p>
         </header>
 
+        {/* Sem traves nesta página. Chegaram a estar cá duas — uma a fechar o
+            título, outra antes do rodapé — e o Gonçalo mandou tirar as duas.
+            As divisórias de madeira ficaram só na inicial. */}
         <MenuCategoryNav
           items={menu.map(({ id, title }) => ({ id, title }))}
         />
