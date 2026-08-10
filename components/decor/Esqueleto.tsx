@@ -1,76 +1,115 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
-import { useAbaVisivel } from "./usarVisibilidade";
+import Image from "next/image";
+import { Reveal } from "@/components/Reveal";
+import { photos } from "@/lib/images";
 
 /*
-  O mascote: o esqueleto pirata sentado à porta. Ciclo de 9s — cerca de 3s
-  de movimento (o braço sobe a garrafa à boca e desce) e os restantes 6s
-  parado. É gráfico, não a fotografia: a fotografia (esqueleto.jpg) não dá
-  para articular um braço.
+  O mascote — a estátua a sério, recortada do fundo e colada por cima do
+  layout. Senta-se na junta entre o Hero e a secção "A casa", à direita,
+  com as pernas penduradas para dentro desta.
+
+  À direita, e não por acaso: é o lado onde ele está na fachada real (ver a
+  descrição da `fachadaNoite` em lib/images.ts), e é o lado livre — o texto
+  do Hero vive num `max-w-3xl` encostado à esquerda.
+
+  Era um SVG desenhado à mão que **nunca chegou a ser montado em página
+  nenhuma**. Ninguém o viu, por isso isto não é uma substituição: é a
+  estreia do mascote no site. Perde-se o braço articulado que levava a
+  garrafa à boca de nove em nove segundos, e não faz falta — uma estátua de
+  cimento não mexe o braço.
+
+  ## Porque é que são dois elementos e não um
+
+  ```
+  contentor   absolute · largura responsiva · -translate-y-[63%]
+    └ Reveal  a queda — o Motion escreve `transform` inline AQUI
+        └ Image
+  ```
+
+  1. `-translate-y-[63%]` é percentagem da **própria altura** do elemento.
+     É o que faz o assento cair sempre em cima da junta sem precisar de um
+     valor de `top` por cada tamanho de ecrã: muda-se a largura e o resto
+     acerta-se sozinho, porque a altura vem do rácio da fotografia.
+
+  2. Tem de estar num elemento **separado** do `Reveal`. O Motion escreve
+     `transform` inline no elemento que anima; se fosse o mesmo, a queda
+     esmagava o posicionamento e ele aparecia encavalitado no sítio errado.
+
+  3. De borla, o mesmo arranjo salva o caso sem movimento: as regras de
+     `prefers-reduced-motion` e de `<noscript>` forçam
+     `transform: none !important` em `[data-reveal]`, e esse atributo cai
+     no elemento de dentro. O posicionamento do de fora sobrevive — ele
+     fica quieto **e no sítio**.
+
+  ## Nunca desaparece
+
+  Não há classes `hidden` aqui. O que muda com a resolução é a largura,
+  nunca a presença.
+
+  | Ecrã | Largura | Altura | Acima da junta | Abaixo | Espaço na `Casa` |
+  |---|---|---|---|---|---|
+  | telemóvel 390 | 240px | 273px | 235px | 38px | 96px |
+  | tablet | 300px | 342px | 294px | 48px | 128px |
+  | `lg` 1024 | 389px | 443px | 381px | 62px | 128px |
+  | ≥1632 | 620px | 706px | 607px | 99px | 128px |
+
+  O que fica abaixo da junta cabe sempre no espaçamento da secção "A casa" —
+  nunca toca em texto.
+
+  **Em `lg` a largura é `38vw` com tecto em 620px, e não um valor fixo.** O
+  620 foi escolhido a olhar para um ecrã de 1764px, onde o contentor está no
+  máximo de 1400 e sobram 568px à direita do texto do Hero. Num portátil de
+  1024 o contentor encolhe para 960 e um esqueleto de 620 punha-se em cima
+  do wordmark. Em `vw` acompanha o contentor e só chega aos 620 a partir dos
+  1632px, que é onde há espaço para ele.
+
+  A conta que o garante: a figura visível começa a 15% da largura do
+  elemento (o recorte tem margem transparente), por isso a sua aresta
+  esquerda fica em `direita_do_contentor − 0,85 × largura`. Isso tem de
+  ficar à direita do texto do Hero, que é `max-w-3xl` mas na prática mede o
+  wordmark, ~536px.
+
+  **Em telemóvel é `62vw` e não 240px fixos** pela mesma família de razões:
+  num iPhone SE (375×667) um valor fixo não caberia.
 */
+
+/*
+  Fracção da altura onde a régua da secção lhe passa. A 86% a arca fica
+  pousada em cima da linha e só os pés e a perna de pau balançam por baixo.
+
+  Medido NESTA fotografia. Trocar o ficheiro implica reconfirmar o número —
+  o recorte anterior tinha outro enquadramento e usava 63%.
+*/
+const ASSENTO = "86%";
+
 export function Esqueleto({ className }: { className?: string }) {
-  const reduce = useReducedMotion();
-  const visivel = useAbaVisivel();
-  const animar = !reduce && visivel;
+  const foto = photos.esqueletoRecorte;
 
   return (
-    <svg
+    <div
       aria-hidden="true"
-      viewBox="0 0 100 140"
-      className={className}
+      className={`pointer-events-none absolute w-[62vw] max-w-[240px] sm:w-[300px] sm:max-w-none lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
+      style={{ transform: `translateY(-${ASSENTO})` }}
     >
-      {/* Arca onde está sentado */}
-      <rect x="20" y="110" width="60" height="24" rx="2" fill="var(--madeira)" stroke="var(--madeira-borda)" />
-
-      {/* Pernas */}
-      <path d="M40,110 L34,138 M60,110 L66,138" stroke="var(--osso)" strokeWidth="5" strokeLinecap="round" />
-
-      {/* Tronco com casaco esfarrapado */}
-      <path
-        d="M32,60 Q30,95 38,112 L62,112 Q70,95 68,60 Z"
-        fill="var(--breu-fundo)"
-        stroke="var(--madeira-borda)"
-        strokeWidth="1"
-      />
-      {/* Costelas à mostra */}
-      {[68, 76, 84, 92].map((y) => (
-        <line key={y} x1="42" y1={y} x2="58" y2={y} stroke="var(--osso)" strokeWidth="2" opacity="0.8" />
-      ))}
-
-      {/* Braço parado (esquerdo) */}
-      <line x1="32" y1="65" x2="20" y2="95" stroke="var(--osso)" strokeWidth="5" strokeLinecap="round" />
-
-      {/* Braço da garrafa (direito), articulado a partir do ombro */}
-      <motion.g
-        style={{ transformOrigin: "68px 65px" }}
-        animate={
-          animar
-            ? { rotate: [0, 0, -95, -95, 0, 0] }
-            : { rotate: 0 }
-        }
-        transition={
-          animar
-            ? {
-                duration: 9,
-                times: [0, 0.66, 0.8, 0.87, 1, 1],
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
-            : undefined
-        }
-      >
-        <line x1="68" y1="65" x2="82" y2="90" stroke="var(--osso)" strokeWidth="5" strokeLinecap="round" />
-        {/* Garrafa na mão */}
-        <rect x="77" y="82" width="8" height="16" rx="2" fill="var(--sangue)" />
-      </motion.g>
-
-      {/* Cabeça: caveira com lenço */}
-      <circle cx="50" cy="40" r="16" fill="var(--osso)" />
-      <path d="M34,34 Q50,18 66,34 L66,30 Q50,14 34,30 Z" fill="var(--sangue)" />
-      <circle cx="44" cy="40" r="3.5" fill="var(--breu)" />
-      <circle cx="56" cy="40" r="3.5" fill="var(--breu)" />
-      <path d="M46,50 L50,54 L54,50" fill="none" stroke="var(--breu)" strokeWidth="1.5" />
-    </svg>
+      <Reveal>
+        <Image
+          src={foto.src}
+          alt=""
+          width={foto.width}
+          height={foto.height}
+          /* Tem de acompanhar as três larguras do contentor, senão o
+             telemóvel descarrega a versão de ecrã grande para uma caixa de
+             240px. */
+          sizes="(min-width: 1632px) 620px, (min-width: 1024px) 38vw, (min-width: 640px) 300px, 62vw"
+          className="h-auto w-full"
+          /*
+            A sombra vai no filtro e não em `box-shadow`: o `box-shadow`
+            desenha o rectângulo da caixa, e um rectângulo à volta de um
+            recorte mata precisamente a leitura de recorte. O `drop-shadow`
+            segue o alfa da imagem.
+          */
+          style={{ filter: "drop-shadow(0 14px 22px rgb(0 0 0 / 0.55))" }}
+        />
+      </Reveal>
+    </div>
   );
 }

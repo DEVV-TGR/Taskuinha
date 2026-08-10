@@ -74,6 +74,33 @@ export const photos = {
     luz: "dia",
     origem: "casa",
   },
+  /*
+    O mascote recortado, com fundo transparente. É esta que vai para o site
+    — as duas de cima têm a parede, a calçada e a floreira atrás, e servem
+    de galeria, não de autocolante.
+
+    Chegou com 3228×3678 e 8,8 MB, e está aqui reduzida a 1200. A maior
+    caixa em que aparece são 620px, que num ecrã a 3× pede 1860px — mas a
+    diferença acima de 1200 já não se vê num recorte fotográfico a esta
+    escala, e eram megabytes de repositório para sempre.
+
+    `alt: ""` porque é decoração: o contentor em `Esqueleto.tsx` é
+    `aria-hidden`, e a estátua já está descrita na `esqueleto.jpg`, que é a
+    mesma peça fotografada com contexto.
+
+    `luz: "dia"` mas **não leva a gradação nocturna**. As duas camadas
+    (`--breu` multiply + `--lanterna` overlay) existem para assentar
+    fotografias que estão *dentro* da página; esta está colada *por cima*
+    dela, e escurecê-la punha-a a parecer que estava por trás.
+  */
+  esqueletoRecorte: {
+    src: "/images/esqueleto-grande.png",
+    alt: "",
+    width: 1200,
+    height: 1367,
+    luz: "dia",
+    origem: "casa",
+  },
 
   /* ------------------------------------------------------------------- casa */
 

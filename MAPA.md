@@ -49,7 +49,9 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cores, tipos, classes utilitárias | `app/globals.css` |
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
-| Aranha, barris, bandeirinhas, rede | `components/decor/` |
+| Aranha, bandeirinhas, rede, lanternas | `components/decor/` |
+| O mascote — tamanho, sítio, altura do assento | `components/decor/Esqueleto.tsx`, montado em `Casa.tsx` |
+| Onde vive o texto do Hero (topo ou fundo, por tamanho de ecrã) | `components/Hero.tsx` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
@@ -96,12 +98,17 @@ a nenhuma página (isso é das Fases 5–9, ao mesmo tempo que cada secção tro
 de pele).
 `Tralha` (orquestrador, o único `fixed`; os restantes são `absolute` e
 assumem-no como ancestral) · `Aranha` · `Rede` · `Bandeirinhas` ·
-`Barril` · `Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
+`Lanterna` · `Relampago` · `Mar` · `Esqueleto` · `BandeiraNegra` ·
 `Pergaminho` · `Tabua`, mais `usarVisibilidade.ts` (hook partilhado, não é um
 dos 12 — pausa animações contínuas com a aba em segundo plano).
 
 > `Sardanisca` foi apagada na ronda de afinações com o cliente. A casa real
 > tem-nas; o desenho no site não convenceu.
+>
+> `Barril` também foi apagado. Havia uma fila de seis pendurados no Hero a
+> soletrar P·I·R·A·T·A — primeiro em SVG, depois com a fotografia do barril
+> real. O cliente não gostou de nenhuma das versões, e nada ficou no lugar:
+> a fotografia da fachada, que está por trás, já tem os barris reais dela.
 >
 > Houve uma ronda em que apareceram um `Caveira.tsx` partilhado, um
 > `SeloDeSeccao` nas juntas e um `SeloDeLacre` na ementa. **Foram todos

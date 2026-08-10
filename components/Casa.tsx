@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Tabua } from "@/components/decor/Tabua";
 import { Lanterna } from "@/components/decor/Lanterna";
+import { Esqueleto } from "@/components/decor/Esqueleto";
 import { photos } from "@/lib/images";
 
 export function Casa() {
@@ -10,6 +11,22 @@ export function Casa() {
       id="a-casa"
       className="relative mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32"
     >
+      {/*
+        O mascote sentado na junta com o Hero, a subir para dentro dele.
+
+        Está montado AQUI e não no `Hero.tsx` por uma razão dura: o Hero é
+        `overflow-hidden`, e lá dentro as pernas dele eram cortadas. Como
+        filho da `Casa` — que é `relative` e não corta nada — sobe para
+        cima da fotografia da fachada sem ser recortado, porque o
+        `overflow-hidden` do Hero só se aplica aos descendentes do Hero.
+
+        Sem `z-index`: o `HeroMedia` é `absolute` sem camada declarada, e a
+        `Casa` vem depois do `Hero` no DOM, por isso este já pinta por cima
+        da fotografia. Fica por baixo dos barris (z-20) e do texto (z-30)
+        do Hero, que estão longe dele.
+      */}
+      <Esqueleto className="top-0 right-5 sm:right-8" />
+
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
         <Reveal className="lg:col-span-5 lg:pt-10">
           <Tabua semente={2} className="p-6 sm:p-8">
