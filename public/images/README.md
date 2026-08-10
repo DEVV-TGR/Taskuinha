@@ -1,6 +1,6 @@
 # Fotografias
 
-Trinta e três ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
+Trinta e quatro ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
 do Facebook. O registo em código, com texto alternativo e dimensões, é o
 `lib/images.ts`; este ficheiro guarda a proveniência.
 
@@ -80,7 +80,7 @@ Cinco são pratos servidos à mesa. Dois são produto acabado de chegar.
 > `petisco-percebes.jpg` fosse uma — é uma navalheira pequena, ao lado de um
 > prato de percebes. A escolha dos seis destaques tem de contar com isto.
 
-## Ilustrações de fora (8)
+## Ilustrações de fora (9)
 
 Não são da casa. São imagens externas usadas como decoração, e é por isso que
 `lib/images.ts` marca cada fotografia com `origem`.
@@ -97,6 +97,7 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | **`tableta-escura.webp`** | 1800×1800 | **A tabuleta do "A casa".** Tábua, ferragens e correntes na mesma imagem, recortadas. |
 | **`porta-esquerda.png`** | 960×1080 | **A folha esquerda do portão.** Tapa meio ecrã à chegada ao site e nas trocas de página. |
 | **`porta-diretia.png`** | 960×1080 | **A folha direita.** A mesma porta espelhada. O nome tem gralha e ficou como chegou. |
+| **`rolo-ementa.webp`** | 1600×1800 | **O rolo da ementa.** Vara, ferragens, caracóis e papel rasgado na mesma imagem, recortados. |
 
 > **As duas portas são um par, e a ordem não é indiferente.** A ferragem com o
 > aro cai na aresta **interior** de cada folha, por isso encostadas os dois
@@ -124,6 +125,21 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 > Nesta troca foram remedidas as duas, e nenhuma medida mudou — as escuras são
 > os mesmos recortes, só escurecidos. Foi sorte, não regra: a próxima troca
 > volta a precisar da medição.
+
+> **A `rolo-ementa.webp` segue o mesmo caminho da tabuleta**, e pela mesma
+> razão: é consumida por `url()` dentro de um `border-image`, em
+> `components/decor/RoloEmenta.tsx`, e faz o rolo crescer com a ementa toda.
+> Substituiu os seis pergaminhos gerados em SVG que a página tinha.
+>
+> **Tem uma marca de água do banco de imagens** — texto ténue ao longo das duas
+> varas e um logótipo no canto inferior direito. O Gonçalo sabe e mandou avançar
+> assim; quando chegar a versão limpa, é trocar o ficheiro.
+>
+> **Se for trocada:** remedir as cinco medidas do comentário do
+> `RoloEmenta.tsx`. Duas delas — os cortes **633** e **1153** — não se medem a
+> olho: são o par de linhas do ficheiro que melhor casa uma com a outra, porque
+> é nesse ponto que a repetição vertical fecha. Encontrá-lo é varrer os pares
+> possíveis à procura do que minimiza a diferença entre as duas linhas.
 
 ## Fundos de secção
 
@@ -162,19 +178,26 @@ estes ficheiros; voltar a comprimir os originais só acrescentava uma geração 
 perda ao que já é material comprimido, para poupar cerca de 5 MB num
 repositório que os aguenta bem.
 
-**A `tableta-escura.webp` é a excepção, e o motivo é o que confirma a regra.**
-Não passa pelo `next/image`: é consumida por `url()` dentro de um
+**As duas de `border-image` são a excepção, e o motivo é o que confirma a
+regra.** Não passam pelo `next/image`: são consumidas por `url()` dentro de um
 `border-image`, e o CSS não tem optimizador nenhum — o que estiver no ficheiro
-é o que o visitante descarrega. Chegou com 6000×6000 e **30 MB**. Está aqui a
-1800 px em WebP, 345 KB, que é o triplo da maior caixa em que alguma vez
-aparece. (A clara que ela substituiu tinha chegado a 39 MB e ficado em 418 KB,
-pelo mesmo caminho.)
+é o que o visitante descarrega.
 
-O PNG original de 30 MB fica **fora do repositório** — está ignorado no
-`.gitignore` e vive só na máquina do Gonçalo. Se for preciso regerar o WebP:
+A `tableta-escura.webp` chegou com 6000×6000 e **30 MB**. Está aqui a 1800 px
+em WebP, 345 KB, que é o triplo da maior caixa em que alguma vez aparece. (A
+clara que ela substituiu tinha chegado a 39 MB e ficado em 418 KB, pelo mesmo
+caminho.) A `rolo-ementa.webp` chegou com 3000×3375 e **12,4 MB**, e está a
+1600 px, 348 KB — o rolo nunca passa dos 1400 px de largura.
+
+Os dois originais ficam **fora do repositório** — estão ignorados no
+`.gitignore` e vivem só na máquina do Gonçalo. Se for preciso regerar os WebP:
 
 ```
 node -e "require('sharp')('public/images/tableta-escura.png')
   .resize(1800,1800,{fit:'fill'}).webp({quality:90})
   .toFile('public/images/tableta-escura.webp')"
+
+node -e "require('sharp')('public/images/pregaminho-ementa.png')
+  .resize(1600,1800,{fit:'fill'}).webp({quality:82})
+  .toFile('public/images/rolo-ementa.webp')"
 ```

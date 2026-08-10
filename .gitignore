@@ -44,6 +44,9 @@ next-env.d.ts
 # O original da tabuleta tem 6000×6000 e 30 MB. O que vai para o site é a
 # tableta-escura.webp a 1800px, gerada dele — ver public/images/README.md.
 /public/images/tableta-escura.png
+# O mesmo com o rolo da ementa: 3000×3375 e 12,4 MB de origem, rolo-ementa.webp
+# a 1600px no site.
+/public/images/pregaminho-ementa.png
 
 # claude code
 # worktrees são cópias de trabalho; skills são symlinks para instalações
