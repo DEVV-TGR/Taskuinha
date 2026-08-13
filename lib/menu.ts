@@ -60,7 +60,13 @@ export const menu: Category[] = [
       },
       {
         name: "Cesto de entradas",
-        description: "Três patês e um queijinho. O pão não está incluído.",
+        /*
+          O pão e as azeitonas pagam-se à parte — as duas coisas, não só o
+          pão. Veio da reunião com o dono, e a descrição anterior só falava
+          do pão. Ambos têm preço próprio nesta mesma secção.
+        */
+        description:
+          "Três patês e um queijinho. O pão e as azeitonas pagam-se à parte.",
         price: 4.9,
       },
       { name: "Tremoços", price: 1.8 },
