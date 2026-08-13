@@ -4,11 +4,12 @@
   Todas as imagens são locais, em /public/images. Não há URLs remotas e o
   next.config.ts já não tem `remotePatterns` — não voltar a acrescentar.
 
-  Vinte e quatro destas fotografias são da casa (fachada, salas, esplanada,
-  pratos, o mar à porta). As outras seis — as três naus e as três caveiras —
-  são ilustrações de fora, usadas como decoração. O campo `origem` guarda essa
-  distinção porque o rodapé precisa dela: o aviso "as fotografias não são da
-  casa" deixou de ser verdade para a esmagadora maioria, mas não para todas.
+  Vinte e sete destas fotografias são da casa (fachada, salas, esplanada,
+  pratos, o mar à porta). As outras nove — as três naus, as três caveiras, o
+  tronco e as duas folhas do portão — são ilustrações de fora, usadas como
+  decoração. O campo `origem` guarda essa distinção porque o rodapé precisa
+  dela: o aviso "as fotografias não são da casa" deixou de ser verdade para a
+  esmagadora maioria, mas não para todas.
 
   O inventário legível, com a proveniência de cada ficheiro, está em
   public/images/README.md.
@@ -323,6 +324,27 @@ export const photos = {
     alt: "Um prato de percebes cozidos e uma navalheira, à mesa da esplanada, com uma caneca de cerveja e a ementa da casa ao lado.",
     width: 1536,
     height: 2048,
+    luz: "dia",
+    origem: "casa",
+  },
+  /*
+    As duas quadradas. Vieram do Gonçalo já a 1400×1400, e os cartões dos
+    destaques cortam-nas a 4/3 com `object-cover` — o prato está centrado nas
+    duas, o corte tira mesa em cima e em baixo.
+  */
+  petiscoNavalheira: {
+    src: "/images/navalheira.jpg",
+    alt: "Uma navalheira cozida inteira, de carapaça vermelha e pinças abertas, num prato de louça sobre a mesa de madeira, com um quebra-nozes de metal pousado atrás.",
+    width: 1400,
+    height: 1399,
+    luz: "dia",
+    origem: "casa",
+  },
+  petiscoBacalhauBras: {
+    src: "/images/bacalhauabras.jpg",
+    alt: "Bacalhau à Brás numa travessa branca: batata palha, lascas de bacalhau, cebola, salsa picada, tiras de pimento vermelho e azeitonas pretas por cima.",
+    width: 1400,
+    height: 1400,
     luz: "dia",
     origem: "casa",
   },

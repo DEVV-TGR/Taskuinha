@@ -250,19 +250,20 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
 
 ## Fotografias
 
-30 ficheiros em `public/images/`, com nomes descritivos — `fachada-noite.jpg`,
+36 ficheiros em `public/images/`, com nomes descritivos — `fachada-noite.jpg`,
 `esqueleto.jpg`, `petisco-ameijoas.jpg`. O inventário completo, com a origem de
 cada uma, está em `public/images/README.md`.
 
-**24 são da casa. 6 são ilustrações de fora** — as três naus e as três caveiras.
-O campo `origem` em `lib/images.ts` guarda a distinção, e o rodapé precisa dela:
-o aviso "as fotografias não são da casa" deixou de ser verdade para a maioria,
-mas não para todas.
+**27 são da casa. 9 são ilustrações de fora** — as três naus, as três caveiras,
+o tronco e as duas folhas do portão. O campo `origem` em `lib/images.ts` guarda
+a distinção, e o rodapé precisa dela: o aviso "as fotografias não são da casa"
+deixou de ser verdade para a maioria, mas não para todas.
 
-**Só há cinco fotografias de pratos servidos** — amêijoas, lapas, lulas,
-sardinhas e percebes. E **não há sapateira nenhuma**: a foto que o plano tomava
-por sapateira tem uma navalheira ao lado de um prato de percebes. Os seis
-destaques têm de contar com isto.
+**Há sete fotografias de pratos servidos** — amêijoas, lapas, lulas, sardinhas,
+percebes, navalheira e bacalhau à Brás. As duas últimas chegaram depois, e são
+elas que puseram os seis destaques da home todos com fotografia real. **Não há
+sapateira nenhuma**: a foto que o plano tomava por sapateira tem uma navalheira
+pequena ao lado de um prato de percebes.
 
 **Tratamento:** as fotos diurnas levam duas camadas de gradação por cima do
 `<Image>` (`bg-breu/45 mix-blend-multiply` + `bg-lanterna/12 mix-blend-overlay`)

@@ -1,13 +1,13 @@
 # Fotografias
 
-Trinta e quatro ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
+Trinta e seis ficheiros. Os nomes descrevem o conteúdo — não voltar aos identificadores
 do Facebook. O registo em código, com texto alternativo e dimensões, é o
 `lib/images.ts`; este ficheiro guarda a proveniência.
 
 Não há imagens remotas. O `next.config.ts` já não tem `remotePatterns` e não
 deve voltar a ter.
 
-## Da casa (25)
+## Da casa (27)
 
 Fotografadas na Taskuinha, vindas do Facebook da casa e de fotografias enviadas
 pelo Gonçalo.
@@ -64,7 +64,7 @@ pelo Gonçalo.
 
 ### Petiscos
 
-Cinco são pratos servidos à mesa. Dois são produto acabado de chegar.
+Sete são pratos servidos à mesa. Dois são produto acabado de chegar.
 
 | Ficheiro | Dim. | O que é mesmo |
 |---|---|---|
@@ -73,12 +73,20 @@ Cinco são pratos servidos à mesa. Dois são produto acabado de chegar.
 | `petisco-lulas.jpg` | 1536×2048 | Lulas **grelhadas** com batata frita. Servido. |
 | `petisco-sardinhas.jpg` | 1536×2048 | Sardinhas assadas sobre **pão de trigo** — não é broa. Servido. |
 | `petisco-percebes.jpg` | 1536×2048 | Percebes cozidos e uma navalheira, com cerveja. Servido. |
+| `navalheira.jpg` | 1400×1399 | Uma navalheira inteira num prato, com o quebra-nozes atrás. Servido. **Nos destaques da home.** |
+| `bacalhauabras.jpg` | 1400×1400 | Bacalhau à Brás numa travessa, com pimento e azeitona. Servido. **Nos destaques da home.** |
 | `percebes-crus.jpg` | 1536×2048 | Percebes crus num alguidar. Produto, não prato. |
 | `lapas-cruas.jpg` | 1536×2048 | Lapas cruas numa tábua. Produto, não prato. |
 
 > **Não há fotografia de sapateira.** O plano do redesenho supunha que
 > `petisco-percebes.jpg` fosse uma — é uma navalheira pequena, ao lado de um
 > prato de percebes. A escolha dos seis destaques tem de contar com isto.
+>
+> Navalheira, essa, passou a haver: a `navalheira.jpg` é uma inteira, num
+> prato só dela, e é a que está na home. Sapateira continua a não haver.
+
+As duas últimas vieram do Gonçalo já quadradas, a 1400×1400, e não a 3:4 como
+o resto da pasta. Os cartões dos destaques cortam-nas a 4/3 com `object-cover`.
 
 ## Ilustrações de fora (9)
 

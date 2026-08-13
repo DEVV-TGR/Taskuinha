@@ -69,70 +69,40 @@ export function Petiscos() {
               <div
                 className={`tabua flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border-4 border-[var(--madeira-borda)] shadow-[0_10px_26px_rgb(0_0_0/0.45)] transition-transform duration-300 ease-out group-hover:rotate-0 ${tilts[i % tilts.length]}`}
               >
-                {dish.photo ? (
-                  <>
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image
-                        src={dish.photo.src}
-                        alt={dish.photo.alt}
-                        fill
-                        /* Tem de acompanhar as células novas: no telemóvel a
-                           caixa são ~170px, e o `100vw` de antes mandava para
-                           lá a versão de ecrã grande. */
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 30vw"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                      />
-                    </div>
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={dish.photo.src}
+                    alt={dish.photo.alt}
+                    fill
+                    /* Tem de acompanhar as células novas: no telemóvel a
+                       caixa são ~170px, e o `100vw` de antes mandava para
+                       lá a versão de ecrã grande. */
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 30vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  />
+                </div>
 
-                    {/*
-                      O nome e o preço descem um degrau no telemóvel: numa
-                      célula de duas colunas, "Sardinhas no pão" ao tamanho
-                      antigo partia em três linhas.
-                    */}
-                    <div className="flex flex-col gap-1.5 bg-breu-raso p-3 sm:gap-2 sm:p-5">
-                      <div className="flex items-baseline justify-between gap-2 sm:gap-4">
-                        <h3 className="display text-sm leading-none text-osso sm:text-base">
-                          {dish.name}
-                        </h3>
-                        <span
-                          className="shrink-0 text-xs text-lanterna sm:text-sm"
-                          style={{ fontFamily: "var(--font-maquina)" }}
-                        >
-                          {formatPrice(dish.price)}
-                        </span>
-                      </div>
-                      <p className="text-xs leading-relaxed text-osso-fraco sm:text-sm">
-                        {dish.description}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  /*
-                    Chegou o dia para que este ramo existia. Com a ementa
-                    verdadeira as sardinhas saíram (o livro tem-nas sem
-                    preço) e entraram a Francesinha e o Bacalhau à Brás, que
-                    são os dois pratos não-marisco mais citados nas
-                    avaliações e para os quais não há fotografia na pasta.
-                    As fotografias têm de vir do dono; até virem, estas duas
-                    células desenham-se só com nome, descrição e preço.
-                  */
-                  <div className="flex flex-1 flex-col justify-between gap-6 bg-breu-raso p-3 sm:p-5">
-                    <div>
-                      <h3 className="display text-sm leading-none text-osso sm:text-base">
-                        {dish.name}
-                      </h3>
-                      <p className="mt-2 text-xs leading-relaxed text-osso-fraco sm:text-sm">
-                        {dish.description}
-                      </p>
-                    </div>
+                {/*
+                  O nome e o preço descem um degrau no telemóvel: numa
+                  célula de duas colunas, "Sardinhas no pão" ao tamanho
+                  antigo partia em três linhas.
+                */}
+                <div className="flex flex-col gap-1.5 bg-breu-raso p-3 sm:gap-2 sm:p-5">
+                  <div className="flex items-baseline justify-between gap-2 sm:gap-4">
+                    <h3 className="display text-sm leading-none text-osso sm:text-base">
+                      {dish.name}
+                    </h3>
                     <span
-                      className="text-xl leading-none text-lanterna sm:text-2xl"
+                      className="shrink-0 text-xs text-lanterna sm:text-sm"
                       style={{ fontFamily: "var(--font-maquina)" }}
                     >
                       {formatPrice(dish.price)}
                     </span>
                   </div>
-                )}
+                  <p className="text-xs leading-relaxed text-osso-fraco sm:text-sm">
+                    {dish.description}
+                  </p>
+                </div>
               </div>
             </Reveal>
           ))}

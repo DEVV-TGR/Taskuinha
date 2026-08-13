@@ -381,7 +381,7 @@ export type Highlight = {
   name: string;
   description: string;
   price: number;
-  photo?: Photo;
+  photo: Photo;
 };
 
 /*
@@ -390,11 +390,15 @@ export type Highlight = {
   Eram cinco, escolhidos por serem os cinco com fotografia real servida à
   mesa. As sardinhas saíram: existem no livro como "Sardinhas c/ salada",
   mas sem preço, e o que não tem preço não vai para o site. No lugar delas
-  entraram dois, a pedido do Gonçalo: a Francesinha e o Bacalhau à Brás —
-  os pratos que não são marisco mais citados nas avaliações, que é o
-  critério que a secção anuncia. Nenhum dos dois tem fotografia, e por
-  isso caem no ramo sem `photo` do `Petiscos.tsx`, que já existia à espera
-  deste dia.
+  entraram a Francesinha e o Bacalhau à Brás, sem fotografia — e o
+  `Petiscos.tsx` ganhou um ramo que desenhava o cartão só com nome,
+  descrição e preço.
+
+  O Gonçalo mandou depois as duas fotografias que faltavam, a navalheira e
+  o bacalhau à Brás, e com elas a troca: fora a Francesinha, dentro a
+  navalheira. Os seis voltam a ser o que a secção anuncia — pratos com
+  fotografia real da casa — e o ramo sem foto foi apagado, que é o que o
+  `photo` obrigatório aqui em cima garante.
 
   Seis fecham a grelha de três colunas em duas linhas cheias, sem a folga
   que a versão de cinco deixava em baixo à direita.
@@ -427,14 +431,16 @@ export const highlights: Highlight[] = [
     photo: photos.petiscoPercebes,
   },
   {
-    name: "Francesinha",
-    description: "Pão, bife, salsicha, chouriço, fiambre e queijo. Há meia.",
-    price: 12.4,
+    name: "Navalheira",
+    description: "Cozida e servida inteira, com o quebra-nozes ao lado.",
+    price: 4.9,
+    photo: photos.petiscoNavalheira,
   },
   {
     name: "Bacalhau à Brás",
     description: "Lascas desfiadas, batata palha e azeitona preta.",
     price: 12.2,
+    photo: photos.petiscoBacalhauBras,
   },
 ];
 
