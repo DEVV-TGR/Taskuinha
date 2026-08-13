@@ -110,7 +110,15 @@ export function Nav({
 
       const el = gavetaRef.current;
       if (!el) return;
-      const focaveis = Array.from(el.querySelectorAll<HTMLElement>("a[href]"));
+      /*
+        Botões também, e não só `a[href]`: o selector de língua abre-se
+        num `<button>`. Com a consulta antiga, o Tab saltava da última
+        ligação directamente para a primeira e o botão das línguas ficava
+        inalcançável por teclado dentro da gaveta.
+      */
+      const focaveis = Array.from(
+        el.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+      );
       if (focaveis.length === 0) return;
       const primeiro = focaveis[0];
       const ultimo = focaveis[focaveis.length - 1];
@@ -222,13 +230,19 @@ export function Nav({
             </ul>
 
             {/*
-              As línguas fecham a gaveta, separadas por uma linha. Ficam
-              dentro dela de propósito: as ligações do selector são
-              `a[href]`, por isso entram na armadilha de foco que o
-              `useEffect` monta e o Tab continua a circular só aqui dentro.
+              As línguas fecham a gaveta, separadas por uma linha.
+
+              `flutuante={false}`: a gaveta é `overflow-hidden` por causa da
+              animação de altura, e a lista do selector, se fosse absoluta,
+              saía cortada na aresta de baixo. No fluxo, a gaveta cresce
+              com ela.
             */}
             <div className="border-t border-linha px-5 py-3">
-              <SelectorLingua lang={lang} texto={texto.linguas} />
+              <SelectorLingua
+                lang={lang}
+                texto={texto.linguas}
+                flutuante={false}
+              />
             </div>
           </motion.div>
         )}
