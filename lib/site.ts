@@ -38,13 +38,13 @@ export const site = {
     { day: "Quinta", label: "10h00 às 23h00", closed: false },
     { day: "Sexta", label: "10h00 às 23h00", closed: false },
     { day: "Sábado", label: "10h00 às 23h00", closed: false },
-    { day: "Domingo", label: "10h00 às 21h00", closed: false },
+    { day: "Domingo", label: "10h00 às 20h00", closed: false },
   ],
 
   // Formato schema.org, para o JSON-LD.
   openingHoursSpec: [
     { days: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "10:00", closes: "23:00" },
-    { days: ["Sunday"], opens: "10:00", closes: "21:00" },
+    { days: ["Sunday"], opens: "10:00", closes: "20:00" },
   ],
 
   links: {

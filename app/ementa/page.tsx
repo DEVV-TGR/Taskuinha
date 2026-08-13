@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
+import { DownloadSimple } from "@phosphor-icons/react/dist/ssr";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
 import { Cta } from "@/components/Cta";
 import { MenuCategoryNav } from "@/components/MenuCategoryNav";
 import { RoloEmenta } from "@/components/decor/RoloEmenta";
-import { menu, formatPrice, PRECOS_SAO_DEMO } from "@/lib/menu";
+import { menu, formatPrice, groupDishes } from "@/lib/menu";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Ementa",
   description:
-    "Petiscos do mar e da terra, sandes, pratos e doces da Taskuinha do Pirata, em Vila Chã.",
+    "Entradas, snacks, sandes, cafetaria, cerveja, vinho e bar da Taskuinha do Pirata, em Vila Chã.",
 };
 
 export default function EmentaPage() {
@@ -30,6 +31,19 @@ export default function EmentaPage() {
             Casa de petiscos, não de pratos de bandeira. O que há hoje depende
             do que o mar deu de manhã.
           </p>
+
+          {/* A ementa da casa, fotografada página a página. Vai em `secondary`
+              de propósito: quem chega aqui já está na ementa, e o botão é
+              para quem a quer levar, não a acção principal da página. */}
+          <Cta
+            href="/ementa-taskuinha.pdf"
+            variant="secondary"
+            download
+            className="mt-8"
+          >
+            <DownloadSimple aria-hidden="true" weight="bold" className="h-4 w-4" />
+            Descarregar a ementa
+          </Cta>
         </header>
 
         {/* Sem traves nesta página. Chegaram a estar cá duas — uma a fechar o
@@ -67,42 +81,72 @@ export default function EmentaPage() {
                         >
                           {category.title}
                         </h2>
-                        <p className="mt-4 max-w-xs text-sm leading-relaxed opacity-75">
-                          {category.intro}
-                        </p>
+                        {/* Opcional desde que a ementa passou a ser a real:
+                            as famílias do papel não têm texto de abertura. */}
+                        {category.intro ? (
+                          <p className="mt-4 max-w-xs text-sm leading-relaxed opacity-75">
+                            {category.intro}
+                          </p>
+                        ) : null}
                       </div>
 
-                      <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2 lg:col-span-8">
-                        {category.dishes.map((dish) => (
-                          <article key={dish.name}>
-                            <div className="flex items-baseline justify-between gap-5">
+                      {/* Os subtítulos que o papel tem dentro de uma família —
+                          hoje só o vinho os usa, para separar as regiões. Cada
+                          bloco leva a sua grelha: uma grelha só, com os
+                          subtítulos pelo meio, partia as colunas ao meio. */}
+                      <div className="space-y-9 lg:col-span-8">
+                        {groupDishes(category.dishes).map((bloco, blocoIndex) => (
+                          <div key={bloco.group ?? `bloco-${blocoIndex}`}>
+                            {bloco.group ? (
                               <h3
-                                className="text-lg leading-tight"
-                                style={{ fontFamily: "var(--font-pergaminho)" }}
-                              >
-                                {dish.name}
-                                {dish.note ? (
-                                  <span
-                                    className="ml-2 align-middle text-[0.65rem] uppercase tracking-[0.16em] text-[var(--pergaminho-queimado)]"
-                                    style={{ fontFamily: "var(--font-maquina)" }}
-                                  >
-                                    {dish.note}
-                                  </span>
-                                ) : null}
-                              </h3>
-                              <span
-                                className="shrink-0 text-sm"
+                                className="mb-5 text-[0.7rem] uppercase tracking-[0.18em] text-[var(--pergaminho-queimado)]"
                                 style={{ fontFamily: "var(--font-maquina)" }}
                               >
-                                {formatPrice(dish.price)}
-                              </span>
-                            </div>
-                            {dish.description ? (
-                              <p className="mt-1.5 max-w-[42ch] text-[0.8rem] leading-relaxed opacity-80">
-                                {dish.description}
-                              </p>
+                                {bloco.group}
+                              </h3>
                             ) : null}
-                          </article>
+
+                            <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2">
+                              {bloco.dishes.map((dish) => {
+                                /* Sob um subtítulo o prato desce um nível, para
+                                   os leitores de ecrã não verem dois h3 a
+                                   dizer coisas de nível diferente. */
+                                const Nome = bloco.group ? "h4" : "h3";
+
+                                return (
+                                  <article key={dish.name}>
+                                    <div className="flex items-baseline justify-between gap-5">
+                                      <Nome
+                                        className="text-lg leading-tight"
+                                        style={{ fontFamily: "var(--font-pergaminho)" }}
+                                      >
+                                        {dish.name}
+                                        {dish.note ? (
+                                          <span
+                                            className="ml-2 align-middle text-[0.65rem] uppercase tracking-[0.16em] text-[var(--pergaminho-queimado)]"
+                                            style={{ fontFamily: "var(--font-maquina)" }}
+                                          >
+                                            {dish.note}
+                                          </span>
+                                        ) : null}
+                                      </Nome>
+                                      <span
+                                        className="shrink-0 text-sm"
+                                        style={{ fontFamily: "var(--font-maquina)" }}
+                                      >
+                                        {formatPrice(dish.price)}
+                                      </span>
+                                    </div>
+                                    {dish.description ? (
+                                      <p className="mt-1.5 max-w-[42ch] text-[0.8rem] leading-relaxed opacity-80">
+                                        {dish.description}
+                                      </p>
+                                    ) : null}
+                                  </article>
+                                );
+                              })}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -115,17 +159,13 @@ export default function EmentaPage() {
 
         <section className="border-t border-linha bg-breu-fundo py-16 sm:py-20">
           <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-5 sm:px-8 lg:flex-row lg:items-end lg:justify-between">
+            {/* Saiu daqui o aviso de que os preços eram de demonstração: são
+                os da ementa da casa desde que o Gonçalo a trouxe da reunião. */}
             <div className="max-w-lg space-y-3 text-sm leading-relaxed text-osso-fraco">
               <p>
                 Se tiveres alergias ou intolerâncias, diz à mesa antes de pedir.
                 Quase tudo passa por marisco.
               </p>
-              {PRECOS_SAO_DEMO ? (
-                <p>
-                  Os preços desta página são exemplos de demonstração e ainda
-                  não são os da casa.
-                </p>
-              ) : null}
             </div>
 
             <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>

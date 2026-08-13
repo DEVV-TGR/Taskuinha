@@ -28,23 +28,31 @@ type Variant = keyof typeof variants;
 export function Cta({
   href,
   variant = "primary",
+  download = false,
   children,
   className = "",
   ...rest
 }: {
   href: string;
   variant?: Variant;
+  /**
+   * Para ficheiros servidos de `public/`. Sai do `Link` do Next — que só
+   * sabe navegar entre rotas — e passa a `<a download>`, que é o que faz o
+   * browser guardar o ficheiro em vez de o abrir por cima do site.
+   */
+  download?: boolean;
   children: ReactNode;
   className?: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const classes = `${base} ${variants[variant]} ${className}`;
   const pregos = variant === "primary" ? <Pregos /> : null;
 
-  if (href.startsWith("tel:") || href.startsWith("http")) {
+  if (href.startsWith("tel:") || href.startsWith("http") || download) {
     return (
       <a
         href={href}
         className={classes}
+        {...(download ? { download: true } : {})}
         {...(href.startsWith("http")
           ? { target: "_blank", rel: "noreferrer" }
           : {})}
