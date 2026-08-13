@@ -110,15 +110,7 @@ export function Nav({
 
       const el = gavetaRef.current;
       if (!el) return;
-      /*
-        Botões também, e não só `a[href]`: o selector de língua abre-se
-        num `<button>`. Com a consulta antiga, o Tab saltava da última
-        ligação directamente para a primeira e o botão das línguas ficava
-        inalcançável por teclado dentro da gaveta.
-      */
-      const focaveis = Array.from(
-        el.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
-      );
+      const focaveis = Array.from(el.querySelectorAll<HTMLElement>("a[href]"));
       if (focaveis.length === 0) return;
       const primeiro = focaveis[0];
       const ultimo = focaveis[focaveis.length - 1];
@@ -176,11 +168,13 @@ export function Nav({
         </ul>
 
         <div className="flex items-center gap-3">
-          {/* Só a partir de md: em telemóvel vai dentro da gaveta, que é
-              onde há largura para as quatro sem apertar o CTA. */}
+          {/* Só a partir de md, e em menu: aqui a barra não tem largura
+              para quatro bandeiras seguidas. Em telemóvel o selector vai
+              dentro da gaveta, em fila. */}
           <SelectorLingua
             lang={lang}
             texto={texto.linguas}
+            variante="menu"
             className="hidden md:block"
           />
 
@@ -230,18 +224,17 @@ export function Nav({
             </ul>
 
             {/*
-              As línguas fecham a gaveta, separadas por uma linha.
-
-              `flutuante={false}`: a gaveta é `overflow-hidden` por causa da
-              animação de altura, e a lista do selector, se fosse absoluta,
-              saía cortada na aresta de baixo. No fluxo, a gaveta cresce
-              com ela.
+              As línguas fecham a gaveta, separadas por uma linha, e aqui
+              ficam as quatro seguidas: há largura para elas, e um menu
+              dentro de um menu era um clique a mais para o mesmo sítio.
+              São ligações, por isso entram na armadilha de foco montada no
+              `useEffect` e o Tab continua a circular só dentro da gaveta.
             */}
             <div className="border-t border-linha px-5 py-3">
               <SelectorLingua
                 lang={lang}
                 texto={texto.linguas}
-                flutuante={false}
+                variante="fila"
               />
             </div>
           </motion.div>

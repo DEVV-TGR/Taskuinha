@@ -5,19 +5,19 @@ import { usePathname } from "next/navigation";
 import { locales, linguas, trocarLingua, type Locale } from "@/lib/i18n";
 
 /*
-  Uma língua à vista — a que está em uso. As outras três aparecem ao clicar.
+  O selector de língua, em duas formas — e a forma depende do sítio, não
+  do tamanho do ecrã por si só.
 
-  O botão mostra a bandeira e as duas letras da língua actual; a lista que
-  abre traz só as **outras**, porque a que está em uso já é o próprio
-  botão. É a leitura directa do pedido do Gonçalo, e é também o que poupa
-  largura numa barra que já tem wordmark, quatro placas, o CTA e a argola.
+  **`menu`, na barra do computador.** À vista fica só a língua em uso; as
+  outras três aparecem ao clicar. A barra já tem wordmark, quatro placas,
+  o CTA e a argola, e quatro bandeiras seguidas a mais não cabiam sem
+  apertar o resto.
 
-  ## Duas montagens, um comportamento
-
-  Na barra a lista é `absolute` e cai por cima do que está por baixo. Na
-  gaveta do telemóvel não pode ser: a gaveta é `overflow-hidden` por causa
-  da animação de altura, e uma lista absoluta ficava cortada. Aí a lista
-  entra no fluxo (`flutuante={false}`) e a gaveta cresce com ela.
+  **`fila`, na gaveta do telemóvel.** As quatro seguidas, sem nada para
+  abrir. Na gaveta há largura de sobra e o problema é o inverso: um menu
+  dentro de um menu é um clique a mais para chegar ao mesmo sítio, e a
+  gaveta é `overflow-hidden` por causa da animação de altura, o que corta
+  qualquer lista que caia por cima.
 
   ## O que se lê e o que se ouve
 
@@ -30,17 +30,82 @@ import { locales, linguas, trocarLingua, type Locale } from "@/lib/i18n";
   de ecrã dizer "Français" com sotaque francês em vez de o soletrar à
   portuguesa.
 */
+type Texto = { escolher: string; actual: string };
+
 export function SelectorLingua({
   lang,
   texto,
-  flutuante = true,
+  variante = "menu",
   className = "",
 }: {
   lang: Locale;
-  texto: { escolher: string; actual: string };
-  /** `false` na gaveta do telemóvel, que é `overflow-hidden`. */
-  flutuante?: boolean;
+  texto: Texto;
+  variante?: "menu" | "fila";
   className?: string;
+}) {
+  return variante === "fila" ? (
+    <Fila lang={lang} texto={texto} className={className} />
+  ) : (
+    <Menu lang={lang} texto={texto} className={className} />
+  );
+}
+
+/* As quatro seguidas, a que está em uso marcada. */
+function Fila({
+  lang,
+  texto,
+  className,
+}: {
+  lang: Locale;
+  texto: Texto;
+  className: string;
+}) {
+  const pathname = usePathname();
+
+  return (
+    <nav aria-label={texto.escolher} className={className}>
+      <ul className="flex items-center gap-0.5">
+        {locales.map((codigo) => {
+          const lingua = linguas[codigo];
+          const actual = codigo === lang;
+
+          return (
+            <li key={codigo}>
+              <a
+                href={trocarLingua(pathname, codigo)}
+                hrefLang={lingua.htmlLang}
+                lang={lingua.htmlLang}
+                aria-current={actual ? "true" : undefined}
+                className={`flex items-center gap-1 rounded-[var(--radius-card)] px-2 py-1.5 text-[0.7rem] tracking-[0.08em] transition-colors ${
+                  actual ? "text-lanterna" : "text-osso-fraco hover:text-osso"
+                }`}
+                style={{ fontFamily: "var(--font-maquina)" }}
+              >
+                <span aria-hidden className="text-[0.95rem] leading-none">
+                  {lingua.bandeira}
+                </span>
+                <span aria-hidden>{lingua.etiqueta}</span>
+                <span className="sr-only">
+                  {actual ? `${lingua.nome} — ${texto.actual}` : lingua.nome}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+/* Só a língua em uso; as outras três abrem por baixo. */
+function Menu({
+  lang,
+  texto,
+  className,
+}: {
+  lang: Locale;
+  texto: Texto;
+  className: string;
 }) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
@@ -51,10 +116,9 @@ export function SelectorLingua({
   const outras = locales.filter((codigo) => codigo !== lang);
 
   /*
-    Fecha com Escape e ao clicar fora. O `pointerdown` e não o `click`:
-    um clique numa das ligações do próprio menu não deve fechá-lo antes de
-    a navegação arrancar, e o `contains` trata disso — mas com `click` o
-    alvo já pode ter saído do DOM quando o evento chega.
+    Fecha com Escape e ao apontar para fora. `pointerdown` e não `click`:
+    com `click`, o alvo pode já ter saído do DOM quando o evento chega, e
+    o `contains` deixava de saber dizer se o clique foi cá dentro.
   */
   useEffect(() => {
     if (!aberto) return;
@@ -103,11 +167,7 @@ export function SelectorLingua({
       {aberto ? (
         <ul
           id="linguas-lista"
-          className={
-            flutuante
-              ? "absolute right-0 top-full z-50 mt-1.5 min-w-max overflow-hidden rounded-[var(--radius-card)] border border-linha bg-breu/98 shadow-[0_10px_26px_rgb(0_0_0/0.55)] backdrop-blur-md"
-              : "mt-2 overflow-hidden rounded-[var(--radius-card)] border border-linha bg-breu/60"
-          }
+          className="absolute right-0 top-full z-50 mt-1.5 min-w-max overflow-hidden rounded-[var(--radius-card)] border border-linha bg-breu/98 shadow-[0_10px_26px_rgb(0_0_0/0.55)] backdrop-blur-md"
         >
           {outras.map((codigo) => {
             const lingua = linguas[codigo];
