@@ -1,7 +1,6 @@
 import { InstagramLogo } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
 import { site, fullAddress } from "@/lib/site";
-import { PRECOS_SAO_DEMO } from "@/lib/menu";
 
 const nav = [
   { label: "A casa", href: "/#a-casa" },
@@ -78,12 +77,6 @@ export function Footer() {
           </div>
         </div>
 
-        {PRECOS_SAO_DEMO ? (
-          <p className="mt-16 border-t border-linha pt-6 text-xs leading-relaxed text-osso-fraco">
-            Os preços da ementa são exemplos de demonstração, à espera dos
-            verdadeiros.
-          </p>
-        ) : null}
       </div>
     </footer>
   );

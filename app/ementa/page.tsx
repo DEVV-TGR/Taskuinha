@@ -5,13 +5,13 @@ import { Reveal } from "@/components/Reveal";
 import { Cta } from "@/components/Cta";
 import { MenuCategoryNav } from "@/components/MenuCategoryNav";
 import { RoloEmenta } from "@/components/decor/RoloEmenta";
-import { menu, formatPrice, PRECOS_SAO_DEMO } from "@/lib/menu";
+import { menu, formatPrice } from "@/lib/menu";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Ementa",
   description:
-    "Petiscos do mar e da terra, sandes, pratos e doces da Taskuinha do Pirata, em Vila Chã.",
+    "Entradas, snacks, sandes e tostas da Taskuinha do Pirata, em Vila Chã, com a carta de cervejas, vinhos e bar.",
 };
 
 export default function EmentaPage() {
@@ -120,12 +120,6 @@ export default function EmentaPage() {
                 Se tiveres alergias ou intolerâncias, diz à mesa antes de pedir.
                 Quase tudo passa por marisco.
               </p>
-              {PRECOS_SAO_DEMO ? (
-                <p>
-                  Os preços desta página são exemplos de demonstração e ainda
-                  não são os da casa.
-                </p>
-              ) : null}
             </div>
 
             <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>

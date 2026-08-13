@@ -57,9 +57,11 @@ export function Petiscos() {
           ocupava 4 colunas por 2 linhas — e saiu a pedido do Gonçalo, que
           queria as fotografias mais pequenas.
 
-          Cinco pratos numa grelha de três deixam uma folga em baixo à direita.
-          Também foi decisão dele: a alternativa era pôr lá o "Ver a ementa",
-          que fica solto por baixo da grelha como sempre esteve.
+          Eram cinco, e cinco numa grelha de três deixavam uma folga em baixo à
+          direita — decisão dele, contra a alternativa de encher o buraco com o
+          "Ver a ementa", que continua solto por baixo da grelha como sempre
+          esteve. Com a ementa verdadeira passaram a seis, e as duas linhas
+          fecham cheias.
         */}
         <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5">
           {highlights.map((dish, i) => (
@@ -106,11 +108,13 @@ export function Petiscos() {
                   </>
                 ) : (
                   /*
-                    Nenhum dos cinco destaques cai aqui hoje — o Bacalhau à
-                    Brás, que era o único sem fotografia, saiu com o bento.
-                    O ramo fica porque `photo` continua opcional no tipo
-                    `Highlight`: no dia em que entre um prato sem foto, a
-                    célula tem por onde se desenhar em vez de rebentar.
+                    Chegou o dia para que este ramo existia. Com a ementa
+                    verdadeira as sardinhas saíram (o livro tem-nas sem
+                    preço) e entraram a Francesinha e o Bacalhau à Brás, que
+                    são os dois pratos não-marisco mais citados nas
+                    avaliações e para os quais não há fotografia na pasta.
+                    As fotografias têm de vir do dono; até virem, estas duas
+                    células desenham-se só com nome, descrição e preço.
                   */
                   <div className="flex flex-1 flex-col justify-between gap-6 bg-breu-raso p-3 sm:p-5">
                     <div>
