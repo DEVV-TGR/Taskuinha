@@ -43,10 +43,19 @@ export type Category = {
   id: string;
   title: string;
   intro: string;
-  dishes: Dish[];
+  dishes: readonly Dish[];
 };
 
-export const menu: Category[] = [
+/*
+  `as const satisfies` e não `: Category[]`.
+
+  A anotação alargava todos os literais para `string`, e com isso o
+  `lib/menu-linguas.ts` ficava sem forma nenhuma para verificar: um prato
+  cujo nome mudasse aqui deixava a tradução pendurada, apontada a uma chave
+  que já não existe, e o build passava na mesma. O `satisfies` guarda os
+  literais e continua a garantir que a estrutura é a de `Category`.
+*/
+export const menu = [
   {
     id: "entradas",
     title: "Entradas",
@@ -375,7 +384,7 @@ export const menu: Category[] = [
       { name: "Shot de whiskey velho", price: 3.0 },
     ],
   },
-];
+] as const satisfies readonly Category[];
 
 export type Highlight = {
   name: string;
@@ -403,7 +412,7 @@ export type Highlight = {
   Seis fecham a grelha de três colunas em duas linhas cheias, sem a folga
   que a versão de cinco deixava em baixo à direita.
 */
-export const highlights: Highlight[] = [
+export const highlights = [
   {
     name: "Amêijoa à pirata",
     description:
@@ -442,7 +451,7 @@ export const highlights: Highlight[] = [
     price: 12.2,
     photo: photos.petiscoBacalhauBras,
   },
-];
+] as const satisfies readonly Highlight[];
 
 export function formatPrice(value: number) {
   return `${value.toFixed(2).replace(".", ",")} €`;

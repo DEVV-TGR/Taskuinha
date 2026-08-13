@@ -5,13 +5,17 @@ import { Mapa } from "@/components/Mapa";
 import { Pergaminho } from "@/components/decor/Pergaminho";
 import { Tabua } from "@/components/decor/Tabua";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
-import { photos } from "@/lib/images";
+import { fotosEm } from "@/lib/images-linguas";
 import { site, fullAddress } from "@/lib/site";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
-export function Encontrar() {
+export async function Encontrar() {
+  const dic = await dicionario();
+  const fotos = fotosEm(await linguaActual());
+
   return (
     <section id="encontrar-nos" className="relative scroll-mt-20 bg-breu">
-      <FundoDeSeccao foto={photos.marPorDoSol} />
+      <FundoDeSeccao foto={fotos.marPorDoSol} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
       <div className="relative mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 sm:py-32">
@@ -26,7 +30,7 @@ export function Encontrar() {
           */}
             <Tabua semente={8} className="p-6 sm:p-8">
               <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-                Encontrar-nos
+                {dic.encontrar.titulo}
               </h2>
 
               <address className="letra-na-madeira mt-8 not-italic">
@@ -61,7 +65,7 @@ export function Encontrar() {
               da fachada — "SEGUNDA — FOLGA" e o resto por baixo. */}
             <Tabua semente={6} className="pendurado mt-12 max-w-sm p-5">
               <h3 className="text-sm font-medium uppercase tracking-wide text-lanterna">
-                Horário
+                {dic.encontrar.horario}
               </h3>
               <dl className="mt-4">
                 {site.hours.map((entry) => (
@@ -79,14 +83,16 @@ export function Encontrar() {
                       {entry.closed ? (
                         <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sangue" />
                       ) : null}
-                      {entry.closed ? `${entry.day} — Folga` : entry.day}
+                      {entry.closed
+                        ? `${dic.dias[entry.day]} — ${dic.encontrar.folga}`
+                        : dic.dias[entry.day]}
                     </dt>
                     {entry.closed ? null : (
                       <dd
                         className="text-sm text-osso-fraco"
                         style={{ fontFamily: "var(--font-maquina)" }}
                       >
-                        {entry.label}
+                        {dic.horarios[entry.label]}
                       </dd>
                     )}
                   </div>
@@ -98,16 +104,15 @@ export function Encontrar() {
               secção e é o aviso mais útil que aqui está. */}
             <Tabua semente={10} className="mt-8 max-w-sm p-5">
               <p className="letra-na-madeira text-sm leading-relaxed text-osso">
-                Ao fim de semana a casa enche. Vale a pena telefonar antes de
-                vir.
+                {dic.encontrar.aviso}
               </p>
             </Tabua>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>
+              <Cta href={`tel:${site.phone.tel}`}>{dic.geral.reservar}</Cta>
               <Cta href={site.links.directions} variant="secondary">
                 <NavigationArrow size={17} weight="bold" aria-hidden />
-                Como chegar
+                {dic.geral.comoChegar}
               </Cta>
             </div>
           </Reveal>
@@ -115,7 +120,7 @@ export function Encontrar() {
           <Reveal index={1}>
             <Pergaminho semente={11} className="h-full">
               <div className="relative">
-                <Mapa />
+                <Mapa titulo={dic.encontrar.mapa} />
                 {/* X a marcar o sítio + bússola — decoração, não faz parte do
                   mapa em si (nunca cima do iframe interactivo). */}
                 <span

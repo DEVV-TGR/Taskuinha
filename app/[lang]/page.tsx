@@ -7,11 +7,21 @@ import { Galeria } from "@/components/Galeria";
 import { Vozes } from "@/components/Vozes";
 import { Encontrar } from "@/components/Encontrar";
 import { Footer } from "@/components/Footer";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
-export default function Home() {
+export default async function Home() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+
   return (
     <>
-      <Nav transparentAtTop />
+      {/* A Nav é de cliente e não alcança o `next/root-params` — daí as
+          três fatias do dicionário virem por prop. */}
+      <Nav
+        transparentAtTop
+        lang={lang}
+        texto={{ nav: dic.nav, geral: dic.geral, linguas: dic.linguas }}
+      />
       {/* tabIndex={-1}: o skip link salta para aqui, e sem isto o
           "salto" é só scroll — o foco do teclado não vem atrás. */}
       <main id="conteudo" tabIndex={-1} className="flex-1 focus:outline-none">

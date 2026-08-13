@@ -1,9 +1,47 @@
 import { ImageResponse } from "next/og";
-import { site, fullAddress } from "@/lib/site";
+import { fullAddress } from "@/lib/site";
+import { isLocale, defaultLocale, type Locale } from "@/lib/i18n";
+import { dicionarioDe } from "@/lib/dicionario";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${site.fullName}, taberna à beira-mar em Vila Chã`;
+
+/*
+  A língua vem do `params`, não do `next/root-params`.
+
+  As imagens de metadata correm como route handlers, e a documentação do
+  `next/root-params` é explícita: os getters não funcionam lá. Aqui o
+  `params` está disponível e resolve o mesmo.
+
+  O `generateImageMetadata` existe por causa do `alt`: como `export const`
+  ele seria uma constante só, igual nas quatro línguas. Devolvido daqui,
+  acompanha a língua do cartão — que é o que um leitor de ecrã anuncia
+  quando o link é partilhado.
+*/
+/*
+  Recuo ao português em vez de `notFound()`.
+
+  Na fase de recolha de dados do build o Next chama estas funções sem os
+  parâmetros da rota preenchidos, e um `notFound()` aí rebenta a compilação
+  inteira — verificado, não hipotético. Um 404 também não teria aqui o
+  sentido que tem numa página: a rota só chega a existir para as quatro
+  línguas que o `generateStaticParams` do layout gera, e o
+  `dynamicParams = false` fecha o resto antes de se chegar cá.
+*/
+function linguaDe(valor: string | undefined): Locale {
+  return valor && isLocale(valor) ? valor : defaultLocale;
+}
+
+export async function generateImageMetadata({
+  params,
+}: {
+  params?: Promise<{ lang: string }>;
+}) {
+  const lang = linguaDe((await params)?.lang);
+  return [
+    { id: "cartao", size, contentType, alt: dicionarioDe(lang).meta.ogAlt },
+  ];
+}
 
 /*
   O `next/font` não chega ao ImageResponse (corre fora do React normal, num
@@ -15,7 +53,13 @@ export const alt = `${site.fullName}, taberna à beira-mar em Vila Chã`;
   usar uma serif do sistema e aceitar a diferença" — é um cartão de
   partilha, não a página.
 */
-export default function OpengraphImage() {
+export default async function OpengraphImage({
+  params,
+}: {
+  params?: Promise<{ lang: string }>;
+}) {
+  const dic = dicionarioDe(linguaDe((await params)?.lang));
+
   return new ImageResponse(
     (
       <div
@@ -74,7 +118,7 @@ export default function OpengraphImage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontSize: 38, color: "#E8DCC4" }}>
-            O mar fica a vinte passos.
+            {dic.hero.titulo}
           </div>
           <div style={{ fontSize: 26, color: "#9A8F7C" }}>{fullAddress()}</div>
         </div>

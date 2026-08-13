@@ -3,8 +3,11 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/Reveal";
 import { Tabua } from "@/components/decor/Tabua";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
-import { photos } from "@/lib/images";
-import { highlights, formatPrice } from "@/lib/menu";
+import { fotosEm } from "@/lib/images-linguas";
+import { formatPrice } from "@/lib/menu";
+import { destaquesEm } from "@/lib/menu-linguas";
+import { caminho } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 /*
   Inclinação individual e determinística — alterna o sentido por índice para
@@ -32,21 +35,25 @@ const tilts = [
   página, e duas divisórias no mesmo sítio — madeira e um fio de 1px — lêem
   como sobra. O `bg-breu` fica: tirou-se o traço, não a mudança de fundo.
 */
-export function Petiscos() {
+export async function Petiscos() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+  const fotos = fotosEm(lang);
+  const highlights = destaquesEm(lang);
+
   return (
     <section id="petiscos" className="relative bg-breu py-24 sm:py-32">
-      <FundoDeSeccao foto={photos.balcaoBandeirinhas} />
+      <FundoDeSeccao foto={fotos.balcaoBandeirinhas} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
       <div className="relative mx-auto w-full max-w-[1400px] scroll-mt-20 px-5 sm:px-8">
         <Reveal className="max-w-2xl">
           <Tabua semente={3} className="p-6 sm:p-8">
             <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-              O que sai mais da cozinha
+              {dic.petiscos.titulo}
             </h2>
             <p className="letra-na-madeira mt-5 text-base leading-relaxed text-osso">
-              Estes são os pratos que mais aparecem nas avaliações de quem cá
-              esteve.
+              {dic.petiscos.frase}
             </p>
           </Tabua>
         </Reveal>
@@ -110,10 +117,10 @@ export function Petiscos() {
 
         <Reveal index={2} className="mt-10">
           <a
-            href="/ementa"
+            href={caminho(lang, "/ementa")}
             className="group inline-flex items-center gap-3 text-base font-medium text-osso transition-colors hover:text-lanterna"
           >
-            <span className="link-underline">Ver a ementa</span>
+            <span className="link-underline">{dic.geral.verEmenta}</span>
             <ArrowRight
               size={18}
               weight="bold"

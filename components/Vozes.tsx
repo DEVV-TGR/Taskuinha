@@ -3,8 +3,10 @@ import { Reveal } from "@/components/Reveal";
 import { Pergaminho } from "@/components/decor/Pergaminho";
 import { Tabua } from "@/components/decor/Tabua";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
-import { photos } from "@/lib/images";
-import { ratings, quotes } from "@/lib/reviews";
+import { fotosEm } from "@/lib/images-linguas";
+import { avaliacoesEm, citacoesEm } from "@/lib/reviews-linguas";
+import { linguas } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 /*
   Os logótipos vêm dos ficheiros oficiais em /public/logos. Aplicados como
@@ -48,22 +50,27 @@ function Estrelas({ score }: { score: string }) {
 */
 const semente = (i: number) => 4 + i * 5;
 
-export function Vozes() {
+export async function Vozes() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+  const fotos = fotosEm(lang);
+  const ratings = avaliacoesEm(lang);
+  const quotes = citacoesEm(lang);
+
   return (
     /* O `border-y border-linha` saiu: as traves passaram a ser a divisória. */
     <section className="relative bg-breu py-24 sm:py-32">
-      <FundoDeSeccao foto={photos.salaEstatuas} />
+      <FundoDeSeccao foto={fotos.salaEstatuas} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
       <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8">
         <Reveal className="max-w-2xl">
           <Tabua semente={7} className="p-6 sm:p-8">
             <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-              O que dizem
+              {dic.vozes.titulo}
             </h2>
             <p className="letra-na-madeira mt-5 text-base leading-relaxed text-osso">
-              Chegam avaliações em várias línguas, o que faz sentido numa casa
-              onde há sempre alguém a caminho de Santiago.
+              {dic.vozes.frase}
             </p>
           </Tabua>
         </Reveal>
@@ -123,10 +130,15 @@ export function Vozes() {
         */}
         <div className="mt-16 grid grid-cols-2 items-stretch gap-4 sm:gap-6">
           {quotes.map((quote, i) => (
-            <Reveal key={quote.text} index={i} as="figure" className="h-full">
+            <Reveal key={quote.id} index={i} as="figure" className="h-full">
               <Pergaminho semente={semente(i)} className="h-full">
                 <blockquote
-                  lang={quote.lang}
+                  /*
+                    A língua da **página**, não a de quem escreveu: o que
+                    está aqui dentro já é a tradução. Quem escreveu está no
+                    `quote.original`, e é o que a nota por baixo declara.
+                  */
+                  lang={linguas[lang].htmlLang}
                   /*
                     O mínimo desceu de 1,1rem para 0,9rem. Em duas colunas de
                     telemóvel a caixa de texto mede ~125px, e a 1,1rem cabiam
@@ -145,6 +157,16 @@ export function Vozes() {
                 </blockquote>
                 <figcaption className="mt-4 text-xs opacity-70 sm:text-sm">
                   {quote.source}
+                  {/*
+                    Só quando a citação não foi escrita na língua em que
+                    está a ser lida. Sem isto punha-se na boca de gente com
+                    nome e data uma frase que não escreveu.
+                  */}
+                  {quote.traduzida ? (
+                    <span className="mt-1 block italic opacity-80">
+                      {dic.vozes.traduzido[quote.original]}
+                    </span>
+                  ) : null}
                 </figcaption>
               </Pergaminho>
             </Reveal>

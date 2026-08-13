@@ -6,10 +6,12 @@ import {
   IM_Fell_English_SC,
 } from "next/font/google";
 import { site } from "@/lib/site";
+import { locales, linguas, caminho, alternativas } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 import { Tralha } from "@/components/decor/Tralha";
 import { Chegada } from "@/components/Chegada";
 import { Travessia } from "@/components/Travessia";
-import "./globals.css";
+import "../globals.css";
 
 /*
   Títulos e wordmark. Wood-type de tabuleta de doca. Só tem peso 400.
@@ -56,38 +58,58 @@ const imfell = IM_Fell_English_SC({
   preload: false,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.fullName} · Taberna à beira-mar em Vila Chã`,
-    template: `%s · ${site.fullName}`,
-  },
-  description: site.description,
-  keywords: [
-    "restaurante Vila Chã",
-    "petiscos Vila do Conde",
-    "marisco à beira-mar",
-    "Taskuinha",
-    "Caminho de Santiago",
-  ],
-  openGraph: {
-    type: "website",
-    locale: "pt_PT",
-    siteName: site.fullName,
-    title: `${site.fullName} · Taberna à beira-mar em Vila Chã`,
-    description: site.description,
-    url: site.url,
-  },
-  robots: { index: true, follow: true },
-};
+/*
+  As quatro línguas, geradas no build.
 
-function StructuredData() {
+  O `dynamicParams = false` fecha a porta ao resto: `/xx` com um xx que não
+  seja língua nossa dá 404 sem chegar a renderizar. Sem ele, o
+  `notFound()` do `linguaActual()` ainda apanhava o caso, mas só depois de
+  o servidor tentar desenhar a página.
+*/
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
+
+export const dynamicParams = false;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+  const titulo = `${site.fullName} · ${dic.meta.titulo}`;
+
+  return {
+    metadataBase: new URL(site.url),
+    title: { default: titulo, template: `%s · ${site.fullName}` },
+    description: dic.meta.descricao,
+    keywords: dic.meta.palavras,
+    alternates: {
+      canonical: caminho(lang, "/"),
+      languages: alternativas("/"),
+    },
+    openGraph: {
+      type: "website",
+      locale: linguas[lang].ogLocale,
+      siteName: site.fullName,
+      title: titulo,
+      description: dic.meta.descricao,
+      url: caminho(lang, "/"),
+    },
+    robots: { index: true, follow: true },
+  };
+}
+
+function StructuredData({ descricao }: { descricao: string }) {
   const data = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
     name: site.fullName,
     alternateName: site.legalName,
-    description: site.description,
+    /*
+      A única linha traduzida do bloco. O resto — morada, coordenadas,
+      horários, `sameAs` — são dados, iguais em qualquer língua, e o
+      `servesCuisine` usa os termos do schema.org, que são fixos.
+    */
+    description: descricao,
     url: site.url,
     telephone: site.phone.tel,
     priceRange: "€€",
@@ -136,10 +158,13 @@ function StructuredData() {
   );
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+
   return (
     <html
-      lang="pt-PT"
+      lang={linguas[lang].htmlLang}
       className={`${rye.variable} ${alegreya.variable} ${elite.variable} ${imfell.variable} h-full antialiased`}
     >
       <head>
@@ -157,7 +182,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{`[data-reveal],[data-pendurado],[data-tralha]{opacity:1!important;transform:none!important;animation:none!important}[data-tralha-movel],[data-chegada]{display:none!important}`}</style>
         </noscript>
-        <StructuredData />
+        <StructuredData descricao={dic.meta.descricao} />
       </head>
       <body className="min-h-full flex flex-col bg-breu text-osso">
         {/*
@@ -168,7 +193,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[70] focus:rounded-[var(--radius-card)] focus:bg-lanterna focus:px-5 focus:py-3 focus:text-sobre-acento focus:font-medium"
         >
-          Saltar para o conteúdo
+          {dic.geral.saltar}
         </a>
         {/*
           O portão à chegada: as folhas vêm fechadas no HTML e o cliente

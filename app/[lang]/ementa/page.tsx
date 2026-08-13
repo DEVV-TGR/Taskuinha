@@ -5,30 +5,57 @@ import { Reveal } from "@/components/Reveal";
 import { Cta } from "@/components/Cta";
 import { MenuCategoryNav } from "@/components/MenuCategoryNav";
 import { RoloEmenta } from "@/components/decor/RoloEmenta";
-import { menu, formatPrice } from "@/lib/menu";
+import { formatPrice } from "@/lib/menu";
+import { ementaEm } from "@/lib/menu-linguas";
 import { site } from "@/lib/site";
+import { caminho, alternativas } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
-export const metadata: Metadata = {
-  title: "Ementa",
-  description:
-    "Entradas, snacks, sandes e tostas da Taskuinha do Pirata, em Vila Chã, com a carta de cervejas, vinhos e bar.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await linguaActual();
+  const dic = await dicionario();
 
-export default function EmentaPage() {
+  return {
+    title: dic.meta.ementaTitulo,
+    description: dic.meta.ementaDescricao,
+    alternates: {
+      canonical: caminho(lang, "/ementa"),
+      languages: alternativas("/ementa"),
+    },
+    /*
+      O `openGraph` do layout não se funde campo a campo com o daqui: sem
+      estas três linhas, o cartão de partilha da ementa saía com o título,
+      a descrição e o endereço da página inicial.
+    */
+    openGraph: {
+      title: `${dic.meta.ementaTitulo} · ${site.fullName}`,
+      description: dic.meta.ementaDescricao,
+      url: caminho(lang, "/ementa"),
+    },
+  };
+}
+
+export default async function EmentaPage() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+  const menu = ementaEm(lang);
+
   return (
     <>
-      <Nav />
+      <Nav
+        lang={lang}
+        texto={{ nav: dic.nav, geral: dic.geral, linguas: dic.linguas }}
+      />
 
       {/* tabIndex={-1}: o skip link salta para aqui, e sem isto o
           "salto" é só scroll — o foco do teclado não vem atrás. */}
       <main id="conteudo" tabIndex={-1} className="flex-1 pt-[var(--altura-nav)] focus:outline-none">
         <header className="mx-auto w-full max-w-[1400px] px-5 pb-10 pt-14 sm:px-8 sm:pb-14 sm:pt-20">
           <h1 className="display text-[clamp(2.5rem,7vw,4.5rem)] leading-[0.9] text-osso">
-            Ementa
+            {dic.ementa.titulo}
           </h1>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-osso-fraco">
-            Casa de petiscos, não de pratos de bandeira. O que há hoje depende
-            do que o mar deu de manhã.
+            {dic.ementa.frase}
           </p>
         </header>
 
@@ -37,6 +64,7 @@ export default function EmentaPage() {
             As divisórias de madeira ficaram só na inicial. */}
         <MenuCategoryNav
           items={menu.map(({ id, title }) => ({ id, title }))}
+          etiqueta={dic.ementa.categorias}
         />
 
         {/*
@@ -116,13 +144,10 @@ export default function EmentaPage() {
         <section className="border-t border-linha bg-breu-fundo py-16 sm:py-20">
           <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-5 sm:px-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-lg space-y-3 text-sm leading-relaxed text-osso-fraco">
-              <p>
-                Se tiveres alergias ou intolerâncias, diz à mesa antes de pedir.
-                Quase tudo passa por marisco.
-              </p>
+              <p>{dic.ementa.alergias}</p>
             </div>
 
-            <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>
+            <Cta href={`tel:${site.phone.tel}`}>{dic.geral.reservar}</Cta>
           </div>
         </section>
       </main>

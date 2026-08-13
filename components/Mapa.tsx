@@ -14,7 +14,9 @@ import { mapEmbedUrl } from "@/lib/site";
   rotação do telemóvel e o redimensionar da janela. A moldura tem altura fixa
   desde o início, por isso não há salto de layout enquanto o mapa não entra.
 */
-export function Mapa() {
+/* `titulo` é o `encontrar.mapa` do dicionário. Vem por prop: componente de
+   cliente não chega ao `next/root-params`. */
+export function Mapa({ titulo }: { titulo: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
 
@@ -54,7 +56,7 @@ export function Mapa() {
           // arranca com a caixa por omissão e pede tiles a menos.
           width={size.w}
           height={size.h}
-          title="Mapa com a localização da Taskuinha na Avenida dos Banhos, Vila Chã"
+          title={titulo}
           src={mapEmbedUrl}
           className="map-frame block h-full w-full border-0"
         />

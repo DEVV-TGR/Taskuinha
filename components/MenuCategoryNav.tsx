@@ -10,7 +10,14 @@ type Item = { id: string; title: string };
   A categoria activa vem de um IntersectionObserver, não de listeners de
   scroll: só corre quando uma secção entra ou sai da faixa observada.
 */
-export function MenuCategoryNav({ items }: { items: Item[] }) {
+export function MenuCategoryNav({
+  items,
+  etiqueta,
+}: {
+  items: Item[];
+  /* `ementa.categorias` do dicionário — componente de cliente, texto por prop. */
+  etiqueta: string;
+}) {
   const [active, setActive] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -37,7 +44,7 @@ export function MenuCategoryNav({ items }: { items: Item[] }) {
 
   return (
     <nav
-      aria-label="Categorias da ementa"
+      aria-label={etiqueta}
       className="sticky top-[var(--altura-nav)] z-30 border-y border-linha bg-breu/92 backdrop-blur-md"
     >
       <ul className="mx-auto flex max-w-[1400px] snap-x gap-2 overflow-x-auto px-5 py-3 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

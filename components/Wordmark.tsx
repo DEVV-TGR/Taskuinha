@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { caminho, type Locale } from "@/lib/i18n";
 
 /*
   O logótipo é a letra da própria casa, não um desenho meu. O letreiro de
@@ -12,14 +13,24 @@ import Link from "next/link";
   porque é o mesmo bloco que serve de referência caso o wordmark volte a
   aparecer fora de um link (hero, por exemplo).
 */
-export function Wordmark({ size = "sm" }: { size?: "sm" | "lg" }) {
+export function Wordmark({
+  size = "sm",
+  lang,
+  etiqueta,
+}: {
+  size?: "sm" | "lg";
+  lang: Locale;
+  /* `nav.inicio` do dicionário. Vem por prop porque a Nav, que monta este
+     componente, é de cliente. */
+  etiqueta: string;
+}) {
   const isLarge = size === "lg";
 
   return (
     <Link
-      href="/"
+      href={caminho(lang, "/")}
       className="group inline-flex flex-col items-start leading-none"
-      aria-label="Taskuinha do Pirata, ir para a página inicial"
+      aria-label={etiqueta}
     >
       <span
         className={`display gravado text-osso transition-colors duration-200 group-hover:text-lanterna ${
