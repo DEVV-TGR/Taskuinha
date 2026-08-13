@@ -160,6 +160,30 @@ export const pt = {
     alergias:
       "Se tiveres alergias ou intolerâncias, diz à mesa antes de pedir. Quase tudo passa por marisco.",
   },
+
+  /*
+    Os dois ecrãs de erro.
+
+    O `avaria` não diz o que se avariou, e é de propósito: a mensagem
+    técnica fica no registo do servidor, não à frente de quem só queria
+    ver a ementa. Nem `error.message` nem `error.digest` chegam ao ecrã.
+  */
+  erro: {
+    perdido: {
+      codigo: "404",
+      titulo: "Esta página não está na casa",
+      frase:
+        "A morada que seguiste não leva a lado nenhum. Acontece — o mar leva coisas.",
+      voltar: "Voltar à entrada",
+    },
+    avaria: {
+      titulo: "Alguma coisa se partiu",
+      frase:
+        "Não foi culpa tua. Tenta outra vez; se voltar a acontecer, telefona-nos que a mesa está lá na mesma.",
+      tentar: "Tentar de novo",
+      voltar: "Voltar à entrada",
+    },
+  },
 };
 
 export type Dicionario = typeof pt;

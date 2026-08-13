@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Rye,
-  Alegreya_Sans,
-  Special_Elite,
-  IM_Fell_English_SC,
-} from "next/font/google";
+import { fontes } from "../fontes";
 import { site } from "@/lib/site";
 import { locales, linguas, caminho, alternativas } from "@/lib/i18n";
 import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
@@ -12,51 +7,6 @@ import { Tralha } from "@/components/decor/Tralha";
 import { Chegada } from "@/components/Chegada";
 import { Travessia } from "@/components/Travessia";
 import "../globals.css";
-
-/*
-  Títulos e wordmark. Wood-type de tabuleta de doca. Só tem peso 400.
-  É a única fonte com `preload`: aparece no hero e é o maior candidato a LCP.
-*/
-const rye = Rye({
-  variable: "--font-rye",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-/*
-  Corpo. Humanista, boa em pt-PT, tem acentuação completa.
-  `preload: false` — o `next/font` faz preload por omissão em todas as
-  fontes; o comentário da Rye já dizia "só ela leva preload" mas isso nunca
-  tinha sido desligado nas outras três. Verificado com Lighthouse: quatro
-  fontes a competir pela mesma ligação no arranque empurra o LCP para bem
-  longe dos 2,5s do plano.
-*/
-const alegreya = Alegreya_Sans({
-  variable: "--font-alegreya",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  preload: false,
-});
-
-/* Preços, horas e números fora do pergaminho. Máquina de escrever gasta. */
-const elite = Special_Elite({
-  variable: "--font-elite",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
-
-/* Só dentro do pergaminho da ementa. Prensa inglesa do séc. XVII. */
-const imfell = IM_Fell_English_SC({
-  variable: "--font-imfell",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
 
 /*
   As quatro línguas, geradas no build.
@@ -152,8 +102,16 @@ function StructuredData({ descricao }: { descricao: string }) {
   return (
     <script
       type="application/ld+json"
-      // O conteúdo é estático e definido neste ficheiro.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      /*
+        O conteúdo é estático e definido neste ficheiro — nenhum destes
+        valores vem de fora. O escape do `<` é na mesma: um `</script>`
+        dentro de uma string JSON fecha a etiqueta e o resto passa a
+        marcação, e a única coisa que separa isto de acontecer é a
+        descrição continuar a não vir de lado nenhum. Custa uma linha.
+      */
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }
@@ -165,7 +123,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   return (
     <html
       lang={linguas[lang].htmlLang}
-      className={`${rye.variable} ${alegreya.variable} ${elite.variable} ${imfell.variable} h-full antialiased`}
+      className={`${fontes} h-full antialiased`}
     >
       <head>
         <meta name="theme-color" content="#080B0D" />

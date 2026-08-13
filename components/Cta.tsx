@@ -63,6 +63,40 @@ export function Cta({
   );
 }
 
+/*
+  A mesma tabuleta, mas que faz alguma coisa em vez de ir a algum lado.
+
+  Existe por causa do `reset()` do `app/[lang]/error.tsx`: tentar outra vez
+  não é navegar, é uma acção — e uma acção pede `<button>`. Envolver o
+  `Cta` num botão dava um `<a>` dentro de um `<button>`, que é marcação
+  inválida e um caos para quem navega por teclado ou leitor de ecrã.
+
+  Partilha o `base`, os `variants` e os `Pregos` com o `Cta` acima. Se o
+  desenho das tabuletas mudar, muda nos dois de uma vez — que é a razão de
+  isto viver aqui e não no ficheiro do ecrã de erro.
+*/
+export function CtaBotao({
+  variant = "primary",
+  children,
+  className = "",
+  ...rest
+}: {
+  variant?: Variant;
+  children: ReactNode;
+  className?: string;
+} & Omit<ComponentProps<"button">, "className" | "children">) {
+  return (
+    <button
+      type="button"
+      className={`${base} ${variants[variant]} ${className}`}
+      {...rest}
+    >
+      {variant === "primary" ? <Pregos /> : null}
+      {children}
+    </button>
+  );
+}
+
 function Pregos() {
   const posicoes = ["top-1 left-1", "top-1 right-1", "bottom-1 left-1", "bottom-1 right-1"];
   return (

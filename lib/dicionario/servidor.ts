@@ -1,6 +1,6 @@
 import { lang } from "next/root-params";
 import { notFound } from "next/navigation";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { isLocale, defaultLocale, type Locale } from "@/lib/i18n";
 import { dicionarios, type Dicionario } from "./index";
 
 /*
@@ -28,4 +28,29 @@ export async function linguaActual(): Promise<Locale> {
 
 export async function dicionario(): Promise<Dicionario> {
   return dicionarios[await linguaActual()];
+}
+
+/*
+  A mesma coisa, mas para quem não pode falhar: os ecrãs de erro.
+
+  O `linguaActual()` acima resolve o caso mau com `notFound()`, e isso é
+  exactamente o que **não** se pode fazer dentro de um `not-found.tsx` —
+  seria pedir à página de 404 que renderizasse um 404. E há um segundo
+  caso: um erro pode rebentar antes de o segmento `[lang]` estar
+  resolvido, e aí o próprio getter atira.
+
+  Daí o recuo ao português em vez de falhar. É a língua da casa, e um 404
+  na língua errada continua a ser um 404 legível — um ecrã em branco não.
+*/
+export async function linguaOuCasa(): Promise<Locale> {
+  try {
+    const valor = await lang();
+    return valor && isLocale(valor) ? valor : defaultLocale;
+  } catch {
+    return defaultLocale;
+  }
+}
+
+export async function dicionarioOuCasa(): Promise<Dicionario> {
+  return dicionarios[await linguaOuCasa()];
 }

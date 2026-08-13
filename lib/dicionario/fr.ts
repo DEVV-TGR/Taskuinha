@@ -129,4 +129,21 @@ export const fr = {
     alergias:
       "Si vous avez des allergies ou des intolérances, dites-le à table avant de commander. Presque tout passe par les fruits de mer.",
   },
+
+  erro: {
+    perdido: {
+      codigo: "404",
+      titulo: "Cette page n'est pas dans la maison",
+      frase:
+        "L'adresse que vous avez suivie ne mène nulle part. Cela arrive — la mer emporte des choses.",
+      voltar: "Retour à la porte",
+    },
+    avaria: {
+      titulo: "Quelque chose s'est cassé",
+      frase:
+        "Ce n'est pas de votre faute. Réessayez ; si cela se reproduit, appelez-nous — la table est toujours là.",
+      tentar: "Réessayer",
+      voltar: "Retour à la porte",
+    },
+  },
 } satisfies Dicionario;

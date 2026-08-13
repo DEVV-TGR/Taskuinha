@@ -129,4 +129,21 @@ export const es = {
     alergias:
       "Si tienes alergias o intolerancias, dilo en la mesa antes de pedir. Casi todo pasa por el marisco.",
   },
+
+  erro: {
+    perdido: {
+      codigo: "404",
+      titulo: "Esta página no está en la casa",
+      frase:
+        "La dirección que seguiste no lleva a ninguna parte. Pasa — el mar se lleva cosas.",
+      voltar: "Volver a la entrada",
+    },
+    avaria: {
+      titulo: "Algo se ha roto",
+      frase:
+        "No fue culpa tuya. Inténtalo otra vez; si vuelve a pasar, llámanos — la mesa sigue ahí.",
+      tentar: "Intentar de nuevo",
+      voltar: "Volver a la entrada",
+    },
+  },
 } satisfies Dicionario;

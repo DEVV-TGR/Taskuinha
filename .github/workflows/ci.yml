@@ -1,0 +1,56 @@
+# Integração contínua.
+#
+# ## O que isto acrescenta ao que a Vercel já faz
+#
+# A Vercel já compila cada push e um build que falha nunca chega a
+# produção — isso não se monta outra vez aqui. O que ela **não** faz é
+# correr o ESLint (o `next build` do Next 16 já não o invoca) nem
+# verificar que os cabeçalhos de segurança continuam a sair nas
+# respostas. É para esses dois que este ficheiro existe.
+#
+# ## Para isto travar mesmo um deploy
+#
+# Falta um passo que não se faz em código: no GitHub, em
+# Settings → Branches, exigir que este workflow passe antes de se poder
+# fazer merge para a `main`. Sem essa regra, isto avisa mas não trava.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` e não `npm install`: instala exactamente o que está no
+      # package-lock.json. Uma auditoria de dependências não vale nada se
+      # o que se instala puder ser outra coisa.
+      - run: npm ci
+
+      - name: Vulnerabilidades nas dependências
+        run: npm audit --audit-level=high
+
+      - name: Tipos
+        run: npm run tipos
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      # Arranca o site compilado e confirma as oito páginas e os
+      # cabeçalhos de segurança. Ver scripts/fumo.mjs.
+      - name: Fumo
+        run: npm run fumo

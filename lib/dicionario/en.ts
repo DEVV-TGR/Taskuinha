@@ -139,4 +139,21 @@ export const en = {
     alergias:
       "If you have allergies or intolerances, tell us at the table before you order. Almost everything here passes through shellfish.",
   },
+
+  erro: {
+    perdido: {
+      codigo: "404",
+      titulo: "This page is not in the house",
+      frase:
+        "The address you followed leads nowhere. It happens — the sea takes things.",
+      voltar: "Back to the door",
+    },
+    avaria: {
+      titulo: "Something broke",
+      frase:
+        "It was not your fault. Try again; if it happens twice, give us a call — the table is still there.",
+      tentar: "Try again",
+      voltar: "Back to the door",
+    },
+  },
 } satisfies Dicionario;
