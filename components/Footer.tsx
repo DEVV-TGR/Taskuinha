@@ -77,6 +77,22 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="mt-12 border-t border-linha pt-6">
+          <p
+            className="text-[0.65rem] uppercase tracking-[0.3em] text-osso-fraco"
+            style={{ fontFamily: "var(--font-maquina)" }}
+          >
+            Site by{" "}
+            <a
+              href="https://devplus.pt"
+              target="_blank"
+              rel="noreferrer"
+              className="link-underline transition-colors hover:text-lanterna"
+            >
+              DevPlus
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
