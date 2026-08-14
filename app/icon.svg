@@ -13,19 +13,25 @@
 
   <!-- Sabres cruzados, por trás de tudo -->
   <g stroke="#E8DCC4" stroke-linecap="round" fill="none">
-    <line x1="12" y1="58" x2="88" y2="30" stroke-width="5.5"/>
-    <line x1="12" y1="30" x2="88" y2="58" stroke-width="5.5"/>
+    <line x1="12" y1="62" x2="88" y2="34" stroke-width="5.5"/>
+    <line x1="12" y1="34" x2="88" y2="62" stroke-width="5.5"/>
     <!-- Ossos cruzados, em baixo -->
-    <line x1="30" y1="80" x2="70" y2="91" stroke-width="7"/>
-    <line x1="30" y1="91" x2="70" y2="80" stroke-width="7"/>
+    <line x1="30" y1="84" x2="70" y2="95" stroke-width="7"/>
+    <line x1="30" y1="95" x2="70" y2="84" stroke-width="7"/>
   </g>
 
   <g fill="#E8DCC4">
-    <!-- Chapéu de bicorne -->
-    <path d="M20,38 Q50,10 80,38 Q62,27 50,33 Q38,27 20,38 Z"/>
+    <!--
+      O bicorne mais largo e mais alto do que o crânio, e a assentar-lhe em
+      cima com dois pontos de folga apenas. À primeira versão a aba nascia
+      dentro do crânio: como são da mesma cor, fundiam-se numa bolha só e o
+      chapéu lia-se como duas orelhas. Só se via ao tamanho do cartão de
+      partilha — no separador, a 16px, passava despercebido.
+    -->
+    <path d="M18,36 Q50,6 82,36 Q62,24 50,31 Q38,24 18,36 Z"/>
     <!-- Crânio e maxilar -->
-    <circle cx="50" cy="48" r="17"/>
-    <path d="M35,57 Q50,74 65,57 L61,63 Q50,68 39,63 Z"/>
+    <circle cx="50" cy="51" r="17"/>
+    <path d="M35,60 Q50,77 65,60 L61,66 Q50,71 39,66 Z"/>
   </g>
 
   <!--
@@ -36,8 +42,8 @@
 
   <!-- Órbitas e nariz, vazados no fundo -->
   <g fill="#080B0D">
-    <circle cx="43" cy="47" r="4.6"/>
-    <circle cx="57" cy="47" r="4.6"/>
+    <circle cx="43" cy="50" r="4.6"/>
+    <circle cx="57" cy="50" r="4.6"/>
   </g>
-  <path d="M46,57 L50,62 L54,57" fill="none" stroke="#080B0D" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M46,60 L50,65 L54,60" fill="none" stroke="#080B0D" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
