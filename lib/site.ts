@@ -1,8 +1,10 @@
 /*
   Fonte de verdade do site.
-  Os dados de contacto, morada e horário foram recolhidos do Restaurantji,
-  Restaurant Guru e GastroRanking em Agosto de 2026. Confirmar com o
-  Anselmo antes de publicar.
+  Os dados de contacto, morada e horário começaram por ser recolhidos do
+  Restaurantji, do Restaurant Guru e do GastroRanking, em Agosto de 2026, e
+  foram depois confirmados com o Anselmo. O que está aqui é o que a casa
+  disse, não o que os agregadores dizem dela — quando divergirem, ganha
+  isto.
 */
 
 export const site = {

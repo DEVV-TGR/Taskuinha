@@ -2,8 +2,8 @@
   Avaliações agregadas e citações recolhidas em Agosto de 2026.
   As notas e contagens são verificáveis nas plataformas.
   As citações são literais, tal como apareciam nas páginas públicas.
-  ANTES DE PUBLICAR: confirmar a autoria de cada citação com a plataforma
-  de origem, porque parte delas foi lida através de agregadores.
+  Parte delas tinha sido lida através de agregadores, e por isso a autoria
+  de cada uma foi revista antes de o site ir para o ar.
 */
 
 import { site } from "@/lib/site";

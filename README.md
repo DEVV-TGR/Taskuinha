@@ -47,22 +47,27 @@ do cabeçalho, uma camada de tralha decorativa (aranha, rede, lanternas) que
 reage ao rato e ao scroll. Tudo colapsa com
 `prefers-reduced-motion` e o conteúdo continua visível sem JavaScript.
 
-## O que falta para publicar
+## Publicado
 
-1. **Preços verdadeiros** em `lib/menu.ts`, e pôr `PRECOS_SAO_DEMO` a `false`
-   para desaparecer o aviso no fim da ementa e do rodapé. Não há preços
-   publicados em lado nenhum (nem no site oficial, nem no RestaurantGuru);
-   os actuais são inventados, calibrados para o intervalo de 10–20 € por
-   pessoa que as avaliações indicam.
-2. **Confirmar com o Anselmo** a morada, o telefone e o horário em
-   `lib/site.ts`. Foram recolhidos de agregadores públicos em Agosto de 2026.
-3. **Confirmar a origem das citações** em `lib/reviews.ts`. Foram lidas
-   através de agregadores e a atribuição a cada plataforma pode não estar
-   certa.
-4. ~~**Domínio real** em `site.url`, que o JSON-LD, o sitemap e os cartões de
-   partilha usam.~~ Feito: `https://www.taskuinhapirata.pt`.
+O site está no ar, em **https://www.taskuinhapirata.pt**.
+
+Esta secção era uma lista de quatro coisas a fazer antes de publicar, e
+está toda feita:
+
+- **Os preços são os da casa.** A ementa foi transcrita das fotografias do
+  livro que o dono forneceu, e revista com ele. Saíram os preços de
+  demonstração e o aviso que os acompanhava — a flag `PRECOS_SAO_DEMO` já
+  não existe.
+- **A morada, o telefone e o horário** em `lib/site.ts` foram confirmados
+  com ele. Tinham sido recolhidos de agregadores públicos.
+- **As citações** em `lib/reviews.ts` foram revistas.
+- **O domínio** em `site.url` é o verdadeiro. Dele saem o `canonical`, o
+  `og:image`, o JSON-LD e o sitemap.
 
 ## Fora de âmbito
 
-Reservas online, área de gestão, inglês para os peregrinos e sugestões do
-dia. Se o site for aprovado, o inglês é o passo seguinte mais útil.
+Reservas online, área de gestão e sugestões do dia.
+
+As quatro línguas — português, inglês, francês e espanhol — estavam aqui
+como o passo seguinte mais útil, para os peregrinos do Caminho. Deixaram
+de estar por fazer.
