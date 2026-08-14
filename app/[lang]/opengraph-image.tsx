@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { fullAddress } from "@/lib/site";
 import { isLocale, defaultLocale, type Locale } from "@/lib/i18n";
@@ -53,12 +55,51 @@ export async function generateImageMetadata({
   usar uma serif do sistema e aceitar a diferença" — é um cartão de
   partilha, não a página.
 */
+
+/*
+  O que mais o Satori não faz, verificado no código do `@vercel/og` que vem
+  embutido no Next, para o próximo não ter de lá ir outra vez:
+
+  - **`filter` não existe.** Nem `blur`, nem nada. Há um `feGaussianBlur` no
+    ficheiro dele, mas é usado só para desenhar o `box-shadow`. É por isso
+    que o fundo daqui de baixo é um ficheiro já desfocado, gerado por
+    `npm run cartao-fundo`, e não uma linha de CSS.
+  - **Não há blend modes nem máscaras.** Uma fotografia com fundo opaco posta
+    por cima de outra desenha o seu próprio rectângulo, e não há como o
+    esconder — quem entrar aqui tem de vir recortado, com alfa.
+  - **Não lê WebP.** JPEG e PNG.
+
+  Do que há, isto usa `objectFit`, `position`, `opacity` e cores com alfa,
+  que chegam bem.
+*/
+
+/*
+  As imagens entram em base64 e não por URL.
+
+  O Satori aceitaria um endereço, mas isso punha o build a fazer pedidos de
+  rede a um site que ainda está a ser construído — e a falhar em silêncio se
+  não respondesse. Ler do disco não tem essa dúvida: ou o ficheiro está lá,
+  ou o build rebenta a dizer qual falta.
+
+  Esta rota não declara `runtime`, portanto corre em Node, e estas imagens
+  são geradas no build. O `fs` está disponível.
+*/
+async function imagemEmBase64(nome: string) {
+  const bytes = await readFile(join(process.cwd(), "public", "images", nome));
+  const tipo = nome.endsWith(".png") ? "png" : "jpeg";
+  return `data:image/${tipo};base64,${bytes.toString("base64")}`;
+}
+
 export default async function OpengraphImage({
   params,
 }: {
   params?: Promise<{ lang: string }>;
 }) {
   const dic = dicionarioDe(linguaDe((await params)?.lang));
+  const [fundo, caveira] = await Promise.all([
+    imagemEmBase64("fachada-por-do-sol-cartao.jpg"),
+    imagemEmBase64("caveira-madeira.jpg"),
+  ]);
 
   return new ImageResponse(
     (
@@ -67,72 +108,119 @@ export default async function OpengraphImage({
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          position: "relative",
           background: "#080B0D",
           color: "#E8DCC4",
-          padding: 80,
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 44 }}>
-          {/*
-            O emblema da casa, o mesmo desenho do `app/icon.svg` — caveira de
-            bicorne, sabres cruzados atrás, ossos por baixo.
+        {/*
+          A fachada ao pôr do sol, desfocada. O recorte é `cover` porque a
+          fotografia é 4:3 e o cartão quase 2:1 — sai o telhado e sai a
+          calçada, fica o meio, que é onde estão a porta e o letreiro.
+        */}
+        <img
+          src={fundo}
+          width={size.width}
+          height={size.height}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            objectFit: "cover",
+          }}
+          alt=""
+        />
 
-            Cada elemento leva os seus atributos, sem os herdar de um `<g>`:
-            quem desenha isto não é o browser, é o Satori, e a herança de
-            atributos de apresentação em SVG é das coisas que ele trata de
-            forma diferente. Repetir `stroke` em cada traço é mais feio e não
-            depende disso.
-          */}
-          <svg width="150" height="150" viewBox="0 0 100 100">
-            <line x1="12" y1="62" x2="88" y2="34" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
-            <line x1="12" y1="34" x2="88" y2="62" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
-            <line x1="30" y1="84" x2="70" y2="95" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
-            <line x1="30" y1="95" x2="70" y2="84" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
-            <path d="M18,36 Q50,6 82,36 Q62,24 50,31 Q38,24 18,36 Z" fill="#E8DCC4" />
-            <circle cx="50" cy="51" r="17" fill="#E8DCC4" />
-            <path d="M35,60 Q50,77 65,60 L61,66 Q50,71 39,66 Z" fill="#E8DCC4" />
-            <circle cx="43" cy="50" r="4.6" fill="#080B0D" />
-            <circle cx="57" cy="50" r="4.6" fill="#080B0D" />
-            <path d="M46,60 L50,65 L54,60" fill="none" stroke="#080B0D" strokeWidth="2.2" strokeLinejoin="round" />
-          </svg>
+        {/*
+          O véu. A fotografia é do fim da tarde, cheia de laranjas claros, e o
+          texto do cartão é osso (#E8DCC4) — sem isto por cima não se lê nada.
+          A 50% ainda se percebe que por trás está a casa, que é o objectivo:
+          a luz dela, não a leitura dela.
+        */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            background: "rgba(8, 11, 13, 0.5)",
+          }}
+        />
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div
-              style={{
-                display: "flex",
-                fontSize: 128,
-                fontFamily: "Georgia, serif",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                lineHeight: 1,
-              }}
-            >
-              TASKUI
-              <span style={{ display: "flex", transform: "scaleX(-1)" }}>N</span>
-              HA
-            </div>
-            <div
-              style={{
-                marginTop: 18,
-                fontSize: 26,
-                letterSpacing: 14,
-                textTransform: "uppercase",
-                color: "#F2A33C",
-              }}
-            >
-              do Pirata
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: 80,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 44 }}>
+            {/*
+              A caveira de madeira, inteira e com o seu fundo preto — não
+              recortada. É uma decisão do Gonçalo e não uma limitação: o
+              rectângulo assume-se, como se fosse uma fotografia pousada em
+              cima da fachada.
+
+              Aqui esteve o emblema desenhado em SVG — o mesmo traço do
+              `app/icon.svg`. Continua a ser ele no separador do browser, que é
+              onde um desenho de duas cores a 32px se defende melhor do que uma
+              fotografia. Num cartão de 1200×630 é ao contrário: há espaço para
+              a peça a sério.
+
+              O `borderRadius` é o que faz o rectângulo ler-se como escolha em
+              vez de descuido. Sombra é que não há: precisava de `filter`, e o
+              `filter` é justamente o que o Satori não tem — ver acima.
+            */}
+            <img
+              src={caveira}
+              width={190}
+              height={238}
+              style={{ borderRadius: 10, objectFit: "cover" }}
+              alt=""
+            />
+
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 128,
+                  fontFamily: "Georgia, serif",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  lineHeight: 1,
+                }}
+              >
+                TASKUI
+                <span style={{ display: "flex", transform: "scaleX(-1)" }}>N</span>
+                HA
+              </div>
+              <div
+                style={{
+                  marginTop: 18,
+                  fontSize: 26,
+                  letterSpacing: 14,
+                  textTransform: "uppercase",
+                  color: "#F2A33C",
+                }}
+              >
+                do Pirata
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ fontSize: 38, color: "#E8DCC4" }}>
-            {dic.hero.titulo}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ fontSize: 38, color: "#E8DCC4" }}>
+              {dic.hero.titulo}
+            </div>
+            <div style={{ fontSize: 26, color: "#9A8F7C" }}>{fullAddress()}</div>
           </div>
-          <div style={{ fontSize: 26, color: "#9A8F7C" }}>{fullAddress()}</div>
         </div>
       </div>
     ),
