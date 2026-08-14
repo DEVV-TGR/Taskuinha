@@ -37,7 +37,12 @@ export function Wordmark({
           isLarge ? "text-3xl sm:text-4xl" : "text-lg sm:text-xl"
         }`}
       >
-        <span aria-hidden="true">
+        {/* `whitespace-nowrap`: o `inline-block` do N é uma caixa atómica e
+            portanto uma oportunidade de quebra de linha a meio do nome. Aqui
+            o risco é menor que no Hero (a letra é pequena), mas é o mesmo
+            defeito e é o mesmo bloco de marcação — ver a explicação longa em
+            `Hero.tsx`. */}
+        <span aria-hidden="true" className="whitespace-nowrap">
           TASKUI<span className="inline-block scale-x-[-1]">N</span>HA
         </span>
         <span className="sr-only">Taskuinha</span>
