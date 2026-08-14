@@ -9,8 +9,8 @@ import type { NextConfig } from "next";
 
   As oito páginas são geradas debaixo de `app/[lang]/`, incluindo as
   portuguesas em `/pt`. Mas o português é a língua da casa e a morada dele
-  é a morada nua: `taskuinha.pt/` e `taskuinha.pt/ementa`. Quem faz essa
-  excepção acontecer é este ficheiro.
+  é a morada nua: `taskuinhapirata.pt/` e `taskuinhapirata.pt/ementa`.
+  Quem faz essa excepção acontecer é este ficheiro.
 
   O `rewrite` serve o conteúdo de `/pt` a quem pede `/`, sem mudar o
   endereço na barra. O `redirect` fecha a porta do outro lado: `/pt`
@@ -105,8 +105,8 @@ const cabecalhosDeSeguranca = [
   { key: "Content-Security-Policy", value: politicaDeConteudo },
   /*
     `strict-origin-when-cross-origin`: quem sai daqui para o Instagram, o
-    TripAdvisor ou a OpenStreetMap leva `https://taskuinha.pt` e mais
-    nada — não leva a página exacta em que estava.
+    TripAdvisor ou a OpenStreetMap leva `https://www.taskuinhapirata.pt`
+    e mais nada — não leva a página exacta em que estava.
   */
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   /* Sem isto o browser pode adivinhar o tipo dos SVG servidos de /public. */

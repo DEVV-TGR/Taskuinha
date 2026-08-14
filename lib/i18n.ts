@@ -10,7 +10,7 @@
   No endereço, e só lá. Não há cookie, não há `localStorage`, não há
   detecção pelo `Accept-Language`: a página em francês é `/fr`, e é isso
   que se envia a um amigo. O português é a língua da casa e não leva
-  prefixo nenhum — `taskuinha.pt/` e `taskuinha.pt/ementa`.
+  prefixo nenhum — `taskuinhapirata.pt/` e `taskuinhapirata.pt/ementa`.
 
   Quem faz essa excepção acontecer é o `next.config.ts`: as páginas são
   todas geradas debaixo de `app/[lang]/`, incluindo as portuguesas em

@@ -59,8 +59,8 @@ reage ao rato e ao scroll. Tudo colapsa com
 3. **Confirmar a origem das citações** em `lib/reviews.ts`. Foram lidas
    através de agregadores e a atribuição a cada plataforma pode não estar
    certa.
-4. **Domínio real** em `site.url`, que o JSON-LD, o sitemap e os cartões de
-   partilha usam.
+4. ~~**Domínio real** em `site.url`, que o JSON-LD, o sitemap e os cartões de
+   partilha usam.~~ Feito: `https://www.taskuinhapirata.pt`.
 
 ## Fora de âmbito
 

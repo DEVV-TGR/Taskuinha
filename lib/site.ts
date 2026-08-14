@@ -11,7 +11,14 @@ export const site = {
   legalName: "Rumoceano - Taskuinha",
   description:
     "Taberna de petiscos em frente à praia de Vila Chã, Vila do Conde. Marisco fresco, esplanada virada ao Atlântico e o Caminho de Santiago a passar à porta.",
-  url: "https://taskuinha.pt",
+  /*
+    Com `www.`, e não sem: o `taskuinhapirata.pt` responde 308 para o
+    `www`, portanto é o `www` que é a morada e não o atalho para ela. Deste
+    valor saem o `canonical`, o `og:url`, o `og:image`, o JSON-LD e o
+    sitemap inteiro — apontá-lo ao endereço que redirecciona seria mandar
+    toda a gente dar uma volta antes de chegar.
+  */
+  url: "https://www.taskuinhapirata.pt",
 
   address: {
     street: "Av. dos Banhos 185",
