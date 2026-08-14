@@ -88,9 +88,17 @@ async function esperarPeloServidor() {
   return false;
 }
 
-const servidor = spawn("npx", ["next", "start", "-p", String(PORTA)], {
-  stdio: ["ignore", "pipe", "pipe"],
-});
+/* O binário do Next chamado directamente, e não através do `npx`. O `npx`
+   arranca o `next start` como um filho seu, e no Linux não lhe passa os
+   sinais à frente: o SIGTERM lá em baixo matava o intermediário e deixava
+   o servidor vivo, agarrado a estes canos, com o Node à espera deles para
+   sempre. No macOS o `npx` substitui-se a si próprio, por isso a diferença
+   só aparecia na CI. Sem intermediário não há sinal por entregar. */
+const servidor = spawn(
+  process.execPath,
+  ["node_modules/next/dist/bin/next", "start", "-p", String(PORTA)],
+  { stdio: ["ignore", "pipe", "pipe"] },
+);
 
 /* Sem isto, um `next start` que rebenta no arranque deixa-nos a olhar
    para um timeout sem saber porquê. */
@@ -150,5 +158,9 @@ try {
   }
   console.log("Fumo limpo.");
 } finally {
+  /* Pedir a saída não é vê-la acontecer. Esperar pelo `close` é o que
+     garante que os canos fecham antes de nós, em vez de ficar um servidor
+     a respirar depois de o teste dizer que acabou. */
   servidor.kill("SIGTERM");
+  await new Promise((resolve) => servidor.once("close", resolve));
 }
