@@ -1,7 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#080B0D"/>
-  <path d="M16 5c-4.8 0-8 3.4-8 7.8 0 2.9 1.5 5 3 6.4v3.3c0 .8.6 1.5 1.4 1.5h.8v-2h1.3v2h3v-2h1.3v2h.8c.8 0 1.4-.7 1.4-1.5v-3.3c1.5-1.4 3-3.5 3-6.4 0-4.4-3.2-7.8-8-7.8z" fill="#E8DCC4"/>
-  <circle cx="12.6" cy="13.6" r="2.3" fill="#080B0D"/>
-  <circle cx="19.4" cy="13.6" r="2.3" fill="#080B0D"/>
-  <path d="M13.8 18.2c1.4 1.1 3 1.1 4.4 0" stroke="#080B0D" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+<!--
+  O emblema da casa: caveira de bicorne com sabres cruzados por trás e
+  ossos por baixo. É o mesmo símbolo da <BandeiraNegra /> e do logótipo do
+  livro da ementa, redesenhado para o tamanho de um separador.
+
+  Não é o desenho da bandeira reduzido — a 16px os traços dela (2,5 de 100)
+  desapareciam. Aqui os sabres levam 5,5 e os ossos 7, e o crânio ocupa um
+  terço da altura, para a silhueta ainda se ler quando o ícone é do tamanho
+  de uma letra.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#080B0D"/>
+
+  <!-- Sabres cruzados, por trás de tudo -->
+  <g stroke="#E8DCC4" stroke-linecap="round" fill="none">
+    <line x1="12" y1="58" x2="88" y2="30" stroke-width="5.5"/>
+    <line x1="12" y1="30" x2="88" y2="58" stroke-width="5.5"/>
+    <!-- Ossos cruzados, em baixo -->
+    <line x1="30" y1="80" x2="70" y2="91" stroke-width="7"/>
+    <line x1="30" y1="91" x2="70" y2="80" stroke-width="7"/>
+  </g>
+
+  <g fill="#E8DCC4">
+    <!-- Chapéu de bicorne -->
+    <path d="M20,38 Q50,10 80,38 Q62,27 50,33 Q38,27 20,38 Z"/>
+    <!-- Crânio e maxilar -->
+    <circle cx="50" cy="48" r="17"/>
+    <path d="M35,57 Q50,74 65,57 L61,63 Q50,68 39,63 Z"/>
+  </g>
+
+  <!--
+    A bandeira tem uma caveira pequena na aba do chapéu. Aqui não: com o
+    bicorne mais estreito ela caía fora da aba e lia-se como um ponto solto
+    em cima do sabre.
+  -->
+
+  <!-- Órbitas e nariz, vazados no fundo -->
+  <g fill="#080B0D">
+    <circle cx="43" cy="47" r="4.6"/>
+    <circle cx="57" cy="47" r="4.6"/>
+  </g>
+  <path d="M46,57 L50,62 L54,57" fill="none" stroke="#080B0D" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>
