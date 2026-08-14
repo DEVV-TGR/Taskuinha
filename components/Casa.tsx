@@ -4,7 +4,8 @@ import { Tabuleta } from "@/components/decor/Tabuleta";
 import { Lanterna } from "@/components/decor/Lanterna";
 import { Esqueleto } from "@/components/decor/Esqueleto";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
-import { photos } from "@/lib/images";
+import { fotosEm } from "@/lib/images-linguas";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 /*
   Duas camadas, e não uma. A secção era o próprio contentor
@@ -18,10 +19,13 @@ import { photos } from "@/lib/images";
   tinha antes, o `top-0 right-5` e o `-mt-24 sm:-mt-32` continuam a bater certo
   sem se lhes tocar num número.
 */
-export function Casa() {
+export async function Casa() {
+  const dic = await dicionario();
+  const fotos = fotosEm(await linguaActual());
+
   return (
     <section id="a-casa" className="relative scroll-mt-20 bg-breu">
-      <FundoDeSeccao foto={photos.nausFrota} />
+      <FundoDeSeccao foto={fotos.nausFrota} />
 
       <div className="relative mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 sm:py-32">
         {/*
@@ -60,25 +64,13 @@ export function Casa() {
           <Reveal className="-mt-24 sm:-mt-32 sm:max-w-[520px] lg:col-span-5 lg:max-w-none">
             <Tabuleta className="px-4 py-2 sm:px-6">
               <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-                A casa
+                {dic.casa.titulo}
               </h2>
 
               <div className="letra-na-madeira mt-6 space-y-4 text-[0.95rem] leading-relaxed text-osso">
-                <p>
-                  Chamam-lhe o Pirata. O nome pegou-se e ficou, como se pega
-                  tudo numa terra pequena.
-                </p>
-                <p>
-                  A Taskuinha é uma taberna de pescadores na Avenida dos Banhos,
-                  com o mar do outro lado da estrada. Serve petiscos, não pratos
-                  de bandeira: amêijoas, lulas, pataniscas, e percebes quando o
-                  mar deixa apanhar.
-                </p>
-                <p>
-                  Há esplanada nas traseiras para quem quer sossego, e há o
-                  balcão para quem não quer. A bebida pode sair porta fora e ir
-                  ver o pôr do sol contigo.
-                </p>
+                <p>{dic.casa.p1}</p>
+                <p>{dic.casa.p2}</p>
+                <p>{dic.casa.p3}</p>
               </div>
             </Tabuleta>
           </Reveal>
@@ -91,8 +83,8 @@ export function Casa() {
               style={{ boxShadow: "inset 0 0 0 1px var(--madeira-borda)" }}
             >
               <Image
-                src={photos.balcaoEspingardas.src}
-                alt={photos.balcaoEspingardas.alt}
+                src={fotos.balcaoEspingardas.src}
+                alt={fotos.balcaoEspingardas.alt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 58vw"
                 className="object-cover"

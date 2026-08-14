@@ -1,7 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#080B0D"/>
-  <path d="M16 5c-4.8 0-8 3.4-8 7.8 0 2.9 1.5 5 3 6.4v3.3c0 .8.6 1.5 1.4 1.5h.8v-2h1.3v2h3v-2h1.3v2h.8c.8 0 1.4-.7 1.4-1.5v-3.3c1.5-1.4 3-3.5 3-6.4 0-4.4-3.2-7.8-8-7.8z" fill="#E8DCC4"/>
-  <circle cx="12.6" cy="13.6" r="2.3" fill="#080B0D"/>
-  <circle cx="19.4" cy="13.6" r="2.3" fill="#080B0D"/>
-  <path d="M13.8 18.2c1.4 1.1 3 1.1 4.4 0" stroke="#080B0D" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+<!--
+  O emblema da casa: caveira de bicorne com sabres cruzados por trás e
+  ossos por baixo. É o mesmo símbolo da <BandeiraNegra /> e do logótipo do
+  livro da ementa, redesenhado para o tamanho de um separador.
+
+  Não é o desenho da bandeira reduzido — a 16px os traços dela (2,5 de 100)
+  desapareciam. Aqui os sabres levam 5,5 e os ossos 7, e o crânio ocupa um
+  terço da altura, para a silhueta ainda se ler quando o ícone é do tamanho
+  de uma letra.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#080B0D"/>
+
+  <!-- Sabres cruzados, por trás de tudo -->
+  <g stroke="#E8DCC4" stroke-linecap="round" fill="none">
+    <line x1="12" y1="62" x2="88" y2="34" stroke-width="5.5"/>
+    <line x1="12" y1="34" x2="88" y2="62" stroke-width="5.5"/>
+    <!-- Ossos cruzados, em baixo -->
+    <line x1="30" y1="84" x2="70" y2="95" stroke-width="7"/>
+    <line x1="30" y1="95" x2="70" y2="84" stroke-width="7"/>
+  </g>
+
+  <g fill="#E8DCC4">
+    <!--
+      O bicorne mais largo e mais alto do que o crânio, e a assentar-lhe em
+      cima com dois pontos de folga apenas. À primeira versão a aba nascia
+      dentro do crânio: como são da mesma cor, fundiam-se numa bolha só e o
+      chapéu lia-se como duas orelhas. Só se via ao tamanho do cartão de
+      partilha — no separador, a 16px, passava despercebido.
+    -->
+    <path d="M18,36 Q50,6 82,36 Q62,24 50,31 Q38,24 18,36 Z"/>
+    <!-- Crânio e maxilar -->
+    <circle cx="50" cy="51" r="17"/>
+    <path d="M35,60 Q50,77 65,60 L61,66 Q50,71 39,66 Z"/>
+  </g>
+
+  <!--
+    A bandeira tem uma caveira pequena na aba do chapéu. Aqui não: com o
+    bicorne mais estreito ela caía fora da aba e lia-se como um ponto solto
+    em cima do sabre.
+  -->
+
+  <!-- Órbitas e nariz, vazados no fundo -->
+  <g fill="#080B0D">
+    <circle cx="43" cy="50" r="4.6"/>
+    <circle cx="57" cy="50" r="4.6"/>
+  </g>
+  <path d="M46,60 L50,65 L54,60" fill="none" stroke="#080B0D" stroke-width="2.2" stroke-linejoin="round"/>
 </svg>

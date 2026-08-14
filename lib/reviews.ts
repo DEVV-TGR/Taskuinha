@@ -19,7 +19,9 @@ export type Rating = {
   icon: string;
 };
 
-export const ratings: Rating[] = [
+/* `as const satisfies` pelo mesmo motivo do `lib/menu.ts`: as traduções do
+   `lib/reviews-linguas.ts` são indexadas por estes literais. */
+export const ratings = [
   {
     platform: "Google",
     score: "4,6",
@@ -42,10 +44,14 @@ export const ratings: Rating[] = [
     href: "https://www.tripadvisor.pt/Restaurant_Review-g189186-d6874259-Reviews-Rumoceano_Taskuinha-Vila_do_Conde_Porto_District_Northern_Portugal.html",
     icon: "tripadvisor",
   },
-];
+] as const satisfies readonly Rating[];
 
 export type Quote = {
+  /* Chave curta, para o `lib/reviews-linguas.ts` não ter de se indexar pelo
+     texto inteiro da citação. Não aparece em lado nenhum da página. */
+  id: string;
   text: string;
+  /** A língua em que a citação foi **escrita**. Não é a da página. */
   lang: "pt" | "en" | "fr";
   source: string;
 };
@@ -91,25 +97,29 @@ export type Quote = {
   utilizador e o mês estão no `source` porque são públicos e é o que torna a
   citação verificável.
 */
-export const quotes: Quote[] = [
+export const quotes = [
   {
+    id: "sherpa",
     text: "Vou imensas vezes por ano! Recomendo! É uma experiência que não pode perder! Comida muito bem confeccionada, gente super atenciosa, e a casa em si, a decoração é espetacular!",
     lang: "pt",
     source: "Sherpa58221185901, TripAdvisor, janeiro de 2024",
   },
   {
+    id: "guru",
     text: "A very charming fisherman's pub with a lot of character and very friendly staff.",
     lang: "en",
     source: "Avaliação no Restaurant Guru",
   },
   {
+    id: "paradise",
     text: "Ambiente relaxado, boa música, vinho engarrafado bonzinho, junto à praia, Sunset, tudo somado, é o ideal para estar com amigos.",
     lang: "pt",
     source: "Paradise43784871060, TripAdvisor, abril de 2023",
   },
   {
+    id: "tripadvisor-fr",
     text: "Bon manger frais près de la mer. Service impeccable.",
     lang: "fr",
     source: "Avaliação no TripAdvisor",
   },
-];
+] as const satisfies readonly Quote[];

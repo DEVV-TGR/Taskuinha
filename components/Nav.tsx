@@ -13,15 +13,32 @@ import {
 import { Phone } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
 import { Cta } from "@/components/Cta";
+import { SelectorLingua } from "@/components/SelectorLingua";
 import { Tabua } from "@/components/decor/Tabua";
 import { site } from "@/lib/site";
+import { caminho, defaultLocale, type Locale } from "@/lib/i18n";
+import type { Dicionario } from "@/lib/dicionario";
 
-const links = [
-  { label: "A casa", href: "/#a-casa" },
-  { label: "Petiscos", href: "/#petiscos" },
-  { label: "O sítio", href: "/#o-sitio" },
-  { label: "Ementa", href: "/ementa" },
-];
+/*
+  As quatro placas, por rota e âncora em vez de por href pronto.
+
+  As âncoras não se traduzem — `#a-casa` é a mesma secção em qualquer
+  língua, e traduzi-las partia todas as ligações antigas sem ganho nenhum
+  para quem lê. O que muda de língua para língua é só o prefixo, que o
+  `caminho()` põe à frente.
+*/
+const placas = [
+  { chave: "casa", rota: "/", ancora: "#a-casa" },
+  { chave: "petiscos", rota: "/", ancora: "#petiscos" },
+  { chave: "sitio", rota: "/", ancora: "#o-sitio" },
+  { chave: "ementa", rota: "/ementa", ancora: "" },
+] as const;
+
+export type TextoNav = {
+  nav: Dicionario["nav"];
+  geral: Dicionario["geral"];
+  linguas: Dicionario["linguas"];
+};
 
 /*
   A barra começa transparente por cima da fotografia do cabeçalho e ganha
@@ -29,8 +46,29 @@ const links = [
   saíste do topo. A opacidade é um motion value, por isso não há re-render
   por frame — o mesmo vale para o balanço das placas, derivado da
   velocidade do scroll.
+
+  Componente de cliente: o `next/root-params` não chega cá, por isso a
+  língua e o texto vêm por props de quem a monta.
 */
-export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }) {
+export function Nav({
+  transparentAtTop = false,
+  lang,
+  texto,
+}: {
+  transparentAtTop?: boolean;
+  lang: Locale;
+  texto: TextoNav;
+}) {
+  const links = placas.map((placa) => ({
+    label: texto.nav[placa.chave],
+    href: `${caminho(lang, placa.rota)}${placa.ancora}`,
+    /*
+      A semente do veio da madeira sai sempre da morada **portuguesa**. Se
+      saísse do href da língua em uso, o `/fr` de dois caracteres mudava o
+      comprimento e cada língua ficava com placas de desenho diferente.
+    */
+    semente: `${caminho(defaultLocale, placa.rota)}${placa.ancora}`.length,
+  }));
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
   const backdropOpacity = useTransform(scrollY, [0, 120], [0, 1]);
@@ -104,10 +142,10 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
       />
 
       <nav
-        aria-label="Navegação principal"
+        aria-label={texto.nav.principal}
         className="relative mx-auto flex h-[var(--altura-nav)] max-w-[1400px] items-center justify-between gap-6 px-5 sm:px-8"
       >
-        <Wordmark />
+        <Wordmark lang={lang} etiqueta={texto.nav.inicio} />
 
         <ul className="hidden items-center gap-4 md:flex">
           {links.map((link) => (
@@ -116,7 +154,7 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
                 className="pendurado inline-block"
                 style={reduce ? undefined : { rotate }}
               >
-                <Tabua semente={link.href.length} className="text-osso">
+                <Tabua semente={link.semente} className="text-osso">
                   <a
                     href={link.href}
                     className="gravado block px-3 py-1.5 text-sm transition-colors hover:text-lanterna"
@@ -130,10 +168,20 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
         </ul>
 
         <div className="flex items-center gap-3">
+          {/* Só a partir de md, e em menu: aqui a barra não tem largura
+              para quatro bandeiras seguidas. Em telemóvel o selector vai
+              dentro da gaveta, em fila. */}
+          <SelectorLingua
+            lang={lang}
+            texto={texto.linguas}
+            variante="menu"
+            className="hidden md:block"
+          />
+
           <Cta href={`tel:${site.phone.tel}`} className="px-4 py-2 text-sm sm:px-6 sm:py-3">
             <Phone size={16} weight="bold" aria-hidden />
-            <span className="hidden sm:inline">Reservar mesa</span>
-            <span className="sr-only sm:hidden">Reservar mesa</span>
+            <span className="hidden sm:inline">{texto.geral.reservar}</span>
+            <span className="sr-only sm:hidden">{texto.geral.reservar}</span>
           </Cta>
 
           <button
@@ -141,7 +189,7 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
             type="button"
             aria-expanded={aberto}
             aria-controls="menu-movel"
-            aria-label={aberto ? "Fechar menu" : "Abrir menu"}
+            aria-label={aberto ? texto.nav.fechar : texto.nav.abrir}
             onClick={() => setAberto((v) => !v)}
             className="grid h-10 w-10 place-items-center rounded-[var(--radius-card)] text-osso md:hidden"
           >
@@ -174,6 +222,21 @@ export function Nav({ transparentAtTop = false }: { transparentAtTop?: boolean }
                 </li>
               ))}
             </ul>
+
+            {/*
+              As línguas fecham a gaveta, separadas por uma linha, e aqui
+              ficam as quatro seguidas: há largura para elas, e um menu
+              dentro de um menu era um clique a mais para o mesmo sítio.
+              São ligações, por isso entram na armadilha de foco montada no
+              `useEffect` e o Tab continua a circular só dentro da gaveta.
+            */}
+            <div className="border-t border-linha px-5 py-3">
+              <SelectorLingua
+                lang={lang}
+                texto={texto.linguas}
+                variante="fila"
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

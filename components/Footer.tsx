@@ -1,14 +1,17 @@
 import { InstagramLogo } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
 import { site, fullAddress } from "@/lib/site";
+import { caminho } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
-const nav = [
-  { label: "A casa", href: "/#a-casa" },
-  { label: "Petiscos", href: "/#petiscos" },
-  { label: "O sítio", href: "/#o-sitio" },
-  { label: "Ementa", href: "/ementa" },
-  { label: "Encontrar-nos", href: "/#encontrar-nos" },
-];
+/* Como na Nav: âncoras iguais em todas as línguas, só o prefixo muda. */
+const secoes = [
+  { chave: "casa", rota: "/", ancora: "#a-casa" },
+  { chave: "petiscos", rota: "/", ancora: "#petiscos" },
+  { chave: "sitio", rota: "/", ancora: "#o-sitio" },
+  { chave: "ementa", rota: "/ementa", ancora: "" },
+  { chave: "encontrar", rota: "/", ancora: "#encontrar-nos" },
+] as const;
 
 /*
   O casco do rodapé: fundo afundado e o nome do barco da ementa real —
@@ -18,13 +21,21 @@ const nav = [
   (`decor/Mar.tsx`). Saiu a pedido do Gonçalo, e o componente foi apagado — o
   rodapé fecha agora a direito.
 */
-export function Footer() {
+export async function Footer() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+
+  const nav = secoes.map((seccao) => ({
+    label: dic.nav[seccao.chave],
+    href: `${caminho(lang, seccao.rota)}${seccao.ancora}`,
+  }));
+
   return (
     <footer className="relative overflow-hidden border-t border-linha bg-breu-fundo">
       <div className="relative z-10 mx-auto w-full max-w-[1400px] px-5 py-16 sm:px-8">
         <div className="flex flex-col gap-12 md:flex-row md:justify-between">
           <div>
-            <Wordmark size="lg" />
+            <Wordmark size="lg" lang={lang} etiqueta={dic.nav.inicio} />
             <p
               className="mt-3 text-[0.65rem] uppercase tracking-[0.3em] text-osso-fraco"
               style={{ fontFamily: "var(--font-maquina)" }}
@@ -44,7 +55,7 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col gap-10 sm:flex-row sm:gap-16">
-            <nav aria-label="Navegação do rodapé">
+            <nav aria-label={dic.nav.rodape}>
               <ul className="space-y-3">
                 {nav.map((item) => (
                   <li key={item.href}>
@@ -70,8 +81,7 @@ export function Footer() {
                 <span className="link-underline">@taskuinhadopirata</span>
               </a>
               <p className="mt-6 max-w-[15rem] text-sm leading-relaxed text-osso-fraco">
-                O Caminho de Santiago passa à porta. Peregrinos são bem
-                recebidos, com ou sem reserva.
+                {dic.rodape.peregrinos}
               </p>
             </div>
           </div>
@@ -82,7 +92,7 @@ export function Footer() {
             className="text-[0.65rem] uppercase tracking-[0.3em] text-osso-fraco"
             style={{ fontFamily: "var(--font-maquina)" }}
           >
-            Site by{" "}
+            {dic.rodape.creditos}{" "}
             <a
               href="https://devplus.pt"
               target="_blank"

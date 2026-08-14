@@ -2,14 +2,17 @@ import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Tabua } from "@/components/decor/Tabua";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
-import { photos } from "@/lib/images";
+import { fotosEm } from "@/lib/images-linguas";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
-const shots = [
-  photos.salaCheia,
-  photos.tectoNauAranha,
-  photos.salaEstatuas,
-  photos.esplanada,
-];
+/* As quatro da parede, por chave — as fotografias em si só se resolvem
+   dentro do componente, já com o `alt` na língua da página. */
+const escolhidas = [
+  "salaCheia",
+  "tectoNauAranha",
+  "salaEstatuas",
+  "esplanada",
+] as const;
 
 /* Estreita e larga na primeira linha, o inverso na segunda. */
 const spans = [
@@ -22,7 +25,11 @@ const spans = [
 /* Inclinação individual — molduras penduradas à mão nunca ficam todas a direito. */
 const tilts = ["rotate-[-1.5deg]", "rotate-[1deg]", "rotate-[-1deg]", "rotate-[1.5deg]"];
 
-export function Galeria() {
+export async function Galeria() {
+  const dic = await dicionario();
+  const fotos = fotosEm(await linguaActual());
+  const shots = escolhidas.map((chave) => fotos[chave]);
+
   return (
     <section id="o-sitio" className="relative scroll-mt-20 bg-breu">
       {/*
@@ -31,19 +38,17 @@ export function Galeria() {
         as quatro molduras por cima têm borda de madeira e sombra própria, que
         é o que as descola do fundo.
       */}
-      <FundoDeSeccao foto={photos.tectoNau} />
+      <FundoDeSeccao foto={fotos.tectoNau} />
 
       {/* `relative` obrigatório: sem ele o conteúdo fica por baixo do fundo. */}
       <div className="relative mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 sm:py-32">
         <Reveal className="max-w-2xl">
           <Tabua semente={5} className="p-6 sm:p-8">
             <h2 className="display letra-na-madeira text-[clamp(2rem,5vw,3.25rem)] leading-[0.95] text-osso">
-              O sítio
+              {dic.galeria.titulo}
             </h2>
             <p className="letra-na-madeira mt-5 text-base leading-relaxed text-osso">
-              Vila Chã é uma aldeia piscatória. Os passadiços de madeira seguem
-              a costa nos dois sentidos e o Caminho de Santiago passa aqui à
-              porta, todos os dias, aos pés de alguém.
+              {dic.galeria.frase}
             </p>
           </Tabua>
         </Reveal>

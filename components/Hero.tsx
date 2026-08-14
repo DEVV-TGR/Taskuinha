@@ -2,6 +2,8 @@ import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Cta } from "@/components/Cta";
 import { site } from "@/lib/site";
+import { caminho } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 /*
   Havia aqui uma fila de seis barris pendurados a soletrar P·I·R·A·T·A,
@@ -40,7 +42,10 @@ import { site } from "@/lib/site";
   esquerda e sobram ~600px à direita, por isso o desenho original — texto
   assente no fundo, por cima da fachada — fica intacto onde funciona.
 */
-export function Hero() {
+export async function Hero() {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+
   return (
     <section className="relative flex min-h-[100vh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
       <HeroMedia />
@@ -67,19 +72,18 @@ export function Hero() {
           </p>
 
           <h1 className="mt-8 max-w-xl text-[clamp(1.6rem,4.4vw,2.6rem)] font-medium leading-[1.12] tracking-tight text-osso">
-            O mar fica a vinte passos.
+            {dic.hero.titulo}
           </h1>
 
           <p className="mt-4 max-w-lg text-base leading-relaxed text-osso-fraco">
-            Taberna de petiscos em Vila Chã. Marisco fresco, esplanada calma e a
-            bebida pode ir contigo até à areia.
+            {dic.hero.frase}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Cta href={`tel:${site.phone.tel}`}>Reservar mesa</Cta>
-            <Cta href="/ementa" variant="secondary">
+            <Cta href={`tel:${site.phone.tel}`}>{dic.geral.reservar}</Cta>
+            <Cta href={caminho(lang, "/ementa")} variant="secondary">
               <ForkKnife size={17} weight="bold" aria-hidden />
-              Ver a ementa
+              {dic.geral.verEmenta}
             </Cta>
           </div>
         </div>

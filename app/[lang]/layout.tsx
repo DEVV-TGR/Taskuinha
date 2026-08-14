@@ -1,93 +1,65 @@
 import type { Metadata } from "next";
-import {
-  Rye,
-  Alegreya_Sans,
-  Special_Elite,
-  IM_Fell_English_SC,
-} from "next/font/google";
+import { fontes } from "../fontes";
 import { site } from "@/lib/site";
+import { locales, linguas, caminho, alternativas } from "@/lib/i18n";
+import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 import { Tralha } from "@/components/decor/Tralha";
 import { Chegada } from "@/components/Chegada";
 import { Travessia } from "@/components/Travessia";
-import "./globals.css";
+import "../globals.css";
 
 /*
-  Títulos e wordmark. Wood-type de tabuleta de doca. Só tem peso 400.
-  É a única fonte com `preload`: aparece no hero e é o maior candidato a LCP.
+  As quatro línguas, geradas no build.
+
+  O `dynamicParams = false` fecha a porta ao resto: `/xx` com um xx que não
+  seja língua nossa dá 404 sem chegar a renderizar. Sem ele, o
+  `notFound()` do `linguaActual()` ainda apanhava o caso, mas só depois de
+  o servidor tentar desenhar a página.
 */
-const rye = Rye({
-  variable: "--font-rye",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
 
-/*
-  Corpo. Humanista, boa em pt-PT, tem acentuação completa.
-  `preload: false` — o `next/font` faz preload por omissão em todas as
-  fontes; o comentário da Rye já dizia "só ela leva preload" mas isso nunca
-  tinha sido desligado nas outras três. Verificado com Lighthouse: quatro
-  fontes a competir pela mesma ligação no arranque empurra o LCP para bem
-  longe dos 2,5s do plano.
-*/
-const alegreya = Alegreya_Sans({
-  variable: "--font-alegreya",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  preload: false,
-});
+export const dynamicParams = false;
 
-/* Preços, horas e números fora do pergaminho. Máquina de escrever gasta. */
-const elite = Special_Elite({
-  variable: "--font-elite",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+  const titulo = `${site.fullName} · ${dic.meta.titulo}`;
 
-/* Só dentro do pergaminho da ementa. Prensa inglesa do séc. XVII. */
-const imfell = IM_Fell_English_SC({
-  variable: "--font-imfell",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
+  return {
+    metadataBase: new URL(site.url),
+    title: { default: titulo, template: `%s · ${site.fullName}` },
+    description: dic.meta.descricao,
+    keywords: dic.meta.palavras,
+    alternates: {
+      canonical: caminho(lang, "/"),
+      languages: alternativas("/"),
+    },
+    openGraph: {
+      type: "website",
+      locale: linguas[lang].ogLocale,
+      siteName: site.fullName,
+      title: titulo,
+      description: dic.meta.descricao,
+      url: caminho(lang, "/"),
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.fullName} · Taberna à beira-mar em Vila Chã`,
-    template: `%s · ${site.fullName}`,
-  },
-  description: site.description,
-  keywords: [
-    "restaurante Vila Chã",
-    "petiscos Vila do Conde",
-    "marisco à beira-mar",
-    "Taskuinha",
-    "Caminho de Santiago",
-  ],
-  openGraph: {
-    type: "website",
-    locale: "pt_PT",
-    siteName: site.fullName,
-    title: `${site.fullName} · Taberna à beira-mar em Vila Chã`,
-    description: site.description,
-    url: site.url,
-  },
-  robots: { index: true, follow: true },
-};
-
-function StructuredData() {
+function StructuredData({ descricao }: { descricao: string }) {
   const data = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
     name: site.fullName,
     alternateName: site.legalName,
-    description: site.description,
+    /*
+      A única linha traduzida do bloco. O resto — morada, coordenadas,
+      horários, `sameAs` — são dados, iguais em qualquer língua, e o
+      `servesCuisine` usa os termos do schema.org, que são fixos.
+    */
+    description: descricao,
     url: site.url,
     telephone: site.phone.tel,
     priceRange: "€€",
@@ -130,17 +102,28 @@ function StructuredData() {
   return (
     <script
       type="application/ld+json"
-      // O conteúdo é estático e definido neste ficheiro.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      /*
+        O conteúdo é estático e definido neste ficheiro — nenhum destes
+        valores vem de fora. O escape do `<` é na mesma: um `</script>`
+        dentro de uma string JSON fecha a etiqueta e o resto passa a
+        marcação, e a única coisa que separa isto de acontecer é a
+        descrição continuar a não vir de lado nenhum. Custa uma linha.
+      */
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
+  const lang = await linguaActual();
+  const dic = await dicionario();
+
   return (
     <html
-      lang="pt-PT"
-      className={`${rye.variable} ${alegreya.variable} ${elite.variable} ${imfell.variable} h-full antialiased`}
+      lang={linguas[lang].htmlLang}
+      className={`${fontes} h-full antialiased`}
     >
       <head>
         <meta name="theme-color" content="#080B0D" />
@@ -157,7 +140,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{`[data-reveal],[data-pendurado],[data-tralha]{opacity:1!important;transform:none!important;animation:none!important}[data-tralha-movel],[data-chegada]{display:none!important}`}</style>
         </noscript>
-        <StructuredData />
+        <StructuredData descricao={dic.meta.descricao} />
       </head>
       <body className="min-h-full flex flex-col bg-breu text-osso">
         {/*
@@ -168,7 +151,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="#conteudo"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[70] focus:rounded-[var(--radius-card)] focus:bg-lanterna focus:px-5 focus:py-3 focus:text-sobre-acento focus:font-medium"
         >
-          Saltar para o conteúdo
+          {dic.geral.saltar}
         </a>
         {/*
           O portão à chegada: as folhas vêm fechadas no HTML e o cliente
