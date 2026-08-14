@@ -199,15 +199,24 @@ A cadeia inteira do workflow, corrida à mão num clone limpo (`npm ci`, sem
 | `npm run build`                  | 13 páginas geradas              |
 | `npm run fumo`                   | fumo limpo, sai, porta livre    |
 
-O primeiro problema também foi confirmado na CI a sério, no PR #32: os
-passos `npm ci`, auditoria, **Tipos**, ESLint e Build passaram todos antes
-de o job encalhar no fumo.
+E depois, a prova que interessa mesmo — a CI a sério, no PR #32, com os
+dois arranjos lá dentro:
 
-Uma ressalva honesta sobre o segundo: o defeito só se manifesta em Linux, e
-a correcção foi validada em macOS — onde passa e sai limpo, mas onde o
-problema também nunca existiu. O que se pode afirmar com segurança é que a
-causa estrutural desapareceu, porque o intermediário que engolia o sinal
-deixou de estar lá. A prova final é o próprio job da CI ficar verde.
+```
+success  npm ci
+success  Vulnerabilidades nas dependências
+success  Tipos
+success  ESLint
+success  Build
+success  Fumo
+success  Complete job
+```
+
+Cinquenta segundos do princípio ao fim. O passo do fumo acabou sozinho,
+sem processo órfão nenhum para o runner arrumar — que era exactamente o que
+não se conseguia demonstrar em macOS, onde o defeito nunca existiu.
+
+É a primeira vez que este workflow chega ao fim desde que foi escrito.
 
 ---
 
