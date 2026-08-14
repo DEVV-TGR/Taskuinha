@@ -32,31 +32,25 @@ export function Wordmark({ size = "sm" }: { size?: "sm" | "lg" }) {
         <span className="sr-only">Taskuinha</span>
       </span>
 
-      <CaveiraPequena
-        className={`text-osso-fraco ${isLarge ? "my-1.5 h-3 w-3" : "my-1 h-2.5 w-2.5"}`}
-      />
+      {/*
+        Entre o nome e o "do Pirata" havia uma caveira de 10px — um círculo
+        com dois olhos, sem chapéu nem ossos. A esse tamanho não se lia como
+        caveira nenhuma, e o Gonçalo mandou tirá-la. O emblema a sério, o da
+        bandeira negra, continua onde tem espaço para se ver.
 
+        A folga que ela dava (`my-1`/`my-1.5`) passou para a margem de cima
+        deste `<span>`, ou o "do Pirata" ficava colado ao nome.
+      */}
       <span
         className={`uppercase text-osso-fraco ${
           isLarge
-            ? "text-[0.7rem] tracking-[0.34em]"
-            : "text-[0.55rem] tracking-[0.28em]"
+            ? "mt-3 text-[0.7rem] tracking-[0.34em]"
+            : "mt-2 text-[0.55rem] tracking-[0.28em]"
         }`}
         style={{ fontFamily: "var(--font-maquina)" }}
       >
         do Pirata
       </span>
     </Link>
-  );
-}
-
-function CaveiraPequena({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 12 12" className={className} fill="currentColor">
-      <circle cx="6" cy="5.5" r="4" />
-      <path d="M3.3,8 Q6,10 8.7,8 L8,9 Q6,10.2 4,9 Z" />
-      <circle cx="4.5" cy="5.3" r="1" fill="var(--breu)" />
-      <circle cx="7.5" cy="5.3" r="1" fill="var(--breu)" />
-    </svg>
   );
 }
