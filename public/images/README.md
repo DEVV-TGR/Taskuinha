@@ -19,6 +19,7 @@ pelo Gonçalo.
 | `fachada-noite.jpg` | 1536×2048 | **A foto do hero.** PIRATA iluminado, os seis barris pendurados, porta aberta, esqueleto, calçada. |
 | `fachada-noite-2.jpg` | 1536×2048 | A mesma fachada noutra noite, mais de frente. |
 | `fachada-por-do-sol.jpg` | 2048×1536 | Sol rasante. **A melhor prova do letreiro** `TASKUIИHA` e do cartaz do horário. |
+| `fachada-por-do-sol-cartao.jpg` | 1200×630 | **Gerado**, não fotografado: a de cima recortada e desfocada, para fundo do cartão de partilha. Refazer com `npm run cartao-fundo`. |
 
 ### O mascote
 
