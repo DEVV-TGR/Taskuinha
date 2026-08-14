@@ -275,20 +275,21 @@ metade.
 
 ## O que ainda falta
 
-- **Preços reais.** Os da ementa são inventados, calibrados para o intervalo de
-  10–20 € por pessoa que as avaliações indicam. Não há preços publicados em
-  lado nenhum — nem no site `eatbu.com` da casa, nem no RestaurantGuru.
-  `PRECOS_SAO_DEMO = true` em `lib/menu.ts` faz aparecer o aviso na página.
-  Pôr a `false` quando chegarem os verdadeiros.
-- Confirmar morada e horário com o Anselmo (dono).
-- **`app/opengraph-image.tsx` está a falhar neste ambiente de desenvolvimento
-  local** com `Input buffer contains unsupported image format`, num erro do
-  WASM do Resvg que o `next/og` usa por baixo — verificado com uma rota
-  `ImageResponse` mínima, igual ao exemplo da própria documentação do
-  Next.js, sem fontes nem nada de especial: falha da mesma forma. Não é um
-  erro do código deste projecto. Confirmar num ambiente de implantação a
-  sério (Vercel) antes de assumir que está partido — pode ser específico
-  desta máquina/sandbox.
+Nada do que estava aqui. O site está publicado em
+**https://www.taskuinhapirata.pt** e os três pontos desta lista fecharam-se:
+
+- **Os preços são os da casa**, transcritos do livro da ementa e revistos
+  com o dono. A flag `PRECOS_SAO_DEMO` e o aviso que ela ligava já não
+  existem.
+- **A morada e o horário** foram confirmados com ele.
+- **O cartão de partilha não está partido.** Ficava aqui a nota de que o
+  `opengraph-image` falhava em desenvolvimento local com `Input buffer
+  contains unsupported image format` — um erro do WASM do Resvg que o
+  `next/og` usa por baixo, reproduzido com uma rota `ImageResponse`
+  mínima, e por isso não do código deste projecto. Pedia-se para confirmar
+  num ambiente a sério antes de o dar por partido, e está confirmado: em
+  produção o cartão responde `200`, `image/png`, 50 KB. Era mesmo só a
+  máquina local.
 
 ---
 
