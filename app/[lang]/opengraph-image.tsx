@@ -75,16 +75,28 @@ export default async function OpengraphImage({
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          {/* A bandeira negra da casa, simplificada — o mesmo desenho do
-              app/icon.svg, maior. */}
-          <svg width="96" height="96" viewBox="0 0 32 32">
-            <path
-              d="M16 5c-4.8 0-8 3.4-8 7.8 0 2.9 1.5 5 3 6.4v3.3c0 .8.6 1.5 1.4 1.5h.8v-2h1.3v2h3v-2h1.3v2h.8c.8 0 1.4-.7 1.4-1.5v-3.3c1.5-1.4 3-3.5 3-6.4 0-4.4-3.2-7.8-8-7.8z"
-              fill="#E8DCC4"
-            />
-            <circle cx="12.6" cy="13.6" r="2.3" fill="#080B0D" />
-            <circle cx="19.4" cy="13.6" r="2.3" fill="#080B0D" />
+        <div style={{ display: "flex", alignItems: "center", gap: 44 }}>
+          {/*
+            O emblema da casa, o mesmo desenho do `app/icon.svg` — caveira de
+            bicorne, sabres cruzados atrás, ossos por baixo.
+
+            Cada elemento leva os seus atributos, sem os herdar de um `<g>`:
+            quem desenha isto não é o browser, é o Satori, e a herança de
+            atributos de apresentação em SVG é das coisas que ele trata de
+            forma diferente. Repetir `stroke` em cada traço é mais feio e não
+            depende disso.
+          */}
+          <svg width="150" height="150" viewBox="0 0 100 100">
+            <line x1="12" y1="62" x2="88" y2="34" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
+            <line x1="12" y1="34" x2="88" y2="62" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
+            <line x1="30" y1="84" x2="70" y2="95" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
+            <line x1="30" y1="95" x2="70" y2="84" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
+            <path d="M18,36 Q50,6 82,36 Q62,24 50,31 Q38,24 18,36 Z" fill="#E8DCC4" />
+            <circle cx="50" cy="51" r="17" fill="#E8DCC4" />
+            <path d="M35,60 Q50,77 65,60 L61,66 Q50,71 39,66 Z" fill="#E8DCC4" />
+            <circle cx="43" cy="50" r="4.6" fill="#080B0D" />
+            <circle cx="57" cy="50" r="4.6" fill="#080B0D" />
+            <path d="M46,60 L50,65 L54,60" fill="none" stroke="#080B0D" strokeWidth="2.2" strokeLinejoin="round" />
           </svg>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
