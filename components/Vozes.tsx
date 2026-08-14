@@ -42,14 +42,6 @@ function Estrelas({ score }: { score: string }) {
   );
 }
 
-/*
-  Semente da borda rasgada, uma por citação. Era uma lista de três à mão
-  (`[4, 9, 12]`), o que obrigava a inventar um número novo sempre que
-  entrasse uma citação — e a repetir recortes assim que passassem de três.
-  Uma conta a partir do índice serve qualquer quantidade.
-*/
-const semente = (i: number) => 4 + i * 5;
-
 export async function Vozes() {
   const lang = await linguaActual();
   const dic = await dicionario();
@@ -131,7 +123,7 @@ export async function Vozes() {
         <div className="mt-16 grid grid-cols-2 items-stretch gap-4 sm:gap-6">
           {quotes.map((quote, i) => (
             <Reveal key={quote.id} index={i} as="figure" className="h-full">
-              <Pergaminho semente={semente(i)} className="h-full">
+              <Pergaminho className="h-full">
                 <blockquote
                   /*
                     A língua da **página**, não a de quem escreveu: o que

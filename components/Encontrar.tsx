@@ -118,7 +118,7 @@ export async function Encontrar() {
           </Reveal>
 
           <Reveal index={1}>
-            <Pergaminho semente={11} className="h-full">
+            <Pergaminho className="h-full">
               <div className="relative">
                 <Mapa titulo={dic.encontrar.mapa} />
                 {/* X a marcar o sítio + bússola — decoração, não faz parte do
