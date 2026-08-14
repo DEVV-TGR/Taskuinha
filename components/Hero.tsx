@@ -56,10 +56,84 @@ export async function Hero() {
         ficava por baixo dela. Em `lg` volta a zero, que é quando o
         `items-end` assume e o `pb` passa a mandar.
       */}
-      <div className="relative z-30 mx-auto w-full max-w-[1400px] px-5 pt-[calc(var(--altura-nav)+1.5rem)] pb-16 sm:px-8 sm:pb-24 lg:pt-0">
+      {/*
+        O `pb` cresce para 384px em ecrãs baixos, e só neles.
+
+        É a segunda metade do arranjo do esqueleto — a primeira está no
+        `Esqueleto.tsx`. Encolhê-lo era o caminho óbvio e não chegava: para ele
+        deixar de tocar nos botões numa WebView de 600px de altura teria de vir
+        abaixo dos 110px de largura, e a essa escala deixa de se perceber que é
+        um esqueleto.
+
+        O que resolve é dar-lhe espaço em vez de lho tirar. O esqueleto está
+        ancorado à junta com a secção "A casa"; se o Hero crescer, a junta
+        desce e ele desce com ela. Este `pb` é o que faz o Hero crescer — e só
+        quando o conteúdo mais o espaçamento passam da altura do ecrã, que é
+        exactamente o caso que se quer apanhar. Num telemóvel normal o
+        `min-h-[100vh]` continua a mandar e isto não muda nada.
+
+        `max-height` e não `max-width`: o que distingue a WebView do Facebook
+        de um browser normal não é a largura do telemóvel, é a altura que
+        sobra depois das barras que nunca recolhem.
+
+        Medido em quatro cenários, com a distância do topo do esqueleto ao
+        fundo dos botões (negativo = em cima deles):
+
+        | | antes | depois |
+        |---|---|---|
+        | Chrome, 390×844 | +110 | +111 |
+        | WebView, 390×600, letra a 120% | **−294** | +154 |
+        | WebView, 390×600, letra a 150% | **−275** | +270 |
+        | 360×640 | **−91** | +57 |
+
+        A primeira linha é a que interessa tanto como as outras: no telemóvel
+        de todos os dias nada mexeu.
+      */}
+      <div className="relative z-30 mx-auto w-full max-w-[1400px] px-5 pt-[calc(var(--altura-nav)+1.5rem)] pb-16 [@media(max-height:700px)]:pb-96 sm:px-8 sm:pb-24 lg:pt-0">
         <div className="max-w-3xl">
-          <p className="display gravado text-[clamp(2.75rem,11vw,6rem)] leading-[0.88] text-osso">
-            <span aria-hidden="true">
+          {/*
+            O piso do `clamp` desceu de `2.75rem` para `2rem`, e a razão é a
+            mesma do `whitespace-nowrap` aqui abaixo.
+
+            Num ecrã de 390px o `11vw` dá 42,9px e continua a ganhar ao piso,
+            portanto **no Chrome não muda absolutamente nada**. Onde muda é
+            onde estava mal: num ecrã de 360px o piso de 44px ganhava ao `11vw`
+            de 39,6px e obrigava o nome a ocupar mais largura do que havia. Com
+            o texto do sistema a 120% ganhava ainda mais.
+
+            O `rem` continua a mandar quando o utilizador pede letra maior — só
+            que a partir de um valor mais baixo. Não se trava a preferência de
+            ninguém; faz-se o layout aguentá-la, que é o que estava por fazer.
+          */}
+          <p className="display gravado text-[clamp(2rem,11vw,6rem)] leading-[0.88] text-osso">
+            {/*
+              O `whitespace-nowrap` não é decorativo — é o que impede o nome
+              de partir a meio.
+
+              O N invertido tem de ser `inline-block`, porque `transform` não
+              pega em elementos inline. Só que um `inline-block` é uma caixa
+              atómica, e o browser trata as fronteiras dela como sítios
+              legítimos para mudar de linha: para o motor de layout aquilo
+              não é a palavra TASKUINHA, são três pedaços — `TASKUI` + `N` +
+              `HA`. Enquanto cabe tudo numa linha ninguém dá por isso; quando
+              deixa de caber, parte no único sítio onde pode, e lê-se
+              `TASKUIИ / HA`.
+
+              Quando é que deixa de caber: o browser embutido do Facebook no
+              Android é uma WebView, e a WebView aplica o *Tamanho da letra*
+              das definições do sistema. O Chrome tem definição própria, a
+              100% por omissão — mesmo telemóvel, mesma página, escalas
+              diferentes. O mínimo do `clamp` acima está em `rem` e escala com
+              essa definição; o `11vw` não escala. Num ecrã estreito é o `rem`
+              que ganha, e é ele que empurra o nome para lá da largura.
+
+              O `-webkit-text-size-adjust: 100%` do preflight do Tailwind não
+              trava isto: serve para o font boosting automático, que é outra
+              coisa. E o zoom pedido pelo sistema não deve ser travado — é uma
+              preferência de acessibilidade. O que se corrige é o layout
+              aguentá-lo.
+            */}
+            <span aria-hidden="true" className="whitespace-nowrap">
               TASKUI<span className="inline-block scale-x-[-1]">N</span>HA
             </span>
             <span className="sr-only">Taskuinha</span>

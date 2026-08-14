@@ -119,6 +119,29 @@ import { photos } from "@/lib/images";
 
   Ambos os valores vão em classes e não no `style`: um `style` inline ganha a
   qualquer classe, e o `sm:` nunca chegaria a aplicar-se.
+
+  ## O tecto de altura, e o browser do Facebook
+
+  `max-w-[min(360px,calc(45vh+33px))]`, e não os 360px sozinhos.
+
+  O defeito aparecia ao abrir o site pelo browser embutido do Facebook, no
+  Android: o esqueleto subia para cima do texto e dos botões. Ele não cresceu
+  — o Hero é que encolheu por baixo dele, e a razão é que os dois se medem em
+  eixos diferentes. O esqueleto tem a largura em `vw` e a altura vem do rácio
+  da fotografia; o Hero tem a altura em `vh`. Enquanto a proporção do ecrã é a
+  de sempre, a conta bate certo. Quando a área visível fica baixa — barra do
+  Facebook em cima, barra do sistema em baixo, nenhuma delas recolhe — a parte
+  do esqueleto que fica dentro do Hero passa de ~50% para ~62% dele.
+
+  A conta do tecto: para a parte de cima caber em metade do Hero é preciso
+  `largura × 1,139 − 38 ≤ 0,5 × H`, e daí sai `largura ≤ 45vh + 33px`.
+
+  Num telemóvel normal em Chrome (390×844, ~750px visíveis) isso dá 370px, o
+  `min()` escolhe os 360px de sempre e **não muda nada**. A 600px de altura dá
+  303px, o esqueleto encolhe e volta aos ~51%. Só morde onde é preciso.
+
+  O `sm:max-w-none` logo a seguir já lá estava, por isso isto fica preso ao
+  telemóvel e não toca em tablet nem em `lg`.
 */
 
 export function Esqueleto({ className }: { className?: string }) {
@@ -127,7 +150,7 @@ export function Esqueleto({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute translate-y-[calc(-100%_+_38px)] w-[93vw] max-w-[360px] sm:w-[300px] sm:max-w-none sm:translate-y-[-86%] lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
+      className={`pointer-events-none absolute translate-y-[calc(-100%_+_38px)] w-[93vw] max-w-[min(360px,calc(45vh+33px))] sm:w-[300px] sm:max-w-none sm:translate-y-[-86%] lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
     >
       <Reveal>
         <Image
