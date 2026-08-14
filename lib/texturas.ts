@@ -87,87 +87,13 @@ export function veioMadeira(opts?: { cor?: string; semente?: number }): string {
   return paraDataUri(svg);
 }
 
-/**
- * Borda rasgada + manchas de queimado, para o `Pergaminho`.
- * `mascara` vai para `mask-image` (a transparência fora do rasgão vem do
- * alfa do SVG, não de preto/branco); `fundo` vai para `background-image`,
- * por cima da cor base do pergaminho.
- */
-export function bordaPergaminho(semente: number): { fundo: string; mascara: string } {
-  const rnd = pseudoAleatorio(semente);
-  const queimado = "#6B4517"; // --pergaminho-queimado
-
-  // Manchas de queimado: blobs irregulares de opacidade baixa, mais densos
-  // nas bordas — como se o lume tivesse lambido o pergaminho por fora.
-  const manchas: string[] = [];
-  const numManchas = 10 + Math.floor(rnd() * 6);
-  for (let i = 0; i < numManchas; i++) {
-    const naBorda = rnd() > 0.4;
-    const cx = naBorda
-      ? rnd() > 0.5
-        ? rnd() * 14
-        : 100 - rnd() * 14
-      : rnd() * 100;
-    const cy = naBorda
-      ? rnd() > 0.5
-        ? rnd() * 14
-        : 100 - rnd() * 14
-      : rnd() * 100;
-    const r = 3 + rnd() * 9;
-    manchas.push(
-      `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" ` +
-        `fill="${queimado}" opacity="${(0.05 + rnd() * 0.12).toFixed(2)}" />`,
-    );
-  }
-  const fundo = paraDataUri(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">` +
-      `${manchas.join("")}</svg>`,
-  );
-
-  // Máscara: um rectângulo com entalhes aleatórios em cada lado, para o
-  // contorno ler como rasgado em vez de cortado a direito.
-  //
-  // Profundidade deliberadamente contida: a máscara stica a 100%×100% da
-  // caixa (mask-size: 100% 100%), por isso "5 unidades" não é um valor
-  // fixo em pixels — é 5% da largura ou altura reais, o que em painéis
-  // largos pode passar de 50px. Verificado: entalhes fundos perto da
-  // margem esquerda tornavam texto ilegível (ficava sobre o fundo escuro
-  // da página, exposto pelo recorte). Entalhes rasos + padding generoso em
-  // Pergaminho.tsx é o par que resolve isto.
-  function ladoEntalhado(fixo: number, eixoFixo: "x" | "y", inicio: number, fim: number) {
-    const pontos: number[] = [];
-    const passos = 7;
-    for (let i = 0; i <= passos; i++) {
-      const t = inicio + ((fim - inicio) * i) / passos;
-      const jitter = i === 0 || i === passos ? 0 : (rnd() * 2 - 1) + (rnd() > 0.85 ? rnd() * 1.5 : 0);
-      pontos.push(eixoFixo === "x" ? fixo + jitter : t, eixoFixo === "x" ? t : fixo + jitter);
-    }
-    return pontos;
-  }
-
-  const margem = 1.5;
-  const cima = ladoEntalhado(margem, "y", margem, 100 - margem);
-  const direita = ladoEntalhado(100 - margem, "x", margem, 100 - margem);
-  const baixo = ladoEntalhado(100 - margem, "y", 100 - margem, margem);
-  const esquerda = ladoEntalhado(margem, "x", 100 - margem, margem);
-
-  const todosPontos = [...cima, ...direita, ...baixo, ...esquerda];
-  const pathD =
-    `M${todosPontos[0].toFixed(1)},${todosPontos[1].toFixed(1)} ` +
-    Array.from({ length: todosPontos.length / 2 - 1 }, (_, i) => {
-      const x = todosPontos[(i + 1) * 2];
-      const y = todosPontos[(i + 1) * 2 + 1];
-      return `L${x.toFixed(1)},${y.toFixed(1)}`;
-    }).join(" ") +
-    " Z";
-
-  const mascara = paraDataUri(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">` +
-      `<path d="${pathD}" fill="#fff" /></svg>`,
-  );
-
-  return { fundo, mascara };
-}
+/*
+  Aqui viveu a `bordaPergaminho()`: manchas de queimado e um contorno
+  entalhado, gerados por semente, que faziam o papel das citações e do painel
+  do mapa. Saiu quando o `decor/Pergaminho.tsx` passou a usar a fotografia
+  `folhavelha.webp` — a folha traz a sua própria borda rasgada, e rasgar por
+  cima de um rasgão não fazia sentido nenhum.
+*/
 
 /**
  * Malha de rede de pesca em losango, com nós nos cruzamentos.
