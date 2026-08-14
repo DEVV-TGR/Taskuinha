@@ -94,7 +94,7 @@ export const menu: Category[] = [
         description: "Cozido, servido morno com sal grosso.",
         price: 9.0,
       },
-      { name: "Amêijoa à pirata", price: 15.2 },
+      { name: "Amêijoa à pirata", price: 16.9 },
     ],
   },
   {
@@ -105,13 +105,13 @@ export const menu: Category[] = [
       {
         name: "Francesinha",
         description: "Pão, bife, salsicha, chouriço, fiambre e queijo.",
-        price: 12.4,
+        price: 13.4,
       },
-      { name: "Meia francesinha", price: 7.9 },
+      { name: "Meia francesinha", price: 8.9 },
       {
         name: "Francesinha com ovo e batata frita",
         description: "A mesma, com ovo estrelado por cima.",
-        price: 12.9,
+        price: 13.9,
       },
       {
         name: "Bacalhau à Brás",
@@ -167,7 +167,7 @@ export const menu: Category[] = [
       {
         name: "Prego no pão",
         description: "Vaca grelhada, alho, pão da padaria da terra.",
-        price: 5.9,
+        price: 6.5,
       },
       {
         name: "Sande P.O.",
@@ -178,7 +178,7 @@ export const menu: Category[] = [
       {
         name: "Cachorro especial",
         description: "Com queijo e molho picante.",
-        price: 7.4,
+        price: 8.4,
       },
       { name: "Sande de presunto", price: 3.0 },
       { name: "Sandes de fiambre", price: 2.0 },
@@ -408,7 +408,13 @@ export const highlights: Highlight[] = [
     name: "Amêijoa à pirata",
     description:
       "O prato que mais aparece nas avaliações. Vem com pão, e o pão serve para o molho.",
-    price: 15.2,
+    /*
+      Repetido de propósito a partir da ementa, e por isso a acertar sempre
+      com ela: os destaques têm texto e fotografia próprios, e não se
+      resolvem com uma referência ao prato lá de cima. Quem mexer no preço
+      num sítio tem de mexer no outro.
+    */
+    price: 16.9,
     photo: photos.petiscoAmeijoas,
   },
   {
