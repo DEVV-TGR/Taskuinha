@@ -96,7 +96,10 @@ export default async function OpengraphImage({
   params?: Promise<{ lang: string }>;
 }) {
   const dic = dicionarioDe(linguaDe((await params)?.lang));
-  const fundo = await imagemEmBase64("fachada-por-do-sol-cartao.jpg");
+  const [fundo, caveira] = await Promise.all([
+    imagemEmBase64("fachada-por-do-sol-cartao.jpg"),
+    imagemEmBase64("caveira-madeira.jpg"),
+  ]);
 
   return new ImageResponse(
     (
@@ -160,27 +163,28 @@ export default async function OpengraphImage({
         >
           <div style={{ display: "flex", alignItems: "center", gap: 44 }}>
             {/*
-              O emblema da casa, o mesmo desenho do `app/icon.svg` — caveira de
-              bicorne, sabres cruzados atrás, ossos por baixo.
+              A caveira de madeira, inteira e com o seu fundo preto — não
+              recortada. É uma decisão do Gonçalo e não uma limitação: o
+              rectângulo assume-se, como se fosse uma fotografia pousada em
+              cima da fachada.
 
-              Cada elemento leva os seus atributos, sem os herdar de um `<g>`:
-              quem desenha isto não é o browser, é o Satori, e a herança de
-              atributos de apresentação em SVG é das coisas que ele trata de
-              forma diferente. Repetir `stroke` em cada traço é mais feio e não
-              depende disso.
+              Aqui esteve o emblema desenhado em SVG — o mesmo traço do
+              `app/icon.svg`. Continua a ser ele no separador do browser, que é
+              onde um desenho de duas cores a 32px se defende melhor do que uma
+              fotografia. Num cartão de 1200×630 é ao contrário: há espaço para
+              a peça a sério.
+
+              O `borderRadius` é o que faz o rectângulo ler-se como escolha em
+              vez de descuido. Sombra é que não há: precisava de `filter`, e o
+              `filter` é justamente o que o Satori não tem — ver acima.
             */}
-            <svg width="150" height="150" viewBox="0 0 100 100">
-              <line x1="12" y1="62" x2="88" y2="34" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
-              <line x1="12" y1="34" x2="88" y2="62" stroke="#E8DCC4" strokeWidth="5.5" strokeLinecap="round" />
-              <line x1="30" y1="84" x2="70" y2="95" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
-              <line x1="30" y1="95" x2="70" y2="84" stroke="#E8DCC4" strokeWidth="7" strokeLinecap="round" />
-              <path d="M18,36 Q50,6 82,36 Q62,24 50,31 Q38,24 18,36 Z" fill="#E8DCC4" />
-              <circle cx="50" cy="51" r="17" fill="#E8DCC4" />
-              <path d="M35,60 Q50,77 65,60 L61,66 Q50,71 39,66 Z" fill="#E8DCC4" />
-              <circle cx="43" cy="50" r="4.6" fill="#080B0D" />
-              <circle cx="57" cy="50" r="4.6" fill="#080B0D" />
-              <path d="M46,60 L50,65 L54,60" fill="none" stroke="#080B0D" strokeWidth="2.2" strokeLinejoin="round" />
-            </svg>
+            <img
+              src={caveira}
+              width={190}
+              height={238}
+              style={{ borderRadius: 10, objectFit: "cover" }}
+              alt=""
+            />
 
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div
