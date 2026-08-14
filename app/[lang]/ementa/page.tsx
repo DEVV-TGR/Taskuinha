@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { Reveal } from "@/components/Reveal";
 import { Cta } from "@/components/Cta";
 import { MenuCategoryNav } from "@/components/MenuCategoryNav";
 import { RoloEmenta } from "@/components/decor/RoloEmenta";
@@ -84,57 +83,65 @@ export default async function EmentaPage() {
         <div className="mx-auto w-full max-w-[1400px] px-5 pb-14 sm:px-8 sm:pb-20">
           <RoloEmenta>
             <div className="space-y-10 sm:space-y-14">
-              {menu.map((category, categoryIndex) => (
-                <section key={category.id} id={category.id} className="scroll-mt-32">
-                  <Reveal index={categoryIndex}>
-                    <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
-                      <div className="lg:col-span-4">
-                        <h2
-                          className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[0.95]"
-                          style={{ fontFamily: "var(--font-pergaminho)" }}
-                        >
-                          {category.title}
-                        </h2>
-                        <p className="mt-4 max-w-xs text-sm leading-relaxed opacity-75">
-                          {category.intro}
-                        </p>
-                      </div>
+              {/*
+                Sem revelação nesta página, a pedido do Gonçalo: as
+                categorias estavam envolvidas num `<Reveal>` e caíam de cima
+                a balançar quando entravam no ecrã. Numa ementa que se lê a
+                percorrer, isso é uma lista inteira a mexer-se por baixo dos
+                olhos de quem procura um preço.
 
-                      <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2 lg:col-span-8">
-                        {category.dishes.map((dish) => (
-                          <article key={dish.name}>
-                            <div className="flex items-baseline justify-between gap-5">
-                              <h3
-                                className="text-lg leading-tight"
-                                style={{ fontFamily: "var(--font-pergaminho)" }}
-                              >
-                                {dish.name}
-                                {dish.note ? (
-                                  <span
-                                    className="ml-2 align-middle text-[0.65rem] uppercase tracking-[0.16em] text-[var(--pergaminho-queimado)]"
-                                    style={{ fontFamily: "var(--font-maquina)" }}
-                                  >
-                                    {dish.note}
-                                  </span>
-                                ) : null}
-                              </h3>
-                              <span
-                                className="shrink-0 text-sm"
-                                style={{ fontFamily: "var(--font-maquina)" }}
-                              >
-                                {formatPrice(dish.price)}
-                              </span>
-                            </div>
-                            {dish.description ? (
-                              <p className="mt-1.5 max-w-[42ch] text-[0.8rem] leading-relaxed opacity-80">
-                                {dish.description}
-                              </p>
-                            ) : null}
-                          </article>
-                        ))}
-                      </div>
+                O `<Reveal />` fica — a página inicial usa-o em todos os
+                blocos, e é lá que ele faz sentido.
+              */}
+              {menu.map((category) => (
+                <section key={category.id} id={category.id} className="scroll-mt-32">
+                  <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+                    <div className="lg:col-span-4">
+                      <h2
+                        className="text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[0.95]"
+                        style={{ fontFamily: "var(--font-pergaminho)" }}
+                      >
+                        {category.title}
+                      </h2>
+                      <p className="mt-4 max-w-xs text-sm leading-relaxed opacity-75">
+                        {category.intro}
+                      </p>
                     </div>
-                  </Reveal>
+
+                    <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2 lg:col-span-8">
+                      {category.dishes.map((dish) => (
+                        <article key={dish.name}>
+                          <div className="flex items-baseline justify-between gap-5">
+                            <h3
+                              className="text-lg leading-tight"
+                              style={{ fontFamily: "var(--font-pergaminho)" }}
+                            >
+                              {dish.name}
+                              {dish.note ? (
+                                <span
+                                  className="ml-2 align-middle text-[0.65rem] uppercase tracking-[0.16em] text-[var(--pergaminho-queimado)]"
+                                  style={{ fontFamily: "var(--font-maquina)" }}
+                                >
+                                  {dish.note}
+                                </span>
+                              ) : null}
+                            </h3>
+                            <span
+                              className="shrink-0 text-sm"
+                              style={{ fontFamily: "var(--font-maquina)" }}
+                            >
+                              {formatPrice(dish.price)}
+                            </span>
+                          </div>
+                          {dish.description ? (
+                            <p className="mt-1.5 max-w-[42ch] text-[0.8rem] leading-relaxed opacity-80">
+                              {dish.description}
+                            </p>
+                          ) : null}
+                        </article>
+                      ))}
+                    </div>
+                  </div>
                 </section>
               ))}
             </div>
