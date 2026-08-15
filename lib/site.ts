@@ -1,11 +1,29 @@
+import casa from "@/data/casa.json";
+import { especificacaoDeHorario, type EntradaDeHorario } from "@/lib/horario";
+
 /*
   Fonte de verdade do site.
+
   Os dados de contacto, morada e horário começaram por ser recolhidos do
   Restaurantji, do Restaurant Guru e do GastroRanking, em Agosto de 2026, e
   foram depois confirmados com o Anselmo. O que está aqui é o que a casa
-  disse, não o que os agregadores dizem dela — quando divergirem, ganha
-  isto.
+  disse, não o que os agregadores dizem dela — quando divergirem, ganha isto.
+
+  ## O que está no `data/casa.json` e o que está aqui
+
+  No JSON, e portanto editável no painel: **telefone, morada, horário e as
+  redes sociais.** São as quatro coisas que mudam sem que o site mude, e as
+  quatro que o dono sabe de cor melhor do que ninguém.
+
+  Aqui, em código: o nome, a descrição, o endereço do site, as **coordenadas**
+  e o mapa. As coordenadas e as duas ligações que as levam lá dentro — o
+  `mapEmbedUrl` e o `links.directions` — são três cópias do mesmo par de
+  números, e mexer numa sem mexer nas outras deixa o mapa a apontar para o
+  sítio errado sem dar um erro. Uma casa não muda de sítio; a rua pode mudar
+  de nome. Por isso a morada é editável e o ponto no mapa não é.
 */
+
+const horario = casa.horario as readonly EntradaDeHorario[];
 
 export const site = {
   name: "Taskuinha",
@@ -14,19 +32,19 @@ export const site = {
   description:
     "Taberna de petiscos em frente à praia de Vila Chã, Vila do Conde. Marisco fresco, esplanada virada ao Atlântico e o Caminho de Santiago a passar à porta.",
   /*
-    Com `www.`, e não sem: o `taskuinhapirata.pt` responde 308 para o
-    `www`, portanto é o `www` que é a morada e não o atalho para ela. Deste
-    valor saem o `canonical`, o `og:url`, o `og:image`, o JSON-LD e o
-    sitemap inteiro — apontá-lo ao endereço que redirecciona seria mandar
-    toda a gente dar uma volta antes de chegar.
+    Com `www.`, e não sem: o `taskuinhapirata.pt` responde 308 para o `www`,
+    portanto é o `www` que é a morada e não o atalho para ela. Deste valor
+    saem o `canonical`, o `og:url`, o `og:image`, o JSON-LD e o sitemap
+    inteiro — apontá-lo ao endereço que redirecciona seria mandar toda a
+    gente dar uma volta antes de chegar.
   */
   url: "https://www.taskuinhapirata.pt",
 
   address: {
-    street: "Av. dos Banhos 185",
-    postalCode: "4485-691",
-    locality: "Vila Chã",
-    region: "Vila do Conde",
+    street: casa.morada.rua,
+    postalCode: casa.morada.codigoPostal,
+    locality: casa.morada.localidade,
+    region: casa.morada.concelho,
     country: "PT",
   },
 
@@ -34,34 +52,23 @@ export const site = {
   geo: { latitude: 41.29033, longitude: -8.73272 },
 
   phone: {
-    display: "229 285 079",
-    tel: "+351229285079",
+    display: casa.telefone.mostrar,
+    tel: casa.telefone.tel,
   },
 
-  priceRange: "10 a 20 € por pessoa",
+  hours: horario,
 
-  hours: [
-    { day: "Segunda", label: "Encerrado", closed: true },
-    { day: "Terça", label: "10h00 às 23h00", closed: false },
-    { day: "Quarta", label: "10h00 às 23h00", closed: false },
-    { day: "Quinta", label: "10h00 às 23h00", closed: false },
-    { day: "Sexta", label: "10h00 às 23h00", closed: false },
-    { day: "Sábado", label: "10h00 às 23h00", closed: false },
-    { day: "Domingo", label: "10h00 às 20h00", closed: false },
-  ],
-
-  // Formato schema.org, para o JSON-LD.
-  openingHoursSpec: [
-    { days: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "10:00", closes: "23:00" },
-    { days: ["Sunday"], opens: "10:00", closes: "20:00" },
-  ],
+  /*
+    Formato schema.org, para o JSON-LD. Calculado do `hours` acima e não
+    escrito à parte — ver `lib/horario.ts` para a razão.
+  */
+  openingHoursSpec: especificacaoDeHorario(horario),
 
   links: {
-    instagram: "https://www.instagram.com/taskuinhadopirata/",
-    facebook: "https://www.facebook.com/pages/Taskuinha/641723082553326",
-    tripadvisor:
-      "https://www.tripadvisor.pt/Restaurant_Review-g189186-d6874259-Reviews-Rumoceano_Taskuinha-Vila_do_Conde_Porto_District_Northern_Portugal.html",
-    restaurantGuru: "https://pt.restaurantguru.com/Taskuinha-Vila-Cha",
+    instagram: casa.links.instagram,
+    facebook: casa.links.facebook,
+    tripadvisor: casa.links.tripadvisor,
+    restaurantGuru: casa.links.restaurantGuru,
     directions:
       "https://www.google.com/maps/dir/?api=1&destination=41.29033,-8.73272&destination_place_id=Taskuinha+Vila+Ch%C3%A3",
   },

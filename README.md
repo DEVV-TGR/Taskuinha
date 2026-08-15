@@ -25,8 +25,10 @@ dados e sem CMS.
 app/               layout com fontes, metadata e JSON-LD; página inicial e /ementa
 components/        uma secção por ficheiro; as que animam são client components
 components/decor/  a camada de tralha — aranha, rede, barris, lanternas…
-lib/site.ts        morada, telefone, horário, coordenadas e redes
-lib/menu.ts        ementa e destaques
+data/ementa.json   os pratos, os preços e as descrições nas quatro línguas
+data/casa.json     morada, telefone, horário e redes sociais
+lib/site.ts        junta o data/casa.json às coordenadas e ao mapa, que ficam em código
+lib/menu.ts        lê o data/ementa.json; e os 6 destaques da página inicial
 lib/images.ts       fotografia local, com origem e tratamento de cada ficheiro
 lib/reviews.ts      notas agregadas e citações recolhidas das plataformas
 lib/texturas.ts     geradores de textura (madeira, pergaminho, rede, grão)
@@ -58,7 +60,7 @@ está toda feita:
   livro que o dono forneceu, e revista com ele. Saíram os preços de
   demonstração e o aviso que os acompanhava — a flag `PRECOS_SAO_DEMO` já
   não existe.
-- **A morada, o telefone e o horário** em `lib/site.ts` foram confirmados
+- **A morada, o telefone e o horário** em `data/casa.json` foram confirmados
   com ele. Tinham sido recolhidos de agregadores públicos.
 - **As citações** em `lib/reviews.ts` foram revistas.
 - **O domínio** em `site.url` é o verdadeiro. Dele saem o `canonical`, o

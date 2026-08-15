@@ -1,0 +1,1206 @@
+{
+  "categorias": [
+    {
+      "id": "entradas",
+      "titulo": {
+        "pt": "Entradas",
+        "en": "Starters",
+        "fr": "Entrées",
+        "es": "Entrantes"
+      },
+      "intro": {
+        "pt": "O que se põe na mesa primeiro. O marisco depende do que o mar deu de manhã.",
+        "en": "What goes on the table first. The seafood depends on what the sea gave this morning.",
+        "fr": "Ce qu'on met sur la table en premier. Les fruits de mer dépendent de ce que la mer a donné le matin.",
+        "es": "Lo que se pone primero en la mesa. El marisco depende de lo que el mar dio por la mañana."
+      },
+      "pratos": [
+        {
+          "id": "tabua-de-presunto-e-queijo",
+          "nome": "Tábua de presunto e queijo",
+          "preco": 13.5,
+          "descricao": {
+            "pt": "Presunto, queijo curado, azeitonas e pão.",
+            "en": "Cured ham, aged cheese, olives and bread.",
+            "fr": "Jambon cru, fromage affiné, olives et pain.",
+            "es": "Jamón, queso curado, aceitunas y pan."
+          }
+        },
+        {
+          "id": "cesto-de-entradas",
+          "nome": "Cesto de entradas",
+          "preco": 4.9,
+          "descricao": {
+            "pt": "Três patês e um queijinho. O pão e as azeitonas pagam-se à parte.",
+            "en": "Three pâtés and a small cheese. Bread is not included.",
+            "fr": "Trois pâtés et un petit fromage. Le pain n'est pas compris.",
+            "es": "Tres patés y un quesito. El pan no está incluido."
+          }
+        },
+        {
+          "id": "tremocos",
+          "nome": "Tremoços",
+          "preco": 1.8
+        },
+        {
+          "id": "amendoins-sem-casca",
+          "nome": "Amendoins sem casca",
+          "preco": 1.2
+        },
+        {
+          "id": "chourico-assado",
+          "nome": "Chouriço assado",
+          "preco": 5.4,
+          "descricao": {
+            "pt": "Assado na telha, à frente de quem o pede.",
+            "en": "Roasted on a roof tile, in front of whoever ordered it.",
+            "fr": "Grillé sur la tuile, devant celui qui le commande.",
+            "es": "Asado en la teja, delante de quien lo pide."
+          }
+        },
+        {
+          "id": "pao-com-chourico",
+          "nome": "Pão com chouriço",
+          "preco": 5.2
+        },
+        {
+          "id": "pao-simples",
+          "nome": "Pão simples",
+          "preco": 2.5
+        },
+        {
+          "id": "pao-com-manteiga",
+          "nome": "Pão com manteiga",
+          "preco": 1.1
+        },
+        {
+          "id": "azeitonas",
+          "nome": "Azeitonas",
+          "preco": 1.5
+        },
+        {
+          "id": "pate",
+          "nome": "Patê",
+          "preco": 1
+        },
+        {
+          "id": "queijinhos",
+          "nome": "Queijinhos",
+          "preco": 1.9
+        },
+        {
+          "id": "alheira",
+          "nome": "Alheira",
+          "preco": 5.2
+        },
+        {
+          "id": "percebes",
+          "nome": "Percebes",
+          "preco": 10.5,
+          "descricao": {
+            "pt": "Só quando o mar deixa apanhar.",
+            "en": "Only when the sea lets them be picked.",
+            "fr": "Seulement quand la mer laisse les cueillir.",
+            "es": "Solo cuando el mar deja cogerlos."
+          },
+          "nota": {
+            "pt": "época",
+            "en": "in season",
+            "fr": "de saison",
+            "es": "de temporada"
+          }
+        },
+        {
+          "id": "navalheira",
+          "nome": "Navalheira",
+          "preco": 4.9
+        },
+        {
+          "id": "torrada-de-lapas",
+          "nome": "Torrada de lapas",
+          "preco": 11.9,
+          "descricao": {
+            "pt": "Grelhadas com alho e coentros, sobre pão torrado.",
+            "en": "Grilled with garlic and coriander, on toasted bread.",
+            "fr": "Grillées à l'ail et à la coriandre, sur du pain grillé.",
+            "es": "A la plancha con ajo y cilantro, sobre pan tostado."
+          }
+        },
+        {
+          "id": "camarao",
+          "nome": "Camarão",
+          "preco": 9,
+          "descricao": {
+            "pt": "Cozido, servido morno com sal grosso.",
+            "en": "Boiled, served warm with coarse salt.",
+            "fr": "Cuites, servies tièdes avec du gros sel.",
+            "es": "Cocidos, servidos templados con sal gruesa."
+          }
+        },
+        {
+          "id": "ameijoa-a-pirata",
+          "nome": "Amêijoa à pirata",
+          "preco": 16.9
+        }
+      ]
+    },
+    {
+      "id": "snack",
+      "titulo": {
+        "pt": "Snack",
+        "en": "Snacks",
+        "fr": "Snacks",
+        "es": "Snacks"
+      },
+      "intro": {
+        "pt": "Quando a fome já não se resolve com um pão e uns tremoços.",
+        "en": "For when the hunger no longer sorts itself out with bread and a few lupin beans.",
+        "fr": "Quand la faim ne se règle plus avec un bout de pain et quelques lupins.",
+        "es": "Cuando el hambre ya no se resuelve con un pan y unos altramuces."
+      },
+      "pratos": [
+        {
+          "id": "francesinha",
+          "nome": "Francesinha",
+          "preco": 13.4,
+          "descricao": {
+            "pt": "Pão, bife, salsicha, chouriço, fiambre e queijo.",
+            "en": "Bread, steak, sausage, chouriço, ham and cheese.",
+            "fr": "Pain, steak, saucisse, chouriço, jambon et fromage.",
+            "es": "Pan, filete, salchicha, chouriço, jamón de york y queso."
+          }
+        },
+        {
+          "id": "meia-francesinha",
+          "nome": "Meia francesinha",
+          "preco": 8.9
+        },
+        {
+          "id": "francesinha-com-ovo-e-batata-frita",
+          "nome": "Francesinha com ovo e batata frita",
+          "preco": 13.9,
+          "descricao": {
+            "pt": "A mesma, com ovo estrelado por cima.",
+            "en": "The same, with a fried egg on top.",
+            "fr": "La même, avec un œuf au plat par-dessus.",
+            "es": "La misma, con huevo frito por encima."
+          }
+        },
+        {
+          "id": "bacalhau-a-bras",
+          "nome": "Bacalhau à Brás",
+          "preco": 12.2,
+          "descricao": {
+            "pt": "Lascas desfiadas, batata palha e azeitona preta.",
+            "en": "Shredded salt cod, straw potatoes and black olives.",
+            "fr": "Morue effilochée, pommes paille et olives noires.",
+            "es": "Bacalao desmigado, patatas paja y aceituna negra."
+          }
+        },
+        {
+          "id": "prego-no-prato",
+          "nome": "Prego no prato",
+          "preco": 11.9,
+          "descricao": {
+            "pt": "Com ovo estrelado e batata frita.",
+            "en": "With a fried egg and chips.",
+            "fr": "Avec œuf au plat et frites.",
+            "es": "Con huevo frito y patatas fritas."
+          }
+        },
+        {
+          "id": "alheira-com-ovo-e-batata-frita",
+          "nome": "Alheira com ovo e batata frita",
+          "preco": 8.5
+        },
+        {
+          "id": "salsicha-com-ovo-e-batata-frita",
+          "nome": "Salsicha com ovo e batata frita",
+          "preco": 6.9
+        },
+        {
+          "id": "bife-na-pedra",
+          "nome": "Bife na pedra",
+          "preco": 26.9
+        },
+        {
+          "id": "lulas-ao-alho-com-batata-frita",
+          "nome": "Lulas ao alho com batata frita",
+          "preco": 12.4,
+          "descricao": {
+            "pt": "Grelhadas na hora, com alho.",
+            "en": "Grilled to order, with garlic.",
+            "fr": "Grillés à la minute, à l'ail.",
+            "es": "A la plancha al momento, con ajo."
+          }
+        },
+        {
+          "id": "moelas",
+          "nome": "Moelas",
+          "preco": 5.2,
+          "descricao": {
+            "pt": "Estufadas devagar em vinho tinto.",
+            "en": "Slow-stewed in red wine.",
+            "fr": "Mijotés doucement au vin rouge.",
+            "es": "Guisadas despacio en vino tinto."
+          }
+        },
+        {
+          "id": "salada-taskuinha",
+          "nome": "Salada Taskuinha",
+          "preco": 3.5
+        },
+        {
+          "id": "pataniscas",
+          "nome": "Pataniscas",
+          "preco": 5.2,
+          "descricao": {
+            "pt": "De bacalhau, feitas à medida do pedido.",
+            "en": "Salt cod fritters, made to order.",
+            "fr": "Beignets de morue, faits à la commande.",
+            "es": "Buñuelos de bacalao, hechos al momento."
+          }
+        }
+      ]
+    },
+    {
+      "id": "extras",
+      "titulo": {
+        "pt": "Extras",
+        "fr": "Suppléments"
+      },
+      "intro": {
+        "pt": "Para acrescentar ao que já vai no prato.",
+        "en": "To add to what is already on the plate.",
+        "fr": "À ajouter à ce qui est déjà dans l'assiette.",
+        "es": "Para añadir a lo que ya va en el plato."
+      },
+      "pratos": [
+        {
+          "id": "ovo-estrelado",
+          "nome": "Ovo estrelado",
+          "preco": 1.5
+        },
+        {
+          "id": "prato-de-batata",
+          "nome": "Prato de batata",
+          "preco": 2.5
+        },
+        {
+          "id": "dose-de-batatas-fritas",
+          "nome": "Dose de batatas fritas",
+          "preco": 3.5
+        }
+      ]
+    },
+    {
+      "id": "sandes",
+      "titulo": {
+        "pt": "Sandes e tostas",
+        "en": "Sandwiches and toasties",
+        "fr": "Sandwichs et tartines",
+        "es": "Bocadillos y tostas"
+      },
+      "intro": {
+        "pt": "O almoço rápido de quem vai a caminho de Santiago.",
+        "en": "The quick lunch of anyone walking on to Santiago.",
+        "fr": "Le déjeuner rapide de qui continue vers Saint-Jacques.",
+        "es": "El almuerzo rápido de quien sigue camino de Santiago."
+      },
+      "pratos": [
+        {
+          "id": "bifana",
+          "nome": "Bifana",
+          "preco": 3.2,
+          "descricao": {
+            "pt": "Estufada de véspera no seu molho.",
+            "en": "Stewed the day before in its own sauce.",
+            "fr": "Mijotée la veille dans sa sauce.",
+            "es": "Guisada la víspera en su salsa."
+          }
+        },
+        {
+          "id": "prego-no-pao",
+          "nome": "Prego no pão",
+          "preco": 6.5,
+          "descricao": {
+            "pt": "Vaca grelhada, alho, pão da padaria da terra.",
+            "en": "Grilled beef, garlic, bread from the village bakery.",
+            "fr": "Bœuf grillé, ail, pain de la boulangerie du village.",
+            "es": "Ternera a la plancha, ajo, pan de la panadería del pueblo."
+          }
+        },
+        {
+          "id": "sande-p-o",
+          "nome": "Sande P.O.",
+          "preco": 3.9,
+          "descricao": {
+            "pt": "Presunto e ovo estrelado, como sempre se fez.",
+            "en": "Cured ham and a fried egg, the way it has always been made.",
+            "fr": "Jambon cru et œuf au plat, comme on l'a toujours fait.",
+            "es": "Jamón y huevo frito, como se hizo siempre."
+          }
+        },
+        {
+          "id": "cachorro-simples",
+          "nome": "Cachorro simples",
+          "preco": 4
+        },
+        {
+          "id": "cachorro-especial",
+          "nome": "Cachorro especial",
+          "preco": 8.4,
+          "descricao": {
+            "pt": "Com queijo e molho picante.",
+            "en": "With cheese and hot sauce.",
+            "fr": "Avec fromage et sauce piquante.",
+            "es": "Con queso y salsa picante."
+          }
+        },
+        {
+          "id": "sande-de-presunto",
+          "nome": "Sande de presunto",
+          "preco": 3
+        },
+        {
+          "id": "sandes-de-fiambre",
+          "nome": "Sandes de fiambre",
+          "preco": 2
+        },
+        {
+          "id": "sandes-de-queijo",
+          "nome": "Sandes de queijo",
+          "preco": 2
+        },
+        {
+          "id": "sandes-mista",
+          "nome": "Sandes mista",
+          "preco": 2
+        },
+        {
+          "id": "tosta-especial",
+          "nome": "Tosta especial",
+          "preco": 7.4
+        },
+        {
+          "id": "tosta-de-fiambre",
+          "nome": "Tosta de fiambre",
+          "preco": 2.5
+        },
+        {
+          "id": "tosta-de-queijo",
+          "nome": "Tosta de queijo",
+          "preco": 2.5
+        },
+        {
+          "id": "tosta-mista",
+          "nome": "Tosta mista",
+          "preco": 2.9
+        },
+        {
+          "id": "torrada",
+          "nome": "Torrada",
+          "preco": 1.5
+        }
+      ]
+    },
+    {
+      "id": "cafetaria",
+      "titulo": {
+        "pt": "Cafetaria",
+        "en": "Coffee bar",
+        "fr": "Cafétéria",
+        "es": "Cafetería"
+      },
+      "intro": {
+        "pt": "O balcão de sempre, antes ou depois da praia.",
+        "en": "The same counter as always, before or after the beach.",
+        "fr": "Le comptoir de toujours, avant ou après la plage.",
+        "es": "La barra de siempre, antes o después de la playa."
+      },
+      "pratos": [
+        {
+          "id": "cafe",
+          "nome": "Café",
+          "preco": 1
+        },
+        {
+          "id": "cafe-duplo",
+          "nome": "Café duplo",
+          "preco": 2
+        },
+        {
+          "id": "cafe-pingado",
+          "nome": "Café pingado",
+          "preco": 1
+        },
+        {
+          "id": "cafe-com-natas",
+          "nome": "Café com natas",
+          "preco": 1.4
+        },
+        {
+          "id": "descafeinado",
+          "nome": "Descafeinado",
+          "preco": 1
+        },
+        {
+          "id": "abatanado",
+          "nome": "Abatanado",
+          "preco": 1.5
+        },
+        {
+          "id": "pingo",
+          "nome": "Pingo",
+          "preco": 1
+        },
+        {
+          "id": "galao",
+          "nome": "Galão",
+          "preco": 1.8
+        },
+        {
+          "id": "meia-de-leite",
+          "nome": "Meia de leite",
+          "preco": 1.6
+        },
+        {
+          "id": "copo-de-leite",
+          "nome": "Copo de leite",
+          "preco": 1.2
+        },
+        {
+          "id": "cappuccino",
+          "nome": "Cappuccino",
+          "preco": 2
+        },
+        {
+          "id": "carioca-de-cafe",
+          "nome": "Carioca de café",
+          "preco": 1
+        },
+        {
+          "id": "carioca-de-limao",
+          "nome": "Carioca de limão",
+          "preco": 1
+        },
+        {
+          "id": "carioca-de-limao-duplo",
+          "nome": "Carioca de limão duplo",
+          "preco": 1.5
+        },
+        {
+          "id": "cevada",
+          "nome": "Cevada",
+          "preco": 0.9
+        },
+        {
+          "id": "cevada-dupla",
+          "nome": "Cevada dupla",
+          "preco": 1.5
+        },
+        {
+          "id": "cha",
+          "nome": "Chá",
+          "preco": 1.3
+        }
+      ]
+    },
+    {
+      "id": "bebidas",
+      "titulo": {
+        "pt": "Bebidas",
+        "en": "Soft drinks",
+        "fr": "Boissons"
+      },
+      "intro": {
+        "pt": "Águas e refrigerantes, para levar para a esplanada.",
+        "en": "Waters and soft drinks, to carry out to the terrace.",
+        "fr": "Eaux et boissons fraîches, à emporter en terrasse.",
+        "es": "Aguas y refrescos, para llevar a la terraza."
+      },
+      "pratos": [
+        {
+          "id": "agua-0-33-l",
+          "nome": "Água 0,33 L",
+          "preco": 1.1
+        },
+        {
+          "id": "agua-1-5-l",
+          "nome": "Água 1,5 L",
+          "preco": 2.5
+        },
+        {
+          "id": "agua-das-pedras",
+          "nome": "Água das Pedras",
+          "preco": 1.4
+        },
+        {
+          "id": "agua-das-pedras-limao",
+          "nome": "Água das Pedras limão",
+          "preco": 1.8
+        },
+        {
+          "id": "agua-tonica",
+          "nome": "Água tónica",
+          "preco": 1.7
+        },
+        {
+          "id": "pneu",
+          "nome": "Pneu",
+          "preco": 1.6,
+          "descricao": {
+            "pt": "Água com gás e limão fresco.",
+            "en": "Sparkling water with fresh lemon.",
+            "fr": "Eau gazeuse et citron frais.",
+            "es": "Agua con gas y limón fresco."
+          }
+        },
+        {
+          "id": "coca-cola-pressao",
+          "nome": "Coca-Cola pressão",
+          "preco": 1.7
+        },
+        {
+          "id": "coca-cola-zero",
+          "nome": "Coca-Cola zero",
+          "preco": 2.1
+        },
+        {
+          "id": "coca-cola-lata",
+          "nome": "Coca-Cola lata",
+          "preco": 2.1
+        },
+        {
+          "id": "coca-cola-garrafa",
+          "nome": "Coca-Cola garrafa",
+          "preco": 2.3
+        },
+        {
+          "id": "compal",
+          "nome": "Compal",
+          "preco": 1.9,
+          "descricao": {
+            "pt": "Néctar de fruta.",
+            "en": "Fruit nectar.",
+            "fr": "Nectar de fruits."
+          }
+        },
+        {
+          "id": "snappy",
+          "nome": "Snappy",
+          "preco": 1.7,
+          "descricao": {
+            "pt": "Refrigerante de lima com gás.",
+            "en": "Sparkling lime soda.",
+            "fr": "Soda pétillant au citron vert.",
+            "es": "Refresco de lima con gas."
+          }
+        },
+        {
+          "id": "fuze-tea",
+          "nome": "Fuze Tea",
+          "preco": 2.1
+        },
+        {
+          "id": "sumo-de-laranja-natural",
+          "nome": "Sumo de laranja natural",
+          "preco": 2.5
+        }
+      ]
+    },
+    {
+      "id": "cerveja",
+      "titulo": {
+        "pt": "Cerveja",
+        "en": "Beer",
+        "fr": "Bière",
+        "es": "Cerveza"
+      },
+      "intro": {
+        "pt": "A bebida pode sair porta fora e ir ver o mar contigo.",
+        "en": "Your drink can go out the door and look at the sea with you.",
+        "fr": "Le verre peut sortir par la porte et aller voir la mer avec vous.",
+        "es": "La bebida puede salir por la puerta e ir a ver el mar contigo."
+      },
+      "pratos": [
+        {
+          "id": "fino",
+          "nome": "Fino",
+          "preco": 1.6
+        },
+        {
+          "id": "fino-preto",
+          "nome": "Fino preto",
+          "preco": 1.6
+        },
+        {
+          "id": "caneca-0-5-l",
+          "nome": "Caneca 0,5 L",
+          "preco": 4.5
+        },
+        {
+          "id": "caneca-super",
+          "nome": "Caneca super",
+          "preco": 3
+        },
+        {
+          "id": "caneca-de-aluminio",
+          "nome": "Caneca de alumínio",
+          "preco": 2.7
+        },
+        {
+          "id": "caneca-de-aluminio-preta",
+          "nome": "Caneca de alumínio preta",
+          "preco": 2.7
+        },
+        {
+          "id": "caneca-de-aluminio-tango",
+          "nome": "Caneca de alumínio tango",
+          "preco": 2.8,
+          "descricao": {
+            "pt": "Com groselha.",
+            "en": "With blackcurrant cordial.",
+            "fr": "Avec du sirop de groseille.",
+            "es": "Con grosella."
+          }
+        },
+        {
+          "id": "caneca-tango",
+          "nome": "Caneca tango",
+          "preco": 3,
+          "descricao": {
+            "pt": "Com groselha.",
+            "en": "With blackcurrant cordial.",
+            "fr": "Avec du sirop de groseille.",
+            "es": "Con grosella."
+          }
+        },
+        {
+          "id": "tango",
+          "nome": "Tango",
+          "preco": 1.6,
+          "descricao": {
+            "pt": "Cerveja com groselha.",
+            "en": "Beer with blackcurrant cordial.",
+            "fr": "Bière au sirop de groseille.",
+            "es": "Cerveza con grosella."
+          }
+        },
+        {
+          "id": "panache",
+          "nome": "Panaché",
+          "preco": 1.6,
+          "descricao": {
+            "pt": "Cerveja com refrigerante de lima.",
+            "en": "Beer with lime soda.",
+            "fr": "Bière et soda au citron vert.",
+            "es": "Cerveza con refresco de lima."
+          }
+        },
+        {
+          "id": "super-bock-lata",
+          "nome": "Super Bock lata",
+          "preco": 2
+        },
+        {
+          "id": "super-bock-sem-alcool",
+          "nome": "Super Bock sem álcool",
+          "preco": 1.9
+        },
+        {
+          "id": "super-bock-sem-alcool-preta",
+          "nome": "Super Bock sem álcool preta",
+          "preco": 1.9
+        },
+        {
+          "id": "somersby",
+          "nome": "Somersby",
+          "preco": 2.5,
+          "descricao": {
+            "pt": "Sidra.",
+            "en": "Cider.",
+            "fr": "Cidre."
+          }
+        }
+      ]
+    },
+    {
+      "id": "vinho",
+      "titulo": {
+        "pt": "Vinho",
+        "en": "Wine",
+        "fr": "Vin",
+        "es": "Vino"
+      },
+      "intro": {
+        "pt": "A copo, em caneca, ou a garrafa para a mesa toda.",
+        "en": "By the glass, by the jug, or a bottle for the whole table.",
+        "fr": "Au verre, en pichet, ou la bouteille pour toute la table.",
+        "es": "Por copa, en jarra, o la botella para toda la mesa."
+      },
+      "pratos": [
+        {
+          "id": "copo-de-vinho-tinto",
+          "nome": "Copo de vinho tinto",
+          "preco": 2
+        },
+        {
+          "id": "copo-de-vinho-branco",
+          "nome": "Copo de vinho branco",
+          "preco": 2
+        },
+        {
+          "id": "caneca-de-vinho-pequena",
+          "nome": "Caneca de vinho pequena",
+          "preco": 3.8
+        },
+        {
+          "id": "copo-de-sangria",
+          "nome": "Copo de sangria",
+          "preco": 3
+        },
+        {
+          "id": "sangria",
+          "nome": "Sangria",
+          "preco": 16
+        },
+        {
+          "id": "montes-ermos",
+          "nome": "Montes Ermos",
+          "preco": 13.5,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "quinta-termos",
+          "nome": "Quinta Termos",
+          "preco": 13.5,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "quinta-termos-reserva",
+          "nome": "Quinta Termos Reserva",
+          "preco": 18,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "quinta-termos-selecao",
+          "nome": "Quinta Termos Seleção",
+          "preco": 21,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "termos-touriga-nacional",
+          "nome": "Termos Touriga Nacional",
+          "preco": 17.5,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "termos-vinhas-velhas-reserva",
+          "nome": "Termos Vinhas Velhas Reserva",
+          "preco": 17.5,
+          "nota": {
+            "pt": "Beira"
+          }
+        },
+        {
+          "id": "dialogo-tinto",
+          "nome": "Diálogo tinto",
+          "preco": 16.5,
+          "nota": {
+            "pt": "Douro"
+          }
+        },
+        {
+          "id": "papa-figos",
+          "nome": "Papa Figos",
+          "preco": 14,
+          "nota": {
+            "pt": "Douro"
+          }
+        },
+        {
+          "id": "esteva-tinto",
+          "nome": "Esteva tinto",
+          "preco": 13.5,
+          "nota": {
+            "pt": "Douro"
+          }
+        },
+        {
+          "id": "meia-esteva-tinto",
+          "nome": "Meia Esteva tinto",
+          "preco": 6.5,
+          "nota": {
+            "pt": "Douro"
+          }
+        },
+        {
+          "id": "desespero",
+          "nome": "Desespero",
+          "preco": 33.9,
+          "nota": {
+            "pt": "Alentejo"
+          }
+        },
+        {
+          "id": "jorna",
+          "nome": "Jorna",
+          "preco": 21,
+          "nota": {
+            "pt": "Alentejo"
+          }
+        },
+        {
+          "id": "monte-velho",
+          "nome": "Monte Velho",
+          "preco": 13.5,
+          "nota": {
+            "pt": "Alentejo"
+          }
+        },
+        {
+          "id": "planalto",
+          "nome": "Planalto",
+          "preco": 13.5,
+          "nota": {
+            "pt": "Alentejo"
+          }
+        },
+        {
+          "id": "maderne",
+          "nome": "Maderne",
+          "preco": 12.5,
+          "nota": {
+            "pt": "verde",
+            "en": "Vinho Verde",
+            "fr": "Vinho Verde",
+            "es": "Vinho Verde"
+          }
+        },
+        {
+          "id": "dibino",
+          "nome": "Dibino",
+          "preco": 13.5,
+          "nota": {
+            "pt": "verde",
+            "en": "Vinho Verde",
+            "fr": "Vinho Verde",
+            "es": "Vinho Verde"
+          }
+        },
+        {
+          "id": "terras-do-demo",
+          "nome": "Terras do Demo",
+          "preco": 19,
+          "nota": {
+            "pt": "espumante",
+            "en": "sparkling",
+            "fr": "pétillant",
+            "es": "espumoso"
+          }
+        },
+        {
+          "id": "murganheira",
+          "nome": "Murganheira",
+          "preco": 19,
+          "nota": {
+            "pt": "espumante",
+            "en": "sparkling",
+            "fr": "pétillant",
+            "es": "espumoso"
+          }
+        },
+        {
+          "id": "raposeira",
+          "nome": "Raposeira",
+          "preco": 17,
+          "nota": {
+            "pt": "espumante",
+            "en": "sparkling",
+            "fr": "pétillant",
+            "es": "espumoso"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bar",
+      "titulo": {
+        "pt": "Bar"
+      },
+      "intro": {
+        "pt": "Ao balcão, já com o sol posto.",
+        "en": "At the counter, once the sun is down.",
+        "fr": "Au comptoir, une fois le soleil couché.",
+        "es": "En la barra, ya con el sol puesto."
+      },
+      "pratos": [
+        {
+          "id": "gin-bombay",
+          "nome": "Gin Bombay",
+          "preco": 8
+        },
+        {
+          "id": "gin-bulldog",
+          "nome": "Gin Bulldog",
+          "preco": 9
+        },
+        {
+          "id": "gin-gordon-s",
+          "nome": "Gin Gordon's",
+          "preco": 6
+        },
+        {
+          "id": "gin-hendricks",
+          "nome": "Gin Hendricks",
+          "preco": 9
+        },
+        {
+          "id": "gin-tanqueray",
+          "nome": "Gin Tanqueray",
+          "preco": 8
+        },
+        {
+          "id": "gin-vigne",
+          "nome": "Gin Vigne",
+          "preco": 10
+        },
+        {
+          "id": "vodka",
+          "nome": "Vodka",
+          "preco": 5
+        },
+        {
+          "id": "vodka-com-sumo",
+          "nome": "Vodka com sumo",
+          "preco": 6
+        },
+        {
+          "id": "bacardi",
+          "nome": "Bacardi",
+          "preco": 5
+        },
+        {
+          "id": "bacardi-limao",
+          "nome": "Bacardi limão",
+          "preco": 5.9
+        },
+        {
+          "id": "captain-morgan",
+          "nome": "Captain Morgan",
+          "preco": 5,
+          "descricao": {
+            "pt": "Rum.",
+            "fr": "Rhum.",
+            "es": "Ron."
+          }
+        },
+        {
+          "id": "cuba-libre",
+          "nome": "Cuba Libre",
+          "preco": 5,
+          "descricao": {
+            "pt": "Rum, Coca-Cola e limão.",
+            "en": "Rum, Coca-Cola and lemon.",
+            "fr": "Rhum, Coca-Cola et citron.",
+            "es": "Ron, Coca-Cola y limón."
+          }
+        },
+        {
+          "id": "caipirinha",
+          "nome": "Caipirinha",
+          "preco": 6,
+          "descricao": {
+            "pt": "Cachaça, lima e açúcar.",
+            "en": "Cachaça, lime and sugar.",
+            "fr": "Cachaça, citron vert et sucre.",
+            "es": "Cachaza, lima y azúcar."
+          }
+        },
+        {
+          "id": "caipirao",
+          "nome": "Caipirão",
+          "preco": 6,
+          "descricao": {
+            "pt": "Caipirinha com licor Beirão.",
+            "en": "Caipirinha with Beirão liqueur.",
+            "fr": "Caipirinha à la liqueur Beirão.",
+            "es": "Caipiriña con licor Beirão."
+          }
+        },
+        {
+          "id": "poncha",
+          "nome": "Poncha",
+          "preco": 5,
+          "descricao": {
+            "pt": "Rum, limão e mel.",
+            "en": "Rum, lemon and honey.",
+            "fr": "Rhum, citron et miel.",
+            "es": "Ron, limón y miel."
+          }
+        },
+        {
+          "id": "ponche",
+          "nome": "Ponche",
+          "preco": 3
+        },
+        {
+          "id": "croft",
+          "nome": "Croft",
+          "preco": 3,
+          "descricao": {
+            "pt": "Brandy."
+          }
+        },
+        {
+          "id": "macieira",
+          "nome": "Macieira",
+          "preco": 3,
+          "descricao": {
+            "pt": "Brandy."
+          }
+        },
+        {
+          "id": "aguardente-velha",
+          "nome": "Aguardente velha",
+          "preco": 4
+        },
+        {
+          "id": "amendoa-amarga",
+          "nome": "Amêndoa amarga",
+          "preco": 3.8,
+          "descricao": {
+            "pt": "Licor de amêndoa amarga.",
+            "en": "Bitter almond liqueur.",
+            "fr": "Liqueur d'amande amère.",
+            "es": "Licor de almendra amarga."
+          }
+        },
+        {
+          "id": "licor",
+          "nome": "Licor",
+          "preco": 4
+        },
+        {
+          "id": "licor-beirao",
+          "nome": "Licor Beirão",
+          "preco": 4
+        },
+        {
+          "id": "favaios",
+          "nome": "Favaios",
+          "preco": 2,
+          "descricao": {
+            "pt": "Moscatel."
+          }
+        },
+        {
+          "id": "favaios-com-cerveja",
+          "nome": "Favaios com cerveja",
+          "preco": 2.2,
+          "descricao": {
+            "pt": "Moscatel com cerveja.",
+            "en": "Moscatel with beer.",
+            "fr": "Moscatel avec de la bière.",
+            "es": "Moscatel con cerveza."
+          }
+        },
+        {
+          "id": "martini",
+          "nome": "Martini",
+          "preco": 2
+        },
+        {
+          "id": "martini-bianco",
+          "nome": "Martini Bianco",
+          "preco": 3
+        },
+        {
+          "id": "martini-com-cerveja",
+          "nome": "Martini com cerveja",
+          "preco": 2.2
+        },
+        {
+          "id": "porto-novo",
+          "nome": "Porto novo",
+          "preco": 2.5
+        },
+        {
+          "id": "porto-velho",
+          "nome": "Porto velho",
+          "preco": 4
+        },
+        {
+          "id": "porto-tonico",
+          "nome": "Porto tónico",
+          "preco": 6
+        },
+        {
+          "id": "whiskey-old-parr",
+          "nome": "Whiskey Old Parr",
+          "preco": 6
+        },
+        {
+          "id": "whiskey-velho",
+          "nome": "Whiskey velho",
+          "preco": 6
+        },
+        {
+          "id": "whiskey-novo",
+          "nome": "Whiskey novo",
+          "preco": 4,
+          "descricao": {
+            "pt": "Blended."
+          }
+        },
+        {
+          "id": "whiskey-jameson",
+          "nome": "Whiskey Jameson",
+          "preco": 4.5,
+          "descricao": {
+            "pt": "Blended."
+          }
+        },
+        {
+          "id": "cutty-sark",
+          "nome": "Cutty Sark",
+          "preco": 4,
+          "descricao": {
+            "pt": "Blended."
+          }
+        },
+        {
+          "id": "whiskey-com-cola",
+          "nome": "Whiskey com cola",
+          "preco": 6
+        },
+        {
+          "id": "shot",
+          "nome": "Shot",
+          "preco": 2
+        },
+        {
+          "id": "shot-de-whiskey",
+          "nome": "Shot de whiskey",
+          "preco": 2.5
+        },
+        {
+          "id": "shot-de-whiskey-velho",
+          "nome": "Shot de whiskey velho",
+          "preco": 3
+        }
+      ]
+    }
+  ]
+}

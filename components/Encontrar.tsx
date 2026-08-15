@@ -7,11 +7,13 @@ import { Tabua } from "@/components/decor/Tabua";
 import { FundoDeSeccao } from "@/components/decor/FundoDeSeccao";
 import { fotosEm } from "@/lib/images-linguas";
 import { site, fullAddress } from "@/lib/site";
+import { horasEm } from "@/lib/horario";
 import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 export async function Encontrar() {
+  const lang = await linguaActual();
   const dic = await dicionario();
-  const fotos = fotosEm(await linguaActual());
+  const fotos = fotosEm(lang);
 
   return (
     <section id="encontrar-nos" className="relative scroll-mt-20 bg-breu">
@@ -68,35 +70,42 @@ export async function Encontrar() {
                 {dic.encontrar.horario}
               </h3>
               <dl className="mt-4">
-                {site.hours.map((entry) => (
-                  <div
-                    key={entry.day}
-                    className="flex items-baseline justify-between gap-6 py-1.5"
-                  >
-                    <dt
-                      className={`flex items-center gap-2 text-sm ${
-                        entry.closed ? "gravado uppercase tracking-wide text-lanterna" : "text-osso"
-                      }`}
+                {site.hours.map((entry) => {
+                  /* `null` é dia fechado — ver lib/horario.ts. */
+                  const horas = horasEm(entry, lang);
+
+                  return (
+                    <div
+                      key={entry.dia}
+                      className="flex items-baseline justify-between gap-6 py-1.5"
                     >
-                      {/* --sangue nunca toca em texto (2,3:1 sobre --madeira,
-                        falha AA) — a cor de aviso fica no ponto, não na letra. */}
-                      {entry.closed ? (
-                        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sangue" />
-                      ) : null}
-                      {entry.closed
-                        ? `${dic.dias[entry.day]} — ${dic.encontrar.folga}`
-                        : dic.dias[entry.day]}
-                    </dt>
-                    {entry.closed ? null : (
-                      <dd
-                        className="text-sm text-osso-fraco"
-                        style={{ fontFamily: "var(--font-maquina)" }}
+                      <dt
+                        className={`flex items-center gap-2 text-sm ${
+                          horas === null
+                            ? "gravado uppercase tracking-wide text-lanterna"
+                            : "text-osso"
+                        }`}
                       >
-                        {dic.horarios[entry.label]}
-                      </dd>
-                    )}
-                  </div>
-                ))}
+                        {/* --sangue nunca toca em texto (2,3:1 sobre --madeira,
+                          falha AA) — a cor de aviso fica no ponto, não na letra. */}
+                        {horas === null ? (
+                          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sangue" />
+                        ) : null}
+                        {horas === null
+                          ? `${dic.dias[entry.dia]} — ${dic.encontrar.folga}`
+                          : dic.dias[entry.dia]}
+                      </dt>
+                      {horas === null ? null : (
+                        <dd
+                          className="text-sm text-osso-fraco"
+                          style={{ fontFamily: "var(--font-maquina)" }}
+                        >
+                          {horas}
+                        </dd>
+                      )}
+                    </div>
+                  );
+                })}
               </dl>
             </Tabua>
 

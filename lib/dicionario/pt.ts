@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/i18n";
-import { site } from "@/lib/site";
+import type { Dia as HorarioDia } from "@/lib/horario";
 
 /*
   O português — a língua da casa, e o original de tudo o resto.
@@ -28,11 +28,18 @@ import { site } from "@/lib/site";
   quer.
 */
 
-/** Os dias como estão escritos no `lib/site.ts`. Servem de chave. */
-type Dia = (typeof site.hours)[number]["day"];
+/*
+  Os sete dias da semana, pelos identificadores do `lib/horario.ts`.
 
-/** Os horários como estão escritos no `lib/site.ts`. Também são chave. */
-type Horario = (typeof site.hours)[number]["label"];
+  Eram chaveados pelo nome português — `Segunda`, `Terça` — e a par deles
+  havia um mapa `horarios` chaveado pela etiqueta escrita à mão
+  (`"10h00 às 23h00"`). Os dois saíram do `lib/site.ts` quando o horário
+  passou a ser editável no painel: uma etiqueta que muda não pode ser chave
+  de tradução, senão mudar a hora de fecho deixa três línguas sem texto.
+  Quem escreve a etiqueta agora é o `horasEm()`; aqui ficam só os nomes dos
+  dias, que são sete e não mudam nunca.
+*/
+type Dia = HorarioDia;
 
 export const pt = {
   meta: {
@@ -129,22 +136,16 @@ export const pt = {
       "Mapa com a localização da Taskuinha na Avenida dos Banhos, Vila Chã",
   },
 
-  /* Chaveados pelo que está escrito no lib/site.ts. */
+  /* Chaveados pelos ids do lib/horario.ts. */
   dias: {
-    Segunda: "Segunda",
-    Terça: "Terça",
-    Quarta: "Quarta",
-    Quinta: "Quinta",
-    Sexta: "Sexta",
-    Sábado: "Sábado",
-    Domingo: "Domingo",
+    segunda: "Segunda",
+    terca: "Terça",
+    quarta: "Quarta",
+    quinta: "Quinta",
+    sexta: "Sexta",
+    sabado: "Sábado",
+    domingo: "Domingo",
   } satisfies Record<Dia, string>,
-
-  horarios: {
-    Encerrado: "Encerrado",
-    "10h00 às 23h00": "10h00 às 23h00",
-    "10h00 às 20h00": "10h00 às 20h00",
-  } satisfies Record<Horario, string>,
 
   rodape: {
     peregrinos:

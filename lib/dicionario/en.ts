@@ -18,8 +18,10 @@ import type { Dicionario } from "./pt";
   mas o prato continua a chamar-se Percebes na ementa (ver
   `lib/menu-linguas.ts`).
 
-  As chaves de `dias` e `horarios` são as do `lib/site.ts` e ficam em
-  português — são chaves, não texto lido.
+  As chaves de `dias` são os identificadores do `lib/horario.ts` e ficam em
+  português — são chaves, não texto lido. As horas em si não estão aqui:
+  são calculadas pelo `horasEm()`, porque uma etiqueta que o painel pode
+  mudar não serve de chave de tradução.
 */
 export const en = {
   meta: {
@@ -110,20 +112,15 @@ export const en = {
   },
 
   dias: {
-    Segunda: "Monday",
-    Terça: "Tuesday",
-    Quarta: "Wednesday",
-    Quinta: "Thursday",
-    Sexta: "Friday",
-    Sábado: "Saturday",
-    Domingo: "Sunday",
+    segunda: "Monday",
+    terca: "Tuesday",
+    quarta: "Wednesday",
+    quinta: "Thursday",
+    sexta: "Friday",
+    sabado: "Saturday",
+    domingo: "Sunday",
   },
 
-  horarios: {
-    Encerrado: "Closed",
-    "10h00 às 23h00": "10am to 11pm",
-    "10h00 às 20h00": "10am to 8pm",
-  },
 
   rodape: {
     peregrinos:

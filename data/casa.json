@@ -1,0 +1,27 @@
+{
+  "telefone": {
+    "mostrar": "229 285 079",
+    "tel": "+351229285079"
+  },
+  "morada": {
+    "rua": "Av. dos Banhos 185",
+    "codigoPostal": "4485-691",
+    "localidade": "Vila Chã",
+    "concelho": "Vila do Conde"
+  },
+  "horario": [
+    { "dia": "segunda", "fechado": true },
+    { "dia": "terca", "abre": "10:00", "fecha": "23:00" },
+    { "dia": "quarta", "abre": "10:00", "fecha": "23:00" },
+    { "dia": "quinta", "abre": "10:00", "fecha": "23:00" },
+    { "dia": "sexta", "abre": "10:00", "fecha": "23:00" },
+    { "dia": "sabado", "abre": "10:00", "fecha": "23:00" },
+    { "dia": "domingo", "abre": "10:00", "fecha": "20:00" }
+  ],
+  "links": {
+    "instagram": "https://www.instagram.com/taskuinhadopirata/",
+    "facebook": "https://www.facebook.com/pages/Taskuinha/641723082553326",
+    "tripadvisor": "https://www.tripadvisor.pt/Restaurant_Review-g189186-d6874259-Reviews-Rumoceano_Taskuinha-Vila_do_Conde_Porto_District_Northern_Portugal.html",
+    "restaurantGuru": "https://pt.restaurantguru.com/Taskuinha-Vila-Cha"
+  }
+}

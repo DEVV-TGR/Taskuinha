@@ -6,6 +6,11 @@
 > `docs/PLANO.md`) está construído — as 10 fases feitas, incluindo a
 > passagem final de acessibilidade e desempenho.
 >
+> **A ementa e os contactos saíram do código** e vivem agora em `data/`, em
+> JSON. É o primeiro passo para o painel de administração em `/painel`, onde
+> o dono da casa vai poder mexer nos preços sem abrir um editor. O painel
+> ainda não existe; os dados já estão no sítio onde ele os vai gravar.
+>
 > **A seguir:** o cliente já viu o site e há uma ronda de afinações a fazer
 > depois de uma reunião presencial na casa. Ver `docs/PROXIMAS-MELHORIAS.md`
 > (o que muda, o que fica) e `docs/RECURSOS-A-PROCURAR.md` (imagens e
@@ -41,9 +46,10 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 
 | Quero mudar… | Ficheiro |
 |---|---|
-| Morada, telefone, horário, redes sociais | `lib/site.ts` |
-| Pratos e preços da ementa | `lib/menu.ts` |
-| Os 6 destaques da página inicial | `lib/menu.ts` → `highlights` (**têm de ser 6**) |
+| Morada, telefone, horário, redes sociais | `data/casa.json` |
+| Pratos, preços e traduções da ementa | `data/ementa.json` |
+| Coordenadas, mapa, nome e descrição da casa | `lib/site.ts` |
+| Os 6 destaques da página inicial | `lib/menu.ts` → `destaques` (**têm de ser 6**) |
 | Fotografias e textos alternativos | `lib/images.ts` |
 | Avaliações e citações | `lib/reviews.ts` |
 | Cores, tipos, classes utilitárias | `app/globals.css` |
@@ -214,7 +220,7 @@ Para texto turquesa usar `--turquesa-luz` (8,5:1).
    servidor não conhece a preferência do visitante; sem estas regras, quem tem
    JavaScript desligado ou movimento reduzido vê uma página em branco.
 
-2. **`highlights` tem exactamente 6 itens** — a grelha do bento em
+2. **`destaques` tem exactamente 6 itens** — a grelha do bento em
    `Petiscos.tsx` está calibrada para seis: o primeiro ocupa
    `col-span-4 row-span-2`, os outros cinco `col-span-2`. Sete ou cinco abrem
    buracos na grelha.

@@ -100,20 +100,15 @@ export const fr = {
   },
 
   dias: {
-    Segunda: "Lundi",
-    Terça: "Mardi",
-    Quarta: "Mercredi",
-    Quinta: "Jeudi",
-    Sexta: "Vendredi",
-    Sábado: "Samedi",
-    Domingo: "Dimanche",
+    segunda: "Lundi",
+    terca: "Mardi",
+    quarta: "Mercredi",
+    quinta: "Jeudi",
+    sexta: "Vendredi",
+    sabado: "Samedi",
+    domingo: "Dimanche",
   },
 
-  horarios: {
-    Encerrado: "Fermé",
-    "10h00 às 23h00": "10h00 à 23h00",
-    "10h00 às 20h00": "10h00 à 20h00",
-  },
 
   rodape: {
     peregrinos:
