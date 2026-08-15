@@ -1,22 +1,38 @@
 # Ementa impressa
 
-- `ementa.pdf` — **é este que vai para a gráfica.** Seis páginas A4
-  (capa, quatro de ementa, contracapa), 2,9 MB. Três folhas frente e verso.
+- `ementa.pdf` — **é este que vai para a gráfica.** Doze páginas A4
+  (capa, dez de ementa, contracapa), 5,2 MB. Seis folhas frente e verso.
 - `ementa.html` — a origem. Editar aqui e voltar a gerar o PDF.
 
 ## O desenho vem do site
 
-Papel, tinta e letra são os do pergaminho do site, tirados de
-`app/globals.css`: `--pergaminho` #d9c7a0, `--pergaminho-tinta` #2b1d0e e
-`--pergaminho-queimado` #6b4517. As arestas queimadas são dois gradientes
-por cima da cor lisa.
+O papel é uma fotografia, não uma cor: `public/images/fundo-ementa.png`, um
+pergaminho de 2475×3500 a 300 dpi — exactamente uma A4 — com textura,
+vincos, manchas e uma moldura ornamentada de tinta sépia. Vai embebido em
+JPEG q88 nas doze páginas. Por baixo continua a cor lisa `--pergaminho`
+#d9c7a0, como rede de segurança: quem imprimir com os "gráficos de fundo"
+desligados perde a fotografia mas não fica com uma folha branca. A tinta
+(#2b1d0e) e o queimado (#6b4517) dos gradientes das arestas são os do site,
+de `app/globals.css`.
 
-As quatro fontes são as mesmas quatro do site — **Rye** no nome da capa,
-**IM Fell English SC** nos pratos e nas categorias, **Special Elite** nos
-preços e nas etiquetas, **Alegreya Sans** no inglês — e vão **embebidas no
-ficheiro** em base64. É o que faz o HTML pesar 1,5 MB, e é de propósito:
-assim abre igual em qualquer computador, na gráfica inclusive, sem rede e
-sem fontes instaladas.
+> **Cuidado ao mexer no CSS do papel.** A data URI da fotografia tem 3 MB, e
+> o Chrome descarta qualquer declaração que passe um valor deste tamanho por
+> `var()` — a declaração inteira cai, cor de segurança incluída, e o fundo
+> desaparece sem erro nenhum. Por isso o `background` está partido em
+> propriedades separadas, com a imagem sozinha em `background-image`.
+
+As fontes são três, todas do site e todas **embebidas no ficheiro** em
+base64 — **IM Fell English SC** em tudo o que é nome, categoria, preço ou
+etiqueta; **Alegreya Sans** no inglês descritivo e nos parágrafos da
+contracapa, que em versaletes não se leriam; **Rye** só no TASKUIИHA da
+capa, que é o letreiro de madeira sobre a porta. A Special Elite, a máquina
+de escrever dos preços, saiu. As fontes embebidas mais a fotografia do
+papel são o que faz o HTML pesar 4,6 MB, e é de propósito: assim abre igual
+em qualquer computador, na gráfica inclusive, sem rede e sem fontes
+instaladas.
+
+A IM Fell English SC já é versaletes — não se lhe põe `text-transform:
+uppercase` por cima, que anula o efeito e devolve caixa alta chapada.
 
 Na capa está o pirata que recebe à porta, o mesmo recorte que está na
 página inicial (`public/images/esqueleto-grande.png`), também embebido.
@@ -27,36 +43,36 @@ Abrir `ementa.html` no Chrome e **Imprimir**:
 
 - destino: **Guardar como PDF**
 - tamanho: **A4**
-- margens: **Nenhuma** (as margens estão no ficheiro, 15 mm em cima e 14 mm
-  aos lados)
+- margens: **Nenhuma** (as margens estão no ficheiro, 28 mm em cima e em
+  baixo, 40 mm aos lados)
 - ligar **Gráficos de fundo** — sem isto o papel sai branco, sem o
   pergaminho nem as arestas queimadas, e a ementa perde metade do que é
 
-Confirmar sempre que dá **seis** páginas. Se der mais, alguma coisa fez
+Confirmar sempre que dá **doze** páginas. Se der mais, alguma coisa fez
 as folhas medirem mais de 297 mm — foi o que aconteceu na primeira versão,
 e está explicado no comentário do `@media print`.
 
-## O ar entre pratos é medido, não escolhido
+## A caixa é uma só, igual em todas as folhas
 
-Cada folha tem o seu `--ar`, no atributo `style` da própria `<section>`:
+O texto vive numa caixa de 130 × 226 mm, a mesma nas doze páginas: 40 mm de
+margem aos lados, 28 mm em cima e em baixo. Os 40 mm dos lados não são
+desperdício — são o que põe as duas flores do pergaminho fora do caminho. A
+flor de baixo à esquerda só ocupa os primeiros 40 mm de largura; a de cima à
+direita, os últimos 40 mm. Com esta margem nenhuma das duas chega ao texto,
+em altura nenhuma da folha.
 
-| Folha | `--ar` |
-|---|---|
-| 2 · Entradas, Snack, Extras | 2,95 mm |
-| 3 · Sandes, Cafetaria, Bebidas | 1,03 mm |
-| 4 · Cerveja, Vinho | 1,87 mm |
-| 5 · Bar | 1,89 mm |
+Uma coluna só, largura fixa, sem cantos comidos e sem colunas de tamanhos
+diferentes. Quando os pratos não cabem, abre-se outra folha — foi assim que
+seis páginas passaram a doze.
 
-A capa e a contracapa não têm `--ar`: não têm lista nenhuma para afinar.
+O `--ar` entre pratos é agora **um valor só, 1,2 mm**, no `:root`. Não é
+uma conta por folha: é uma escolha de desenho, e mexer-lhe muda todas as
+folhas ao mesmo tempo.
 
-As categorias têm tamanhos muito diferentes — o Bar tem 39 linhas, os
-Extras têm 3 — e com um valor único umas folhas fechavam cheias e outras
-ficavam com um terço em branco. Estes quatro números foram encontrados a
-medir onde acaba o último prato de cada folha, até todas fecharem a 6-8 mm
-do fundo da caixa.
-
-**Se acrescentares ou tirares pratos, estes números deixam de servir.** Diz
-e volto a afiná-los.
+**Se acrescentares ou tirares pratos, a repartição pelas folhas deixa de
+estar equilibrada.** Diz e volto a reparti-los — mede-se a altura real de
+cada prato no browser e procura-se a divisão que deixa as folhas com o
+mesmo peso, sem categorias a virar a página por dois pratos.
 
 ## O que falta
 
