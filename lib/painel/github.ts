@@ -71,12 +71,29 @@ export class ErroDoGithub extends Error {
   }
 
   /*
-    A mensagem que se mostra a quem está do outro lado. O 401 e o 403 merecem
-    palavras próprias porque têm quase sempre a mesma causa e uma causa que se
-    resolve: um PAT do GitHub caduca ao fim de um ano, no máximo, e sem esta
-    distinção o sintoma seria "o painel deixou de gravar" sem mais nada.
+    A mensagem que se mostra a quem está do outro lado.
+
+    ## Não configurado e expirado não são a mesma coisa
+
+    Esta distinção nasceu de um engano real: sem `PAINEL_GITHUB_TOKEN` nenhum, o
+    painel dizia *"o mais provável é o token ter expirado ou perdido
+    permissões"* — e mandava quem o lesse procurar um problema que não existia,
+    em vez de o mandar criar o token que faltava.
+
+    Um erro que descreve mal a causa é pior do que um erro genérico: o genérico
+    faz perguntar, o errado faz procurar no sítio errado.
+
+    O 401 e o 403 do próprio GitHub continuam a merecer palavras próprias, e
+    pela razão que já lá estava: um PAT caduca ao fim de um ano, no máximo, e
+    sem isto escrito o sintoma seria "o painel deixou de gravar" e mais nada.
   */
   get paraOEcra(): string {
+    if (this.estado === SEM_TOKEN) {
+      return (
+        "O painel ainda não tem acesso ao repositório — falta configurar o " +
+        "PAINEL_GITHUB_TOKEN. Ver docs/PAINEL.md."
+      );
+    }
     if (this.estado === 401 || this.estado === 403) {
       return (
         "O painel não conseguiu falar com o GitHub — o mais provável é o " +
@@ -93,10 +110,16 @@ export class ErroDoGithub extends Error {
   }
 }
 
+/*
+  Não é um código de estado do GitHub — o pedido nem chega a sair. É um número
+  fora da gama do HTTP de propósito, para nunca colidir com uma resposta real.
+*/
+const SEM_TOKEN = 0;
+
 /* Lido dentro da função: em module scope rebentava o `next build` da CI. */
 function cabecalhos(): HeadersInit {
   const token = process.env.PAINEL_GITHUB_TOKEN;
-  if (!token) throw new ErroDoGithub(401, "PAINEL_GITHUB_TOKEN em falta.");
+  if (!token) throw new ErroDoGithub(SEM_TOKEN, "PAINEL_GITHUB_TOKEN em falta.");
 
   return {
     Authorization: `Bearer ${token}`,
