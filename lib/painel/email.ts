@@ -65,6 +65,49 @@ function chaveDeApi(): string {
   return valor;
 }
 
+/*
+  Em desenvolvimento, sem chave do Resend, o código vai para o terminal.
+
+  Sem isto não há forma de entrar no painel na própria máquina sem montar uma
+  conta de email — e montar uma conta de email para carregar num botão e ver se
+  o ecrã está direito é fricção a mais.
+
+  **Isto não é uma porta traseira.** O código continua a ser gerado, continua a
+  ser exigido, e continua a ter de bater certo. O que muda é por onde ele sai:
+  em vez de um email, sai no terminal de quem está a correr o `npm run dev`, que
+  é a mesma pessoa que está a tentar entrar.
+
+  Duas condições, e as duas têm de se verificar:
+
+  - `NODE_ENV !== "production"` — na Vercel o build de produção é sempre
+    `production`, portanto este ramo não existe lá;
+  - **não haver `RESEND_API_KEY`** — se houver chave, manda-se o email a sério,
+    mesmo em desenvolvimento.
+
+  Se um dia isto aparecer a disparar em produção, é sinal de que o `NODE_ENV`
+  está errado — e aí o problema é esse, não este ficheiro.
+*/
+function paraOTerminal(para: string, legivel: string): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  if (process.env.RESEND_API_KEY) return false;
+
+  console.log(
+    [
+      "",
+      "┌────────────────────────────────────────────────┐",
+      "│  DESENVOLVIMENTO — sem RESEND_API_KEY          │",
+      "│  O código não foi enviado por email.           │",
+      "├────────────────────────────────────────────────┤",
+      `│  para:   ${para.padEnd(38)}│`,
+      `│  código: ${legivel.padEnd(38)}│`,
+      "└────────────────────────────────────────────────┘",
+      "",
+    ].join("\n"),
+  );
+
+  return true;
+}
+
 export async function enviarCodigo({
   para,
   codigo,
@@ -73,6 +116,8 @@ export async function enviarCodigo({
   codigo: string;
 }): Promise<void> {
   const legivel = comEspaco(codigo);
+
+  if (paraOTerminal(para, legivel)) return;
 
   const resposta = await fetch("https://api.resend.com/emails", {
     method: "POST",

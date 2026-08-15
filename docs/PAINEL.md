@@ -132,6 +132,29 @@ escrita ao `DEVV-TGR/Taskuinha`:
 
 ---
 
+## Experimentar na própria máquina
+
+Um `.env.local` chega — o `.gitignore` já o apanha, e não tem nada que ver com
+o que está na Vercel:
+
+```
+PAINEL_UTILIZADOR=…
+PAINEL_PASSWORD=…
+PAINEL_EMAIL=…
+```
+
+**Sem `RESEND_API_KEY`, e só em desenvolvimento, o código do segundo passo sai
+no terminal** onde estiver o `npm run dev`, dentro de uma caixa difícil de não
+ver. Não é uma porta traseira: o código continua a ser gerado, exigido, e a ter
+de bater certo — muda só por onde sai, e sai para a mesma pessoa que está a
+tentar entrar. Em produção o ramo não existe (`NODE_ENV`), e se não houver chave
+o painel recusa-se a deixar entrar.
+
+Sem `PAINEL_GITHUB_TOKEN`, a entrada e o aspecto do painel vêem-se na mesma; os
+ecrãs da ementa e da casa mostram a mensagem de erro do GitHub em vez dos dados.
+
+---
+
 ## Recomendado: a regra de rate limiting
 
 Não é obrigatória para o painel funcionar, mas é o que trava mesmo um bot a
