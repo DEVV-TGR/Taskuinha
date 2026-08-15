@@ -18,8 +18,12 @@ npm run dev
 ## Como está feito
 
 Next.js 16 com App Router, TypeScript, Tailwind v4 (CSS-first), Motion para
-as animações e Phosphor para os ícones. Duas rotas estáticas, sem base de
-dados e sem CMS.
+as animações e Phosphor para os ícones. Duas rotas estáticas em quatro
+línguas, sem base de dados.
+
+O CMS é o próprio repositório: há um painel em `/painel` onde o dono da casa
+muda preços e pratos, e o que ele grava é um commit em `data/*.json` que faz a
+Vercel reconstruir o site. Ver `docs/PAINEL.md`.
 
 ```
 app/               layout com fontes, metadata e JSON-LD; página inicial e /ementa

@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# …menos o exemplo, que só tem os nomes das variáveis do painel e nenhum valor.
+# É a única forma de quem clona o repositório saber o que é preciso definir.
+!.env.example
 
 # vercel
 .vercel

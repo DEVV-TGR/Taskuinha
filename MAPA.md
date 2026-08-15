@@ -6,10 +6,11 @@
 > `docs/PLANO.md`) está construído — as 10 fases feitas, incluindo a
 > passagem final de acessibilidade e desempenho.
 >
-> **A ementa e os contactos saíram do código** e vivem agora em `data/`, em
-> JSON. É o primeiro passo para o painel de administração em `/painel`, onde
-> o dono da casa vai poder mexer nos preços sem abrir um editor. O painel
-> ainda não existe; os dados já estão no sítio onde ele os vai gravar.
+> **Há um painel de administração em `/painel`.** A ementa e os contactos
+> saíram do código para `data/*.json`, e o painel grava-os no repositório pela
+> API do GitHub — a Vercel vê o push e reconstrói o site. O dono da casa muda
+> preços, acrescenta e tira pratos sem abrir um editor. Ver `docs/PAINEL.md`,
+> que tem os três passos de montagem que não se fazem em código.
 >
 > **A seguir:** o cliente já viu o site e há uma ronda de afinações a fazer
 > depois de uma reunião presencial na casa. Ver `docs/PROXIMAS-MELHORIAS.md`
@@ -61,6 +62,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
+| Quem entra no painel, e como | `docs/PAINEL.md` |
 | Favicon | `app/icon.svg` |
 | Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |
 | Dados estruturados para o Google | `app/layout.tsx` → `StructuredData` |
@@ -72,8 +74,14 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 
 | Rota | Ficheiro | Conteúdo |
 |---|---|---|
-| `/` | `app/page.tsx` | Hero → Casa → Petiscos → Galeria → Vozes → Encontrar |
-| `/ementa` | `app/ementa/page.tsx` | Ementa completa num rolo só |
+| `/` | `app/[lang]/page.tsx` | Hero → Casa → Petiscos → Galeria → Vozes → Encontrar |
+| `/ementa` | `app/[lang]/ementa/page.tsx` | Ementa completa num rolo só |
+| `/painel` | `app/painel/page.tsx` | O painel da casa — **fora do `[lang]`** |
+| `/painel/ementa` | `app/painel/ementa/page.tsx` | Preços, pratos novos, tirar pratos |
+| `/painel/casa` | `app/painel/casa/page.tsx` | Contactos e horário |
+
+As oito públicas são geradas no build; as do painel são dinâmicas, e o
+`npm run fumo` lê o `prerender-manifest.json` para essa divisão não regredir.
 
 Gerados automaticamente: `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/icon.svg`.
 
