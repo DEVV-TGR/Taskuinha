@@ -1,5 +1,6 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { segredoDeSessao } from "./utilizadores";
 
 /*
   O cookie de sessão do painel.
@@ -42,25 +43,19 @@ const VERSAO = "s1";
 export const VALIDADE_MS = 8 * 60 * 60 * 1000;
 
 /*
-  Lido dentro da função e não no topo do ficheiro: o `next build` do CI corre sem
-  variáveis nenhumas, e um `throw` em module scope rebentava-o. Aqui só rebenta
-  quando alguém tenta mesmo abrir ou selar uma sessão — que em CI não acontece,
-  porque o caminho não autenticado nunca chega cá (ver `proxy.ts`).
-*/
-function segredo(): string {
-  const valor = process.env.PAINEL_SESSAO_SEGREDO;
-  /* 32 bytes em base64 dão 43 caracteres. Menos do que isso não é um segredo. */
-  if (!valor || valor.length < 43) {
-    throw new Error(
-      "PAINEL_SESSAO_SEGREDO em falta ou demasiado curto. " +
-        "Gera um com: openssl rand -base64 32",
-    );
-  }
-  return valor;
-}
+  A chave sai das próprias credenciais — ver `segredoDeSessao()` no
+  `lib/painel/utilizadores.ts`. Não há uma terceira variável de ambiente para
+  gerar com o `openssl`, e mudar a password expulsa toda a gente, que é o que se
+  espera de mudar uma password.
 
+  Chamada dentro da função e não no topo do ficheiro: o `next build` da CI corre
+  sem variáveis nenhumas e um `throw` em module scope rebentava-o. Aqui só
+  rebenta quando alguém tenta mesmo abrir ou selar uma sessão — que em CI não
+  acontece, porque o caminho de quem não tem sessão nunca chega cá (ver
+  `proxy.ts`).
+*/
 function assinar(corpo: string): string {
-  return createHmac("sha256", segredo())
+  return createHmac("sha256", segredoDeSessao())
     .update(`${VERSAO}.${corpo}`)
     .digest("base64url");
 }

@@ -9,7 +9,6 @@
     "lint": "eslint",
     "tipos": "next typegen && tsc --noEmit",
     "fumo": "node scripts/fumo.mjs",
-    "palavra-passe": "node scripts/palavra-passe.mjs",
     "cartao-fundo": "node scripts/cartao-fundo.mjs",
     "folha-velha": "node scripts/folha-velha.mjs"
   },

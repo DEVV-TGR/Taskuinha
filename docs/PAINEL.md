@@ -21,24 +21,41 @@ passarem cinco minutos sem aparecer.
 
 ---
 
-## Os três passos que ninguém pode fazer por código
-
-Sem estes o painel não arranca.
+## Montar — dois passos
 
 ### 1. As variáveis de ambiente, na Vercel
 
-Project → Settings → Environment Variables. **Marcar as três como *Sensitive***,
-para não serem legíveis de volta no dashboard.
+Project → Settings → Environment Variables. **Marcar como *Sensitive***, para não
+serem legíveis de volta no dashboard depois de gravadas.
 
-| Nome | Onde arranjar |
-|---|---|
-| `PAINEL_UTILIZADORES` | `npm run palavra-passe` imprime a linha inteira, pronta a colar |
-| `PAINEL_SESSAO_SEGREDO` | `openssl rand -base64 32` |
-| `PAINEL_GITHUB_TOKEN` | o token do passo 2 |
+```
+PAINEL_UTILIZADOR    goncalo
+PAINEL_PASSWORD      a que ele escolher
+PAINEL_GITHUB_TOKEN  o token do passo 2
+```
+
+Escrevem-se à mão e acabou. Não há script para correr nem hash para gerar.
+
+Para uma segunda pessoa, é o mesmo par com um número ao lado —
+`PAINEL_UTILIZADOR_2` e `PAINEL_PASSWORD_2`, até ao `_5`.
 
 > **Mudar uma variável não afecta as funções já publicadas.** É preciso um
-> redeploy para a nova valer. Quem mudar uma password, testar, e concluir que o
+> redeploy para a nova valer. Quem mudar a password, testar, e concluir que o
 > painel está partido, está a ver isto.
+
+> **Mudar a password expulsa quem estiver ligado.** É de propósito: a chave que
+> assina o cookie de sessão sai das próprias credenciais, e é isso que evita ter
+> de gerar e guardar uma terceira variável. Também é o botão de emergência, se
+> alguma vez for preciso.
+
+**Escolher a password.** Que não seja a password de mais nada. Ela fica em claro
+nas variáveis de ambiente da Vercel — quem as conseguir ler também lê o
+`PAINEL_GITHUB_TOKEN`, que já dá acesso de escrita ao repositório, por isso um
+hash não fecharia porta nenhuma que o token não deixasse aberta. O que se perde
+mesmo é a password ser reutilizável noutro sítio.
+
+E que não seja `taskuinha2026`: cada tentativa custa ~100 ms e o firewall trava
+por IP, mas uma password que está numa lista de palavras cai à mesma.
 
 ### 2. O token do GitHub
 
@@ -55,13 +72,13 @@ escrita ao `DEVV-TGR/Taskuinha`:
 > deixa de gravar — e diz *"o token expirou ou perdeu permissões"* em vez de
 > falhar em silêncio, mas continua a ser preciso alguém renová-lo. Vale a pena um
 > lembrete no calendário.
->
-> Uma GitHub App resolvia a expiração, ao custo de bastante mais montagem: JWT
-> assinado com chave privada, troca por um token de instalação de uma hora, e a
-> chave em base64 nas variáveis de ambiente. Para uma casa com um painel, o PAT
-> é a escolha proporcional.
 
-### 3. A regra de rate limiting, no Vercel Firewall
+---
+
+## Recomendado: a regra de rate limiting
+
+Não é obrigatória para o painel funcionar, mas é o que trava mesmo um bot a
+tentar passwords — e configura-se uma vez, sem código.
 
 Dashboard → Projecto → **Firewall** → Configure → New Rule:
 
@@ -69,9 +86,8 @@ Dashboard → Projecto → **Firewall** → Configure → New Rule:
   *equals* `POST`
 - **Then**: **Rate Limit**, janela de **60s**, limite de **5**, chave **IP
   Address**, acção **Challenge**
-- Review Changes → Publish
 
-Três coisas que decidem se isto funciona:
+Três coisas que decidem se funciona:
 
 - **O filtro `POST` é obrigatório.** A entrada é uma server action, e uma server
   action é um POST para o caminho da própria página. Sem o filtro, a regra conta
@@ -79,32 +95,15 @@ Três coisas que decidem se isto funciona:
 - **`Challenge` e não `Deny`.** Quem se engana cinco vezes resolve um desafio e
   continua; um bot não resolve. Um `Deny` bloqueava o dono um minuto sem
   explicação nenhuma.
-- **Começar com a acção `Log`** durante uns dias, ver na Firewall Overview
-  quantos pedidos legítimos apanharia, e só depois passar a `Challenge`.
+- **Começar com a acção `Log`** durante uns dias, ver quantos pedidos legítimos
+  apanharia, e só depois passar a `Challenge`.
 
 Existe no plano Hobby: uma regra de rate limit grátis por projecto, com o
 primeiro milhão de pedidos incluído por mês.
 
----
-
-## Acrescentar um utilizador
-
-```bash
-npm run palavra-passe
-```
-
-Pede o nome, e **carrega em Enter na password** para a deixar gerar. Guarda-a no
-gestor de passwords do telemóvel — não há forma de a recuperar depois.
-
-Se já houver um `PAINEL_UTILIZADORES` no ambiente, o script junta-se a ele em vez
-de o substituir, e imprime a lista inteira.
-
-> **Porque é que a password é gerada e não escolhida.** É a medida que mais
-> protege o painel — mais do que o scrypt, mais do que o firewall, mais do que
-> tudo o resto junto. Com ~100 ms por tentativa e a regra do firewall a travar por
-> IP, `taskuinha2026` está em qualquer lista de palavras e cai em segundos; 18
-> bytes aleatórios não caem nunca. O scrypt não protege uma password fraca —
-> protege uma forte, e protege-a sobretudo no dia em que os hashes vazarem.
+Há também um contador em memória no código (`lib/painel/travao.ts`), que apanha
+um script ingénuo e mais nada — está lá explicado porquê. A regra do firewall é
+que é a defesa.
 
 ---
 
@@ -112,10 +111,10 @@ de o substituir, e imprime a lista inteira.
 
 | O que se vê | O que é |
 |---|---|
+| A entrada não aceita a password certa | a variável mudou mas não houve redeploy — ver o aviso do passo 1 |
 | *"o token expirou ou perdeu permissões"* | o PAT do GitHub caducou — passo 2 |
 | *"alguém gravou entretanto"* | duas pessoas no painel ao mesmo tempo. Recarregar e repetir; **nada foi gravado**, de propósito, para não apagar o trabalho do outro |
 | *"passaram cinco minutos e o site continua na versão anterior"* | o build da Vercel falhou. **O site não caiu** — a Vercel mantém o deploy anterior no ar. A alteração está gravada no repositório; ver os registos da Vercel |
-| A entrada não aceita a password certa | a variável mudou mas não houve redeploy — ver o aviso do passo 1 |
 
 ---
 
