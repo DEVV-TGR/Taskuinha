@@ -9,8 +9,10 @@
 > **Há um painel de administração em `/painel`.** A ementa e os contactos
 > saíram do código para `data/*.json`, e o painel grava-os no repositório pela
 > API do GitHub — a Vercel vê o push e reconstrói o site. O dono da casa muda
-> preços, acrescenta e tira pratos sem abrir um editor. Ver `docs/PAINEL.md`,
-> que tem os três passos de montagem que não se fazem em código.
+> preços, acrescenta e tira pratos sem abrir um editor. A entrada tem dois
+> passos — palavra-passe e um código por email — e lembra o aparelho 30 dias.
+> Ver `docs/PAINEL.md`, que tem os passos de montagem que não se fazem em
+> código.
 >
 > **A seguir:** o cliente já viu o site e há uma ronda de afinações a fazer
 > depois de uma reunião presencial na casa. Ver `docs/PROXIMAS-MELHORIAS.md`
@@ -77,6 +79,8 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | `/` | `app/[lang]/page.tsx` | Hero → Casa → Petiscos → Galeria → Vozes → Encontrar |
 | `/ementa` | `app/[lang]/ementa/page.tsx` | Ementa completa num rolo só |
 | `/painel` | `app/painel/page.tsx` | O painel da casa — **fora do `[lang]`** |
+| `/painel/entrar` | `app/painel/entrar/page.tsx` | Utilizador e palavra-passe |
+| `/painel/entrar/codigo` | `app/painel/entrar/codigo/page.tsx` | O código de 6 algarismos, por email |
 | `/painel/ementa` | `app/painel/ementa/page.tsx` | Preços, pratos novos, tirar pratos |
 | `/painel/casa` | `app/painel/casa/page.tsx` | Contactos e horário |
 

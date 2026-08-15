@@ -33,7 +33,13 @@ const NOME_DO_COOKIE = "taskuinha_sessao";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /* O ecrã de entrada tem de ser alcançável por quem ainda não entrou. */
+  /*
+    Os ecrãs de entrada têm de ser alcançáveis por quem ainda não entrou — os
+    **dois**, que o `startsWith` já cobre: `/painel/entrar` (a password) e
+    `/painel/entrar/codigo` (o código do email). Quem estiver a meio do segundo
+    passo ainda não tem cookie de sessão, e mandá-lo daqui para trás era um
+    ciclo.
+  */
   if (pathname.startsWith("/painel/entrar")) return NextResponse.next();
 
   if (!request.cookies.has(NOME_DO_COOKIE)) {

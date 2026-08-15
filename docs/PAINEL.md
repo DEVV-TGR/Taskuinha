@@ -21,7 +21,34 @@ passarem cinco minutos sem aparecer.
 
 ---
 
-## Montar — dois passos
+## Como se entra
+
+Dois passos, sempre:
+
+```
+1. utilizador + palavra-passe
+        ↓
+   aparelho já conhecido?  ──sim─→  entra
+        ↓ não
+2. código de 6 algarismos, que vai por email
+        ↓
+   entra — e este aparelho fica conhecido 30 dias
+```
+
+O código vai **no assunto do email**, para se ler na notificação do telemóvel
+sem ter de abrir nada. Vale 10 minutos e serve uma vez só.
+
+Depois de acertar o código uma vez, aquele telemóvel ou browser só volta a
+pedi-lo daqui a 30 dias. Noutro aparelho, ou numa janela anónima, pede outra vez.
+
+> **Quem controla a caixa de correio controla o painel.** É a natureza do
+> segundo passo por email — mais fraco do que uma app de códigos, e muito mais
+> fácil para quem não quer instalar nada. **O email que recebe os códigos deve
+> ele próprio ter verificação em dois passos ligada.**
+
+---
+
+## Montar — três passos
 
 ### 1. As variáveis de ambiente, na Vercel
 
@@ -31,33 +58,63 @@ serem legíveis de volta no dashboard depois de gravadas.
 ```
 PAINEL_UTILIZADOR    goncalo
 PAINEL_PASSWORD      a que ele escolher
-PAINEL_GITHUB_TOKEN  o token do passo 2
+PAINEL_EMAIL         goncalo@…            ← para onde vai o código
+RESEND_API_KEY       re_…                 ← do passo 2
+PAINEL_GITHUB_TOKEN  ghp_…                ← do passo 3
 ```
 
 Escrevem-se à mão e acabou. Não há script para correr nem hash para gerar.
 
-Para uma segunda pessoa, é o mesmo par com um número ao lado —
-`PAINEL_UTILIZADOR_2` e `PAINEL_PASSWORD_2`, até ao `_5`.
+Para uma segunda pessoa, é o mesmo trio com um número ao lado —
+`PAINEL_UTILIZADOR_2`, `PAINEL_PASSWORD_2` e `PAINEL_EMAIL_2`, até ao `_5`.
+
+> **Faltar o email é o mesmo que o utilizador não existir.** É deliberado: sem
+> email não há segundo passo, e um utilizador que entrasse só com password era
+> uma porta aberta ao lado da que se acabou de trancar.
+
+> **O email é fixo aqui, não se escreve no ecrã de entrada.** Se fosse escrito,
+> quem tivesse a password mandava o código para o seu próprio endereço e o
+> segundo passo não valia nada.
 
 > **Mudar uma variável não afecta as funções já publicadas.** É preciso um
 > redeploy para a nova valer. Quem mudar a password, testar, e concluir que o
 > painel está partido, está a ver isto.
 
-> **Mudar a password expulsa quem estiver ligado.** É de propósito: a chave que
-> assina o cookie de sessão sai das próprias credenciais, e é isso que evita ter
-> de gerar e guardar uma terceira variável. Também é o botão de emergência, se
-> alguma vez for preciso.
+> **Mudar a password revoga tudo.** Sessões abertas, códigos a meio, e todos os
+> aparelhos que estavam lembrados os 30 dias. É de propósito: as chaves saem das
+> próprias credenciais, o que dispensa mais uma variável para gerar — e dá um
+> botão de emergência que é um só e apaga tudo.
 
-**Escolher a password.** Que não seja a password de mais nada. Ela fica em claro
-nas variáveis de ambiente da Vercel — quem as conseguir ler também lê o
-`PAINEL_GITHUB_TOKEN`, que já dá acesso de escrita ao repositório, por isso um
-hash não fecharia porta nenhuma que o token não deixasse aberta. O que se perde
-mesmo é a password ser reutilizável noutro sítio.
+**Escolher a password.** Que não seja a password de mais nada.
 
-E que não seja `taskuinha2026`: cada tentativa custa ~100 ms e o firewall trava
-por IP, mas uma password que está numa lista de palavras cai à mesma.
+Ela fica em claro nas variáveis de ambiente da Vercel. Guardar um hash protegia
+de quem as conseguisse ler — e essa pessoa lê também o `PAINEL_GITHUB_TOKEN`,
+que já dá escrita no repositório, por isso o hash não fecharia porta nenhuma que
+o token não deixasse aberta. O que se perde mesmo é a password ser reutilizável
+noutro sítio.
 
-### 2. O token do GitHub
+**E é aqui que o segundo passo muda a conta.** Uma password sozinha já não
+chega para entrar: quem a souber — porque a adivinhou, porque a viu, ou porque
+leu as variáveis — continua a precisar da caixa de correio do Gonçalo. É essa a
+razão de existir.
+
+### 2. A conta de email (Resend)
+
+O painel precisa de um serviço que envie o email do código.
+
+1. Conta em **[resend.com](https://resend.com)** — grátis até 3000 emails por
+   mês, e isto vai usar uns 20.
+2. **Domains → Add Domain → `taskuinhapirata.pt`.** O Resend dá três registos
+   DNS (SPF, DKIM e um de retorno) para pôr onde o domínio está alojado. É o que
+   permite enviar de `codigo@taskuinhapirata.pt` em vez de um endereço
+   emprestado que aterra no spam. Demora uns minutos a verificar.
+3. **API Keys → Create**, com permissão de envio apenas. Copiar para o
+   `RESEND_API_KEY`.
+
+> Se o Resend estiver em baixo, não se entra em **aparelhos novos**. Os que já
+> estão conhecidos continuam a entrar durante os 30 dias.
+
+### 3. O token do GitHub
 
 Um **fine-grained personal access token**, criado por alguém com acesso de
 escrita ao `DEVV-TGR/Taskuinha`:
@@ -112,7 +169,10 @@ que é a defesa.
 | O que se vê | O que é |
 |---|---|
 | A entrada não aceita a password certa | a variável mudou mas não houve redeploy — ver o aviso do passo 1 |
-| *"o token expirou ou perdeu permissões"* | o PAT do GitHub caducou — passo 2 |
+| *"a chave do serviço de email parece estar errada"* | a `RESEND_API_KEY` está errada ou expirou — passo 2 |
+| O código não chega | ver Logs no dashboard do Resend. O mais provável é o domínio ter deixado de estar verificado, ou o email ter ido para o spam |
+| Pede o código todas as vezes | o browser está a apagar cookies ao fechar, ou é uma janela anónima. É o comportamento certo |
+| *"o token expirou ou perdeu permissões"* | o PAT do GitHub caducou — passo 3 |
 | *"alguém gravou entretanto"* | duas pessoas no painel ao mesmo tempo. Recarregar e repetir; **nada foi gravado**, de propósito, para não apagar o trabalho do outro |
 | *"passaram cinco minutos e o site continua na versão anterior"* | o build da Vercel falhou. **O site não caiu** — a Vercel mantém o deploy anterior no ar. A alteração está gravada no repositório; ver os registos da Vercel |
 

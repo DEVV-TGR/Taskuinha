@@ -74,7 +74,12 @@ const CUSTO = { N: 1 << 15, r: 8, p: 1, maxmem: 192 * 1024 * 1024 };
 */
 const SAL = "taskuinha:painel:v1";
 
-export type Utilizador = { utilizador: string; password: string };
+export type Utilizador = {
+  utilizador: string;
+  password: string;
+  /** Para onde vai o código do segundo passo. */
+  email: string;
+};
 
 /*
   Lê o ambiente. Nunca em module scope: o `next build` da CI corre sem uma
@@ -84,6 +89,10 @@ export type Utilizador = { utilizador: string; password: string };
   atirar, que um ecrã de avaria diria a quem está do outro lado que há aqui
   alguma coisa mal configurada, e isso é meio caminho andado para quem procura
   por onde entrar.
+
+  **Um utilizador sem email não conta.** Sem email não há segundo passo, e um
+  utilizador que entrasse só com password seria uma porta lateral aberta ao lado
+  da porta que se acabou de trancar. Falta o email, o utilizador não existe.
 */
 function carregar(): Utilizador[] {
   const lista: Utilizador[] = [];
@@ -91,10 +100,19 @@ function carregar(): Utilizador[] {
   for (const sufixo of ["", "_2", "_3", "_4", "_5"]) {
     const utilizador = process.env[`PAINEL_UTILIZADOR${sufixo}`]?.trim();
     const password = process.env[`PAINEL_PASSWORD${sufixo}`];
-    if (utilizador && password) lista.push({ utilizador, password });
+    const email = process.env[`PAINEL_EMAIL${sufixo}`]?.trim();
+
+    if (utilizador && password && email) {
+      lista.push({ utilizador, password, email });
+    }
   }
 
   return lista;
+}
+
+/** O email de quem entrou, para lá mandar o código. */
+export function emailDe(utilizador: string): string | null {
+  return carregar().find((u) => u.utilizador === utilizador)?.email ?? null;
 }
 
 /*
@@ -138,33 +156,38 @@ export async function autenticar(
 }
 
 /*
-  A chave que assina o cookie de sessão.
+  O segredo de onde saem todas as chaves do painel.
 
-  Sai das próprias credenciais, e não de uma terceira variável de ambiente que
+  Sai das próprias credenciais, e não de mais uma variável de ambiente que
   alguém tivesse de gerar com o `openssl`. Era mais uma coisa a montar, e o que
   ela dava consegue-se daqui.
 
-  Tem uma propriedade que se quer: **mudar a password expulsa toda a gente**.
-  Os cookies assinados com a chave antiga deixam de abrir, o que é exactamente
-  o que se espera de mudar uma password — e é o botão de emergência que de
-  outra forma seria preciso lembrar de carregar à parte.
+  Tem uma propriedade que se quer: **mudar a password revoga tudo** — sessões
+  abertas, desafios a meio, e aparelhos que estavam lembrados os 30 dias. É
+  exactamente o que se espera de mudar uma password, e é o botão de emergência
+  que de outra forma era preciso lembrar de carregar à parte.
 
-  `sha256` e não `scrypt`: isto corre em cada pedido ao painel, e o que está a
-  ser derivado só é atacável por quem já tenha um cookie válido — ou seja, por
-  quem já entrou. Não há aqui um ataque offline que valha os 100 ms.
+  Isto não é uma chave; é a matéria-prima delas. Quem quer uma chave vai ao
+  `lib/painel/chaves.ts`, que a estica em três — uma por uso, e nunca a mesma
+  para assinar e para cifrar.
+
+  `sha256` e não `scrypt`: corre em cada pedido ao painel, e o que está a ser
+  derivado só é atacável por quem já tenha um cookie válido — ou seja, por quem
+  já entrou. Não há aqui um ataque offline que valha os 50 ms.
 */
-export function segredoDeSessao(): string {
+export function segredoDasCredenciais(): string {
   const credenciais = carregar()
     .map((u) => `${u.utilizador}:${normalizar(u.password)}`)
     .join("\n");
 
   if (credenciais === "") {
     throw new Error(
-      "PAINEL_UTILIZADOR e PAINEL_PASSWORD em falta. Ver docs/PAINEL.md.",
+      "PAINEL_UTILIZADOR, PAINEL_PASSWORD e PAINEL_EMAIL em falta. " +
+        "Ver docs/PAINEL.md.",
     );
   }
 
   return createHash("sha256")
-    .update(`taskuinha:sessao:v1\n${credenciais}`)
+    .update(`taskuinha:credenciais:v1\n${credenciais}`)
     .digest("base64");
 }

@@ -195,6 +195,23 @@ try {
     "o painel continua a trazer os cabeçalhos de segurança do site",
   );
 
+  /*
+    O segundo passo da entrada. Sem um desafio a meio — que é o que a CI tem,
+    sem variável nenhuma definida — tem de mandar para o princípio, e não pode
+    rebentar a tentar derivar chaves que não existem.
+  */
+  const segundoPasso = await fetch(`${BASE}/painel/entrar/codigo`, {
+    redirect: "manual",
+  });
+  verificar(
+    [302, 307, 308].includes(segundoPasso.status),
+    `/painel/entrar/codigo sem desafio redirecciona (${segundoPasso.status})`,
+  );
+  verificar(
+    (segundoPasso.headers.get("location") ?? "").endsWith("/painel/entrar"),
+    "…e é para o princípio da entrada",
+  );
+
   const robots = await (await fetch(`${BASE}/robots.txt`)).text();
   verificar(robots.includes("Disallow: /painel"), "o robots.txt fecha o painel");
 
