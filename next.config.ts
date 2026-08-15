@@ -36,12 +36,28 @@ import type { NextConfig } from "next";
 /*
   ## Os cabeçalhos de segurança
 
-  O site não tem autenticação, nem API, nem base de dados, nem um único
-  campo de formulário: todo o texto que chega ao browser são constantes
-  deste repositório. Não há por onde entrar um XSS. Estes cabeçalhos são
-  portanto defesa em profundidade, e o que fecham a sério é outra coisa —
-  o `frame-ancestors`, que impede que alguém ponha a Taskuinha dentro de
-  um iframe e receba os cliques no botão do telefone.
+  As oito páginas públicas não têm um único campo de formulário: todo o
+  texto que chega ao browser sai de `data/*.json` no build. Não há por onde
+  entrar um XSS, e para elas estes cabeçalhos continuam a ser defesa em
+  profundidade — o que fechavam a sério era o `frame-ancestors`, que impede
+  que alguém ponha a Taskuinha dentro de um iframe e receba os cliques no
+  botão do telefone.
+
+  **Isso mudou com o `/painel`.** Passou a haver autenticação, formulários e
+  uma sessão em cookie, e o `frame-ancestors` deixou de ser precaução para
+  passar a fechar um ataque a sério: clickjacking sobre um painel autenticado
+  é outra conversa que clickjacking sobre um botão de telefone.
+
+  ### O `connect-src 'self'` e o GitHub
+
+  O painel grava por HTTP na API do GitHub, e mesmo assim o `connect-src`
+  continua a ser só `'self'`. Não é esquecimento: a chamada é feita **no
+  servidor**, dentro de uma server action, e o browser nunca fala com o
+  `api.github.com`. A CSP só governa o browser.
+
+  Se alguém alguma vez precisar de acrescentar `https://api.github.com` aqui,
+  é sinal de que o desenho se partiu e de que o token do GitHub está a passar
+  pelo cliente. Não acrescentar — corrigir.
 
   ### Porque é que há `'unsafe-inline'` no script-src
 
@@ -122,9 +138,33 @@ const cabecalhosDeSeguranca = [
   },
 ];
 
+/*
+  Os dois cabeçalhos que só o painel precisa.
+
+  Vão numa entrada à parte, antes da genérica, e não repetem nenhuma chave
+  dela — duas entradas que casam com o mesmo caminho e declaram a mesma chave
+  têm uma resolução em que não vale a pena confiar.
+
+  `no-store` porque um painel autenticado não se guarda em lado nenhum: nem no
+  CDN da Vercel, nem no disco do browser, nem no botão "voltar" — que é o caso
+  que se esquece e o que faria aparecer a ementa de outra pessoa depois de sair.
+
+  `X-Robots-Tag` é a terceira camada do "isto não se indexa", ao lado do
+  `app/robots.ts` e da metadata do `app/painel/layout.tsx`. É a única das três
+  que vale numa resposta que não é HTML.
+*/
+const cabecalhosDoPainel = [
+  { key: "Cache-Control", value: "no-store, max-age=0, must-revalidate" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+];
+
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/(.*)", headers: cabecalhosDeSeguranca }];
+    return [
+      { source: "/painel/:path*", headers: cabecalhosDoPainel },
+      { source: "/painel", headers: cabecalhosDoPainel },
+      { source: "/(.*)", headers: cabecalhosDeSeguranca },
+    ];
   },
 
 

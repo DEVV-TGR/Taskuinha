@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { setTimeout as esperar } from "node:timers/promises";
 
 /*
@@ -140,6 +141,62 @@ try {
     csp.includes("https://www.openstreetmap.org"),
     "deixa passar o mapa da OpenStreetMap",
   );
+
+  /*
+    As oito páginas continuam a ser geradas no build.
+
+    Isto lê-se do manifesto e não da resposta HTTP de propósito: uma página que
+    passou a dinâmica responde 200 na mesma, com o mesmo aspecto, e só se nota
+    na factura e no tempo de resposta. É o género de regressão que se descobre
+    meses depois — um `await cookies()` acrescentado a um componente partilhado
+    chega para a provocar.
+  */
+  console.log("\nAs oito continuam a ser geradas no build:");
+  const manifesto = JSON.parse(
+    readFileSync(new URL("../.next/prerender-manifest.json", import.meta.url), "utf8"),
+  );
+  const geradas = Object.keys(manifesto.routes ?? {});
+  for (const rota of ["/pt", "/pt/ementa", "/en", "/en/ementa", "/fr", "/fr/ementa", "/es", "/es/ementa"]) {
+    verificar(geradas.includes(rota), `${rota} está no prerender-manifest`);
+  }
+  verificar(
+    !geradas.some((rota) => rota.startsWith("/painel")),
+    "nenhuma rota do painel foi gerada no build",
+  );
+
+  /*
+    O painel, visto de fora e sem sessão — que é como a CI o vê, sem uma única
+    variável de ambiente definida. Se alguma destas verificações precisar de um
+    segredo para passar, é sinal de que um segredo passou a ser lido cedo demais.
+  */
+  console.log("\nO painel:");
+  const painel = await fetch(`${BASE}/painel`, { redirect: "manual" });
+  verificar(
+    [302, 307, 308].includes(painel.status),
+    `/painel sem sessão redirecciona (${painel.status})`,
+  );
+  verificar(
+    (painel.headers.get("location") ?? "").includes("/painel/entrar"),
+    "…e é para /painel/entrar",
+  );
+
+  const entrada = await fetch(`${BASE}/painel/entrar`);
+  verificar(entrada.status === 200, "/painel/entrar responde 200 sem segredos nenhuns");
+  verificar(
+    (entrada.headers.get("cache-control") ?? "").includes("no-store"),
+    "o painel não se guarda em cache",
+  );
+  verificar(
+    (entrada.headers.get("x-robots-tag") ?? "").includes("noindex"),
+    "o painel traz x-robots-tag",
+  );
+  verificar(
+    (entrada.headers.get("x-frame-options") ?? "") === "DENY",
+    "o painel continua a trazer os cabeçalhos de segurança do site",
+  );
+
+  const robots = await (await fetch(`${BASE}/robots.txt`)).text();
+  verificar(robots.includes("Disallow: /painel"), "o robots.txt fecha o painel");
 
   console.log("\nO 404:");
   const perdido = await fetch(`${BASE}/morada-que-nao-existe`);
