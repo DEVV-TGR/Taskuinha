@@ -23,7 +23,7 @@ type Casa = {
 */
 
 export default async function Casa() {
-  const { utilizador } = await exigirSessao();
+  const { email } = await exigirSessao();
 
   let ficheiro;
   try {
@@ -31,7 +31,7 @@ export default async function Casa() {
   } catch (erro) {
     return (
       <>
-        <Cabecalho titulo="A casa" voltarPara="/painel" utilizador={utilizador} />
+        <Cabecalho titulo="A casa" voltarPara="/painel" quem={email} />
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
           <Aviso tom="mau">
             {erro instanceof ErroDoGithub
@@ -45,7 +45,7 @@ export default async function Casa() {
 
   return (
     <>
-      <Cabecalho titulo="A casa" voltarPara="/painel" utilizador={utilizador} />
+      <Cabecalho titulo="A casa" voltarPara="/painel" quem={email} />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
         <EditorDaCasa inicial={ficheiro.dados} sha={ficheiro.sha} />

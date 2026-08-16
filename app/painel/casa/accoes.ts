@@ -29,7 +29,7 @@ export async function gravarCasa(
   dados: FormData,
 ): Promise<EstadoDaCasa> {
   /* Primeiro de tudo, e outra vez — o `proxy.ts` não é a fechadura. */
-  const { utilizador } = await exigirSessaoNaAccao();
+  const { email } = await exigirSessaoNaAccao();
 
   const sha = String(dados.get("sha") ?? "");
   let casa: unknown;
@@ -48,8 +48,8 @@ export async function gravarCasa(
       caminho: CAMINHO_CASA,
       dados: casa,
       sha,
-      mensagem: `Contactos e horário, pelo painel (${utilizador})`,
-      autor: utilizador,
+      mensagem: `Contactos e horário, pelo painel (${email})`,
+      autor: email,
     });
 
     return { tipo: "gravado", commit, endereco: enderecoDoCommit(commit) };

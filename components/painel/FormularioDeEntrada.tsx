@@ -4,11 +4,20 @@ import { useActionState } from "react";
 import { Campo } from "@/components/painel/Campo";
 import { Aviso } from "@/components/painel/Aviso";
 import { CtaBotao } from "@/components/Cta";
-import { entrar, type EstadoDaEntrada } from "@/app/painel/accoes";
+import { pedirCodigo, type EstadoDaEntrada } from "@/app/painel/accoes";
 
+/*
+  Um campo, e é tudo.
+
+  Não há password para escrever nem para esquecer. Quem tem acesso escreve o
+  email e recebe um código.
+
+  `autoComplete="email"` faz o telemóvel oferecer o endereço logo; `type="email"`
+  troca o teclado por um que tem o `@` à mão.
+*/
 export function FormularioDeEntrada() {
   const [estado, accao, aPedir] = useActionState<EstadoDaEntrada, FormData>(
-    entrar,
+    pedirCodigo,
     {},
   );
 
@@ -16,32 +25,33 @@ export function FormularioDeEntrada() {
     <form action={accao} className="space-y-5">
       {estado.erro ? <Aviso tom="mau">{estado.erro}</Aviso> : null}
 
+      {/*
+        A mesma mensagem para quem tem acesso e para quem não tem. Se dissesse
+        "esse email não está autorizado", qualquer pessoa podia usar este
+        formulário para descobrir quem entra no painel.
+      */}
+      {estado.enviado ? (
+        <Aviso tom="bom">
+          Se este email tiver acesso ao painel, o código chega em instantes.
+          Vale 10 minutos.
+        </Aviso>
+      ) : null}
+
       <Campo
-        etiqueta="Utilizador"
-        name="utilizador"
-        type="text"
+        etiqueta="Email"
+        name="email"
+        type="email"
         required
-        autoComplete="username"
+        autoComplete="email"
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck={false}
-        /*
-          Só no ecrã de entrada, e é o único do painel que o leva: o campo é o
-          primeiro da página e não há mais nada para fazer aqui.
-        */
         autoFocus
-      />
-
-      <Campo
-        etiqueta="Palavra-passe"
-        name="password"
-        type="password"
-        required
-        autoComplete="current-password"
+        placeholder="o-teu-email@exemplo.pt"
       />
 
       <CtaBotao type="submit" disabled={aPedir} className="w-full">
-        {aPedir ? "A verificar…" : "Entrar"}
+        {aPedir ? "A enviar…" : "Receber código"}
       </CtaBotao>
     </form>
   );

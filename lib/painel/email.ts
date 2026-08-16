@@ -14,18 +14,27 @@ import { comEspaco } from "./codigo";
   pelo cliente — que é a mesma nota que está escrita no `next.config.ts` a
   propósito do GitHub.
 
-  ## O remetente
+  ## O remetente vem de uma variável
 
-  `codigo@taskuinhapirata.pt`. É preciso que o domínio esteja verificado no
-  Resend (três registos DNS, uma vez só — ver `docs/PAINEL.md`); sem isso o
-  Resend recusa o envio, e é melhor assim do que mandar de um endereço
-  emprestado que aterra na pasta de spam.
+  `RESEND_REMETENTE`, com o formato `Nome <endereco@dominio>`. O domínio tem de
+  estar verificado na conta de Resend que estiver a ser usada.
+
+  Não está fixo no código porque o domínio a usar é o da agência, já verificado,
+  e não o da casa: o domínio verificado governa o **remetente**, não o
+  destinatário — dá para enviar para qualquer endereço a partir de um domínio já
+  verificado. Verificar o `taskuinhapirata.pt` gastava a única vaga de domínio do
+  plano gratuito e obrigava a mexer no DNS do cliente, sem ganho nenhum para um
+  email interno de seis algarismos.
 
   A caixa não recebe respostas. O `reply_to` aponta ao próprio remetente e o
   texto do email diz que não vale a pena responder.
 */
 
-const REMETENTE = "Taskuinha <codigo@taskuinhapirata.pt>";
+function remetente(): string {
+  const valor = process.env.RESEND_REMETENTE;
+  if (!valor) throw new ErroAoEnviar(401, "RESEND_REMETENTE em falta.");
+  return valor;
+}
 
 export class ErroAoEnviar extends Error {
   readonly estado: number;
@@ -119,6 +128,8 @@ export async function enviarCodigo({
 
   if (paraOTerminal(para, legivel)) return;
 
+  const de = remetente();
+
   const resposta = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -132,9 +143,9 @@ export async function enviarCodigo({
       "Idempotency-Key": `painel-${para}-${codigo}`,
     },
     body: JSON.stringify({
-      from: REMETENTE,
+      from: de,
       to: [para],
-      reply_to: REMETENTE,
+      reply_to: de,
       /*
         O código vai no **assunto** de propósito. Quem estiver no telemóvel
         lê-o na notificação, sem desbloquear e sem abrir o email — que é como
@@ -146,8 +157,9 @@ export async function enviarCodigo({
         "",
         "Vale 10 minutos e serve uma vez só.",
         "",
-        "Se não foste tu a tentar entrar, alguém sabe a palavra-passe do",
-        "painel — vale a pena mudá-la.",
+        "Se não foste tu a pedir este código, alguém escreveu o teu endereço",
+        "no ecrã de entrada do painel. Não há nada a fazer — sem o código não",
+        "se entra — mas vale a pena avisares o Tomás se acontecer muitas vezes.",
         "",
         "Esta caixa não lê respostas.",
       ].join("\n"),

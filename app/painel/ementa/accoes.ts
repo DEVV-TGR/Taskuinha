@@ -32,7 +32,7 @@ export async function publicarEmenta(
   _estado: EstadoDaEmenta,
   dados: FormData,
 ): Promise<EstadoDaEmenta> {
-  const { utilizador } = await exigirSessaoNaAccao();
+  const { email } = await exigirSessaoNaAccao();
 
   const sha = String(dados.get("sha") ?? "");
   const resumo = String(dados.get("resumo") ?? "").trim();
@@ -55,8 +55,8 @@ export async function publicarEmenta(
       caminho: CAMINHO_EMENTA,
       dados: ementa,
       sha,
-      mensagem: `Ementa: ${resumo || "alterações"}, pelo painel (${utilizador})`,
-      autor: utilizador,
+      mensagem: `Ementa: ${resumo || "alterações"}, pelo painel (${email})`,
+      autor: email,
     });
 
     return { tipo: "gravado", commit, endereco: enderecoDoCommit(commit) };

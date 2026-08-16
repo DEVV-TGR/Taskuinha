@@ -168,6 +168,7 @@ export async function gravar({
   /** O que veio do `ler()`. É o cadeado. */
   sha: string;
   mensagem: string;
+  /** O email de quem está a gravar — vai para o autor do commit. */
   autor: string;
 }): Promise<{ commit: string; sha: string }> {
   /*
@@ -188,11 +189,14 @@ export async function gravar({
       sha,
       branch: RAMO,
       /*
-        O autor é quem entrou no painel; o committer é o painel. Assim o
-        `git log` diz quem mudou o preço, e o endereço de email é claramente
-        de uma máquina para ninguém tentar responder-lhe.
+        O autor é quem entrou no painel; o committer é o painel.
+
+        O email do autor é o **verdadeiro**, o mesmo com que a pessoa entrou —
+        já foi um endereço inventado (`goncalo@painel.taskuinhapirata.pt`), o
+        que dava um `git log` com autores que não existem e não se ligavam a
+        conta nenhuma no GitHub. O nome sai da parte antes do `@`.
       */
-      author: { name: autor, email: `${autor}@painel.taskuinhapirata.pt` },
+      author: { name: autor.split("@")[0], email: autor },
       committer: {
         name: "Painel da Taskuinha",
         email: "painel@taskuinhapirata.pt",

@@ -17,12 +17,13 @@ import { sair } from "@/app/painel/accoes";
 export function Cabecalho({
   titulo,
   voltarPara,
-  utilizador,
+  quem,
 }: {
   titulo: string;
   /** Ausente na página inicial do painel, que não tem para onde voltar. */
   voltarPara?: string;
-  utilizador?: string;
+  /** O email de quem está ligado. */
+  quem?: string;
 }) {
   return (
     <header className="border-b border-linha bg-breu-fundo">
@@ -41,15 +42,15 @@ export function Cabecalho({
           {titulo}
         </h1>
 
-        {utilizador ? (
+        {quem ? (
           <form action={sair} className="shrink-0">
             <span className="mr-2 hidden text-sm text-osso-fraco sm:inline">
-              {utilizador}
+              {quem}
             </span>
             <button
               type="submit"
               className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-osso-fraco hover:text-lanterna"
-              aria-label={`Sair (${utilizador})`}
+              aria-label={`Sair (${quem})`}
             >
               <SignOut size={20} weight="bold" />
             </button>

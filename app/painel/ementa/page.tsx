@@ -24,7 +24,7 @@ type Ementa = {
 */
 
 export default async function Ementa() {
-  const { utilizador } = await exigirSessao();
+  const { email } = await exigirSessao();
 
   let ficheiro;
   try {
@@ -32,7 +32,7 @@ export default async function Ementa() {
   } catch (erro) {
     return (
       <>
-        <Cabecalho titulo="A ementa" voltarPara="/painel" utilizador={utilizador} />
+        <Cabecalho titulo="A ementa" voltarPara="/painel" quem={email} />
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
           <Aviso tom="mau">
             {erro instanceof ErroDoGithub
@@ -46,7 +46,7 @@ export default async function Ementa() {
 
   return (
     <>
-      <Cabecalho titulo="A ementa" voltarPara="/painel" utilizador={utilizador} />
+      <Cabecalho titulo="A ementa" voltarPara="/painel" quem={email} />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
         <EditorDeEmenta inicial={ficheiro.dados} sha={ficheiro.sha} />

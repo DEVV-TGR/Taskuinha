@@ -1,85 +1,54 @@
 import "server-only";
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  randomInt,
-  timingSafeEqual,
-} from "node:crypto";
+import { createHash, createHmac, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { chave } from "./chaves";
+import { ler, guardar, apagar, somar } from "./redis";
 
 /*
-  O código de seis algarismos, e o sítio onde ele espera entre os dois ecrãs.
+  O código de seis algarismos.
 
-  ## O problema
+  ## O que mudou, e porquê
 
-  O código nasce no primeiro ecrã (a seguir à password) e é confirmado no
-  segundo. Entre um e outro há um pedido HTTP, e nada onde o guardar: não há
-  base de dados, e em funções serverless não há memória partilhada — um `Map`
-  não serve, pela mesma razão que já está escrita no `lib/painel/travao.ts`.
+  O código já viveu dentro de um cookie cifrado, porque não havia onde o guardar
+  do lado do servidor. Funcionava, e tinha uma falha que estava documentada mas
+  não resolvida: **o contador de tentativas ia no mesmo cookie**, e quem atacasse
+  guardava uma cópia e reenviava-a para o pôr a zero. Não há como contar num
+  papel que se entrega a quem está a contar.
 
-  ## A solução, e porque é *cifrado* e não assinado
+  Agora há Redis. O código guarda-se lá, o cookie leva só o `id` do desafio, e as
+  tentativas contam-se com `INCR` — atómico, do lado de cá, e sem volta a dar.
 
-  O desafio vai num cookie, **cifrado** com AES-256-GCM.
+  ## Hash, e não o código
 
-  Assinado não chegava. Quem esteja a atacar já passou a password para chegar
-  aqui — é esse exactamente o cenário que o segundo passo existe para travar — e
-  um cookie assinado é legível: bastava-lhe abri-lo e ler lá o código.
+  `SHA-256`, nunca o código em texto. Se o armazenamento for lido por quem não
+  devia, os códigos activos não servem para entrar.
 
-  Guardar um *hash* do código também não servia. Seis algarismos são um milhão
-  de hipóteses; com o hash na mão, experimentam-se todas em segundos num
-  portátil qualquer. O que impede a força bruta é ela ter de passar pela rede,
-  e para isso o código não pode sair do servidor.
+  E aqui o hash chega, ao contrário do que acontecia no cookie: um hash de seis
+  algarismos quebra-se num instante *se quem o tem puder experimentar à vontade*
+  — e no cookie podia, porque o cookie estava na mão dele. No Redis, para chegar
+  ao hash é preciso já ter as chaves do Redis, e nessa altura o código de entrada
+  é o menor dos problemas. `bcrypt` seria lentidão sem ganho: isto expira em dez
+  minutos e tem cinco tentativas.
 
-  Cifrado, o cookie não diz nada a quem não tem a chave — e a chave é derivada
-  das credenciais e vive só no servidor.
+  ## Uso único
 
-  ## GCM, e não CBC
-
-  O GCM autentica ao mesmo tempo que cifra: se alguém mexer num byte do cookie,
-  o `decipher.final()` atira em vez de devolver lixo silencioso. Com CBC era
-  preciso juntar um HMAC à mão e acertar na ordem — mais peças para enganar.
-
-  ## A limitação, dita à cabeça
-
-  O contador de tentativas vive dentro do próprio cookie e é reescrito a cada
-  falha. Quem esteja a atacar pode guardar uma cópia de um cookie anterior e
-  reenviá-la para pôr o contador a zero, e não há como impedir isso sem
-  armazenamento partilhado.
-
-  O que fecha a porta é a conta, e não o contador:
-
-  - o código expira em **10 minutos**;
-  - a regra do Vercel Firewall limita a **5 pedidos por minuto por IP** em
-    `/painel/entrar*` — e o segundo ecrã é `/painel/entrar/codigo`, portanto
-    está coberto pela mesma regra (ver `docs/PAINEL.md`);
-  - **50 tentativas contra um milhão de códigos** dá 0,005% por desafio.
-
-  É honesto dizer de onde vem a garantia: vem do firewall.
+  Ao ser aceite, a chave é apagada. Um código que já entrou não volta a entrar,
+  mesmo dentro dos dez minutos — o que interessa se o email for lido mais tarde
+  por outra pessoa.
 */
 
 export const NOME_DO_DESAFIO = "taskuinha_desafio";
 
-/* Tempo que chega para ir ao email sem obrigar a correr. */
 export const VALIDADE_MS = 10 * 60 * 1000;
+const VALIDADE_S = VALIDADE_MS / 1000;
 
-/* Só conta para o aviso "já erraste umas quantas" — ver a limitação acima. */
 const TENTATIVAS = 5;
 
-type Desafio = {
-  /** Quem está a entrar. */
-  u: string;
-  /** O código, em texto. Nunca sai do servidor por não estar cifrado. */
-  c: string;
-  exp: number;
-  tentativas: number;
-};
+type Guardado = { email: string; hash: string };
 
 /*
   `randomInt` e não `Math.random()`: o segundo é previsível a partir de umas
-  quantas saídas, e um código de entrada previsível não é um código. O intervalo
-  vai de 0 a 999999 e é enchido com zeros à esquerda, para o "000042" ser tão
-  provável como o "384921".
+  quantas saídas, e um código de entrada previsível não é um código. Zeros à
+  esquerda para o "000042" ser tão provável como o "384921".
 */
 export function gerarCodigo(): string {
   return String(randomInt(0, 1_000_000)).padStart(6, "0");
@@ -90,132 +59,110 @@ export function comEspaco(codigo: string): string {
   return `${codigo.slice(0, 3)} ${codigo.slice(3)}`;
 }
 
-function selar(desafio: Desafio): string {
-  /*
-    12 bytes é o tamanho canónico do nonce em GCM, e tem de ser diferente em
-    cada cifragem com a mesma chave — daí vir do `randomBytes` e viajar em claro
-    ao lado do texto cifrado, que é como o GCM foi desenhado para ser usado.
-  */
-  const nonce = randomBytes(12);
-  const cifra = createCipheriv("aes-256-gcm", chave("desafio"), nonce);
-
-  const corpo = Buffer.concat([
-    cifra.update(JSON.stringify(desafio), "utf8"),
-    cifra.final(),
-  ]);
-
-  return [nonce, cifra.getAuthTag(), corpo]
-    .map((parte) => parte.toString("base64url"))
-    .join(".");
+function hashDoCodigo(codigo: string): string {
+  return createHash("sha256").update(codigo).digest("hex");
 }
 
-function abrir(valor: string | undefined): Desafio | null {
-  if (!valor) return null;
-
-  const partes = valor.split(".");
-  if (partes.length !== 3) return null;
-
-  try {
-    const [nonce, etiqueta, corpo] = partes.map((p) => Buffer.from(p, "base64url"));
-    const decifra = createDecipheriv("aes-256-gcm", chave("desafio"), nonce);
-    decifra.setAuthTag(etiqueta);
-
-    /* Se alguém mexeu num byte, é aqui que rebenta — e é o que se quer. */
-    const texto = Buffer.concat([decifra.update(corpo), decifra.final()]).toString("utf8");
-
-    const lido: unknown = JSON.parse(texto);
-    if (typeof lido !== "object" || lido === null) return null;
-
-    const { u, c, exp, tentativas } = lido as Record<string, unknown>;
-    if (
-      typeof u !== "string" ||
-      typeof c !== "string" ||
-      typeof exp !== "number" ||
-      typeof tentativas !== "number"
-    ) {
-      return null;
-    }
-
-    return { u, c, exp, tentativas };
-  } catch {
-    return null;
-  }
+/*
+  O cookie leva o `id` e uma assinatura, e mais nada — o código não vai lá dentro
+  porque já não precisa de ir. Assinado para que o `id` não possa ser inventado:
+  sem isso, alguém pedia um código para o seu próprio endereço e depois trocava o
+  `id` pelo de outra pessoa.
+*/
+async function selar(id: string): Promise<string> {
+  const selo = createHmac("sha256", await chave("desafio"))
+    .update(`d1.${id}`)
+    .digest("base64url");
+  return `d1.${id}.${selo}`;
 }
 
-/** Um desafio novo, pronto a ir para o cookie. */
-export function criarDesafio(utilizador: string, codigo: string): string {
-  return selar({
-    u: utilizador,
-    c: codigo,
-    exp: Date.now() + VALIDADE_MS,
-    tentativas: 0,
-  });
+async function abrir(cookie: string | undefined): Promise<string | null> {
+  if (!cookie) return null;
+
+  const partes = cookie.split(".");
+  if (partes.length !== 3 || partes[0] !== "d1") return null;
+  const [, id, selo] = partes;
+
+  const esperado = Buffer.from((await selar(id)).split(".")[2]);
+  const recebido = Buffer.from(selo);
+  if (esperado.length !== recebido.length) return null;
+  if (!timingSafeEqual(esperado, recebido)) return null;
+
+  return id;
+}
+
+/** Guarda um código novo e devolve o cookie que aponta para ele. */
+export async function criarDesafio(email: string, codigo: string): Promise<string> {
+  const id = randomBytes(16).toString("base64url");
+
+  await guardar(
+    `otp:${id}`,
+    JSON.stringify({ email, hash: hashDoCodigo(codigo) } satisfies Guardado),
+    VALIDADE_S,
+  );
+
+  return selar(id);
 }
 
 export type Veredicto =
-  | { estado: "certo"; utilizador: string }
-  | { estado: "errado"; cookie: string; restam: number }
+  | { estado: "certo"; email: string }
+  | { estado: "errado"; restam: number }
   | { estado: "expirado" }
   | { estado: "sem-desafio" };
 
-/*
-  Confere o código escrito contra o que está no cookie.
-
-  Devolve sempre o que a acção precisa de fazer a seguir, incluindo o cookie
-  novo quando erra — é assim que o contador anda para a frente, já que não há
-  onde o guardar do lado de cá.
-*/
-export function conferirCodigo(
+export async function conferirCodigo(
   cookie: string | undefined,
   escrito: string,
-): Veredicto {
-  const desafio = abrir(cookie);
-  if (!desafio) return { estado: "sem-desafio" };
-  if (desafio.exp < Date.now()) return { estado: "expirado" };
-  if (desafio.tentativas >= TENTATIVAS) return { estado: "expirado" };
+): Promise<Veredicto> {
+  const id = await abrir(cookie);
+  if (!id) return { estado: "sem-desafio" };
+
+  const bruto = await ler(`otp:${id}`);
+  /* Expirou sozinho no Redis, ou foi usado, ou foi queimado por tentativas. */
+  if (!bruto) return { estado: "expirado" };
+
+  const guardado = JSON.parse(bruto) as Guardado;
 
   /*
-    Comparação em tempo constante. Contra seis algarismos por HTTP isto é quase
-    simbólico — mas é uma linha, e a alternativa é a única comparação de segredos
-    de todo o projecto a ser feita com `===`.
+    Conta **antes** de comparar, e não depois.
+
+    Contar depois deixava passar uma tentativa a mais em cada corrida: dois
+    pedidos ao mesmo tempo comparavam os dois antes de qualquer um somar. Somar
+    primeiro é o que faz a quinta ser mesmo a quinta.
   */
-  const esperado = Buffer.from(desafio.c);
-  const obtido = Buffer.from(escrito.replace(/\D/g, ""));
+  const tentativa = await somar(`otp-tentativas:${id}`, VALIDADE_S);
+  if (tentativa > TENTATIVAS) {
+    await apagar(`otp:${id}`);
+    return { estado: "expirado" };
+  }
 
-  const bate =
-    esperado.length === obtido.length && timingSafeEqual(esperado, obtido);
+  const esperado = Buffer.from(guardado.hash);
+  const obtido = Buffer.from(hashDoCodigo(escrito.replace(/\D/g, "")));
+  const bate = esperado.length === obtido.length && timingSafeEqual(esperado, obtido);
 
-  if (bate) return { estado: "certo", utilizador: desafio.u };
+  if (!bate) {
+    const restam = TENTATIVAS - tentativa;
+    if (restam <= 0) await apagar(`otp:${id}`);
+    return { estado: "errado", restam: Math.max(0, restam) };
+  }
 
-  const tentativas = desafio.tentativas + 1;
-  return {
-    estado: "errado",
-    cookie: selar({ ...desafio, tentativas }),
-    restam: Math.max(0, TENTATIVAS - tentativas),
-  };
+  /* Uso único: entrou, acabou. */
+  await Promise.all([apagar(`otp:${id}`), apagar(`otp-tentativas:${id}`)]);
+  return { estado: "certo", email: guardado.email };
 }
 
-/** Quem é que está a meio de entrar, para o segundo ecrã saber a quem falar. */
-export function utilizadorDoDesafio(cookie: string | undefined): string | null {
-  const desafio = abrir(cookie);
-  if (!desafio || desafio.exp < Date.now()) return null;
-  return desafio.u;
+/** Para quem é o código que está a meio, para o segundo ecrã saber a quem falar. */
+export async function emailDoDesafio(cookie: string | undefined): Promise<string | null> {
+  const id = await abrir(cookie);
+  if (!id) return null;
+
+  const bruto = await ler(`otp:${id}`);
+  return bruto ? (JSON.parse(bruto) as Guardado).email : null;
 }
 
-/*
-  `goncalo@taskuinhapirata.pt` → `g•••••o@taskuinhapirata.pt`
-
-  O segundo ecrã tem de dizer para onde foi o código, senão quem lá está não
-  sabe onde procurar. Mas escrever o endereço por extenso seria oferecê-lo a
-  quem chegou ali com uma password roubada. Mostrar as pontas chega para quem é
-  dono da caixa reconhecer, e não chega para quem não é.
-*/
-export function meioEscondido(email: string): string {
-  const [nome, dominio] = email.split("@");
-  if (!dominio) return "•••";
-
-  const visivel =
-    nome.length <= 2 ? nome.slice(0, 1) : `${nome[0]}${"•".repeat(Math.min(nome.length - 2, 6))}${nome.at(-1)}`;
-
-  return `${visivel}@${dominio}`;
+/** Deita fora o desafio a meio — usa-se ao pedir outro código. */
+export async function apagarDesafio(cookie: string | undefined): Promise<void> {
+  const id = await abrir(cookie);
+  if (!id) return;
+  await Promise.all([apagar(`otp:${id}`), apagar(`otp-tentativas:${id}`)]);
 }

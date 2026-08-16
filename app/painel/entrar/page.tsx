@@ -26,7 +26,7 @@ export default async function Entrar() {
             Taskuinha
           </h1>
           <p className="mt-3 text-sm text-osso-fraco">
-            O painel da casa. Ementa, preços e contactos.
+            O painel da casa. Escreve o teu email e recebes um código.
           </p>
         </header>
 
@@ -35,8 +35,8 @@ export default async function Entrar() {
         </Tabua>
 
         <p className="mt-6 text-center text-xs leading-relaxed text-osso-fraco">
-          Se te esqueceste da palavra-passe, não há como a recuperar — só criar
-          outra. Fala com o Tomás.
+          Não há palavra-passe para decorar. Se o código não chegar, confirma o
+          endereço e vê o spam.
         </p>
       </div>
     </main>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ForkKnife, House, CaretRight } from "@phosphor-icons/react/dist/ssr";
 import { exigirSessao } from "@/lib/painel/porta";
+import { esquecerEsteAparelho } from "@/app/painel/accoes";
 import { Cabecalho } from "@/components/painel/Cabecalho";
 import { Tabua } from "@/components/decor/Tabua";
 
@@ -29,11 +30,11 @@ const seccoes = [
 ];
 
 export default async function Painel() {
-  const { utilizador } = await exigirSessao();
+  const { email } = await exigirSessao();
 
   return (
     <>
-      <Cabecalho titulo="Painel" utilizador={utilizador} />
+      <Cabecalho titulo="Painel" quem={email} />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
         <ul className="space-y-4">
@@ -79,6 +80,29 @@ export default async function Painel() {
           O que se muda aqui não aparece no site logo a seguir. Cada publicação
           reconstrói o site, e isso costuma demorar <strong>1 a 2 minutos</strong>.
         </p>
+
+        {/*
+          Este aparelho está lembrado 30 dias e por isso não pede o código.
+          Quem emprestou o telemóvel, ou entrou num computador que não é dele,
+          precisa de uma forma de desfazer isso — e precisa dela aqui, não
+          escondida numa página de definições que este painel não tem.
+        */}
+        <form
+          action={esquecerEsteAparelho}
+          className="mt-10 border-t border-linha pt-6"
+        >
+          <button
+            type="submit"
+            className="link-underline min-h-11 text-sm text-osso-fraco hover:text-lanterna"
+          >
+            Esquecer este aparelho
+          </button>
+          <p className="mt-2 text-xs leading-relaxed text-osso-fraco">
+            Este telemóvel ou computador não volta a pedir o código durante 30
+            dias. Se não for teu, ou se o emprestaste, carrega aqui — sais, e da
+            próxima vez o código é pedido outra vez.
+          </p>
+        </form>
       </main>
     </>
   );

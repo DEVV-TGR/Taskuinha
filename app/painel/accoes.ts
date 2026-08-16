@@ -2,11 +2,12 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { autenticar, emailDe } from "@/lib/painel/utilizadores";
+import { autorizado } from "@/lib/painel/utilizadores";
 import {
   selar,
-  selarAparelho,
+  lembrarAparelho,
   aparelhoConhecido,
+  esquecerAparelho,
   opcoesDoCookie,
   NOME_DO_COOKIE,
   NOME_DO_APARELHO,
@@ -16,98 +17,85 @@ import {
   gerarCodigo,
   criarDesafio,
   conferirCodigo,
-  utilizadorDoDesafio,
+  emailDoDesafio,
+  apagarDesafio,
   NOME_DO_DESAFIO,
   VALIDADE_MS as VALIDADE_DO_DESAFIO,
 } from "@/lib/painel/codigo";
 import { enviarCodigo, ErroAoEnviar } from "@/lib/painel/email";
+import { podePedirCodigo, anotar } from "@/lib/painel/limites";
 import { exigirSessaoNaAccao } from "@/lib/painel/porta";
-import { travado, registarFalha, limpar, anotarTentativa } from "@/lib/painel/travao";
 
 /*
   Entrar, confirmar o código, e sair.
 
-  A entrada tem dois passos. O primeiro confere a password; o segundo confere um
-  código de seis algarismos que foi por email. Um aparelho que já tenha passado
-  pelo segundo salta-o durante 30 dias.
-
-  As acções que mexem em dados vivem ao lado dos ecrãs que as usam
-  (`ementa/accoes.ts`, `casa/accoes.ts`); estas são da porta.
+  A entrada é passwordless: escreve-se o email, chega um código, entra-se. Um
+  aparelho que já tenha passado pelo código salta-o durante 30 dias.
 */
 
-export type EstadoDaEntrada = { erro?: string };
+export type EstadoDaEntrada = { erro?: string; enviado?: boolean };
 
 /*
-  Passo 1 — a password.
+  A resposta é sempre a mesma, e é o ponto mais delicado deste ficheiro.
 
-  Password errada não manda email nenhum: só se avança com a password certa.
-  Isto revela, a quem tenta, se acertou na password — mas é assim que qualquer
-  banco funciona, e a alternativa (mandar sempre um email, mesmo com password
-  errada) transformava o formulário numa máquina de enviar spam para a caixa do
-  dono da casa.
+  Um email que tem acesso e um que não tem saem daqui com `{ enviado: true }`, e
+  o ecrã escreve a mesma frase nos dois casos. Se a resposta distinguisse —
+  *"esse email não está autorizado"* — o formulário passava a ser uma ferramenta
+  para qualquer pessoa descobrir quem entra no painel.
+
+  E não é só o texto. Um email de fora **consome na mesma** o orçamento de
+  pedidos, para o comportamento a partir do quarto ser igual nos dois casos.
 */
-export async function entrar(
+export async function pedirCodigo(
   _estado: EstadoDaEntrada,
   dados: FormData,
 ): Promise<EstadoDaEntrada> {
-  const utilizador = String(dados.get("utilizador") ?? "").trim();
-  const password = String(dados.get("password") ?? "");
+  const email = String(dados.get("email") ?? "").trim().toLowerCase();
 
-  if (await travado()) {
-    return {
-      erro: "Demasiadas tentativas seguidas. Espera um minuto e tenta outra vez.",
-    };
-  }
-
-  const quem = await autenticar(utilizador, password);
-
-  if (!quem) {
-    await registarFalha();
-    await anotarTentativa(utilizador);
-    /*
-      Uma mensagem só para os dois casos. Dizer "esse utilizador não existe"
-      poupava um segundo a quem se engana e dava a quem tenta entrar a lista dos
-      nomes que valem a pena — e a derivação contra uma password que não é de
-      ninguém, no `lib/painel/utilizadores.ts`, existe para o tempo de resposta
-      também não dizer isso.
-    */
-    return { erro: "Utilizador ou palavra-passe inválidos." };
-  }
-
-  await limpar();
-  const frasco = await cookies();
+  if (!email.includes("@")) return { erro: "Escreve um endereço de email." };
 
   /*
-    Já passou por aqui neste aparelho nos últimos 30 dias — não se pede o
-    código outra vez.
+    Conta antes de saber se o email existe — ver o comentário do
+    `lib/painel/limites.ts`. Esgotado o orçamento, responde-se a mesma coisa de
+    sempre: quem está a sondar não fica a saber se parou por causa do limite ou
+    por o email não existir.
   */
-  if (aparelhoConhecido(frasco.get(NOME_DO_APARELHO)?.value, quem.utilizador)) {
-    frasco.set(NOME_DO_COOKIE, selar(quem.utilizador), opcoesDoCookie());
+  if (!(await podePedirCodigo(email))) {
+    await anotar("limite de pedidos esgotado", email);
+    return { enviado: true };
+  }
+
+  const quem = autorizado(email);
+
+  if (!quem) {
+    await anotar("pedido para email fora da lista", email);
+    return { enviado: true };
+  }
+
+  const frasco = await cookies();
+
+  /* Já passou pelo código neste aparelho — entra sem repetir. */
+  if (await aparelhoConhecido(frasco.get(NOME_DO_APARELHO)?.value, quem.email)) {
+    frasco.set(NOME_DO_COOKIE, await selar(quem.email), opcoesDoCookie());
     redirect("/painel");
   }
 
-  const email = emailDe(quem.utilizador);
-  if (!email) {
-    /* Não devia acontecer — um utilizador sem email não é carregado. */
-    return { erro: "Este utilizador não tem email configurado. Fala com o Tomás." };
-  }
+  /* Pedir outro código invalida o anterior, para não haver dois válidos. */
+  await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
 
   const codigo = gerarCodigo();
 
   try {
-    await enviarCodigo({ para: email, codigo });
+    await enviarCodigo({ para: quem.email, codigo });
   } catch (erro) {
-    /*
-      Uma falha de email **nunca** pode virar "entra à mesma". O painel fica na
-      porta e diz o que se passou.
-    */
+    /* Uma falha de envio nunca pode virar "entra à mesma". */
     if (erro instanceof ErroAoEnviar) return { erro: erro.paraOEcra };
     throw erro;
   }
 
   frasco.set(
     NOME_DO_DESAFIO,
-    criarDesafio(quem.utilizador, codigo),
+    await criarDesafio(quem.email, codigo),
     opcoesDoCookie(VALIDADE_DO_DESAFIO),
   );
 
@@ -120,45 +108,33 @@ export async function entrar(
 
 export type EstadoDoCodigo = { erro?: string; reenviado?: boolean };
 
-/** Passo 2 — o código que foi por email. */
 export async function confirmarCodigo(
   _estado: EstadoDoCodigo,
   dados: FormData,
 ): Promise<EstadoDoCodigo> {
-  if (await travado()) {
-    return { erro: "Demasiadas tentativas seguidas. Espera um minuto." };
-  }
-
   const frasco = await cookies();
   const escrito = String(dados.get("codigo") ?? "");
-  const veredicto = conferirCodigo(frasco.get(NOME_DO_DESAFIO)?.value, escrito);
+  const veredicto = await conferirCodigo(frasco.get(NOME_DO_DESAFIO)?.value, escrito);
 
   if (veredicto.estado === "sem-desafio" || veredicto.estado === "expirado") {
     frasco.delete({ name: NOME_DO_DESAFIO, path: "/painel" });
-    return {
-      erro: "O código expirou. Volta a escrever o utilizador e a palavra-passe.",
-    };
+    return { erro: "O código expirou ou já não serve. Pede outro." };
   }
 
   if (veredicto.estado === "errado") {
-    await registarFalha();
-    /* O cookie novo é o que faz o contador andar — ver lib/painel/codigo.ts. */
-    frasco.set(NOME_DO_DESAFIO, veredicto.cookie, opcoesDoCookie(VALIDADE_DO_DESAFIO));
-
+    await anotar("código errado", "—");
     return {
       erro:
         veredicto.restam > 0
           ? `Código errado. Faltam ${veredicto.restam} tentativas.`
-          : "Código errado. Volta a começar.",
+          : "Código errado, e acabaram as tentativas. Pede outro.",
     };
   }
 
-  await limpar();
-
-  frasco.set(NOME_DO_COOKIE, selar(veredicto.utilizador), opcoesDoCookie());
+  frasco.set(NOME_DO_COOKIE, await selar(veredicto.email), opcoesDoCookie());
   frasco.set(
     NOME_DO_APARELHO,
-    selarAparelho(veredicto.utilizador),
+    await lembrarAparelho(veredicto.email),
     opcoesDoCookie(VALIDADE_APARELHO_MS),
   );
   frasco.delete({ name: NOME_DO_DESAFIO, path: "/painel" });
@@ -169,17 +145,17 @@ export async function confirmarCodigo(
 /** "Não chegou nada" — outro código, e o anterior deixa de servir. */
 export async function reenviarCodigo(): Promise<EstadoDoCodigo> {
   const frasco = await cookies();
-  const utilizador = utilizadorDoDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
+  const email = await emailDoDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
 
-  if (!utilizador) {
-    return {
-      erro: "O código expirou. Volta a escrever o utilizador e a palavra-passe.",
-    };
+  if (!email) return { erro: "O código expirou. Volta a escrever o email." };
+
+  /* O reenvio conta como pedido — senão era a porta das traseiras do limite. */
+  if (!(await podePedirCodigo(email))) {
+    await anotar("limite de pedidos esgotado no reenvio", email);
+    return { erro: "Já pediste códigos demais. Espera uns minutos." };
   }
 
-  const email = emailDe(utilizador);
-  if (!email) return { erro: "Este utilizador não tem email configurado." };
-
+  await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
   const codigo = gerarCodigo();
 
   try {
@@ -189,15 +165,9 @@ export async function reenviarCodigo(): Promise<EstadoDoCodigo> {
     throw erro;
   }
 
-  /*
-    Um desafio novo substitui o antigo. O código anterior deixa de servir, o que
-    evita a confusão de haver dois emails válidos na caixa ao mesmo tempo — e de
-    caminho põe o contador de tentativas a zero, que é o que quem carregou no
-    botão espera.
-  */
   frasco.set(
     NOME_DO_DESAFIO,
-    criarDesafio(utilizador, codigo),
+    await criarDesafio(email, codigo),
     opcoesDoCookie(VALIDADE_DO_DESAFIO),
   );
 
@@ -208,16 +178,32 @@ export async function sair(): Promise<void> {
   await exigirSessaoNaAccao();
 
   /*
-    O `delete` tem de levar as mesmas opções de caminho com que o cookie foi
-    posto. Um `delete` sem `path` apaga o cookie de `/` — que não existe — e
-    deixa o de `/painel` onde estava, com a sessão viva e o botão de sair a não
-    fazer nada.
+    O `delete` tem de levar o mesmo caminho com que o cookie foi posto. Sem
+    `path`, apagava um cookie de `/` que não existe e deixava o de `/painel` no
+    sítio, com a sessão viva e o botão a não fazer nada.
 
-    O cookie do aparelho **fica**. Sair é fechar a sessão, não esquecer o
-    telemóvel: quem sair volta a entrar com a password e sem código, que é o que
-    se espera de um aparelho que já é conhecido.
+    O aparelho **fica**: sair é fechar a sessão, não desconfiar do telemóvel.
+    Quem quiser esquecê-lo tem o botão do lado.
   */
   (await cookies()).delete({ name: NOME_DO_COOKIE, path: "/painel" });
+
+  redirect("/painel/entrar");
+}
+
+/*
+  Esquecer este aparelho.
+
+  Apaga o registo no Redis, o cookie do aparelho e a sessão — a seguir a isto,
+  este browser volta a pedir o código. É o que se carrega quando se empresta o
+  telemóvel, ou quando se entrou num computador que não é nosso.
+*/
+export async function esquecerEsteAparelho(): Promise<void> {
+  await exigirSessaoNaAccao();
+  const frasco = await cookies();
+
+  await esquecerAparelho(frasco.get(NOME_DO_APARELHO)?.value);
+  frasco.delete({ name: NOME_DO_APARELHO, path: "/painel" });
+  frasco.delete({ name: NOME_DO_COOKIE, path: "/painel" });
 
   redirect("/painel/entrar");
 }

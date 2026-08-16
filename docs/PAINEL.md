@@ -13,7 +13,7 @@ uma lista de preços em vez de um editor de texto.
 
 O painel grava `data/ementa.json` e `data/casa.json` **no próprio repositório**,
 pela API do GitHub. A Vercel vê o push e reconstrói o site. Não há base de dados
-nenhuma, e o histórico de quem mudou o quê é o `git log`.
+de conteúdo, e o histórico de quem mudou o quê é o `git log`.
 
 O preço disto é o tempo: **1 a 2 minutos** entre carregar em Publicar e a
 alteração estar no ar. O painel diz isso no ecrã, com um contador, e avisa se
@@ -23,142 +23,102 @@ passarem cinco minutos sem aparecer.
 
 ## Como se entra
 
-Dois passos, sempre:
+Não há password.
 
 ```
-1. utilizador + palavra-passe
+1. escreve-se o email
         ↓
    aparelho já conhecido?  ──sim─→  entra
         ↓ não
-2. código de 6 algarismos, que vai por email
+2. chega um código de 6 algarismos por email
         ↓
    entra — e este aparelho fica conhecido 30 dias
 ```
 
-O código vai **no assunto do email**, para se ler na notificação do telemóvel
-sem ter de abrir nada. Vale 10 minutos e serve uma vez só.
+O código vai **no assunto**, para se ler na notificação do telemóvel sem abrir
+nada. Vale 10 minutos e serve uma vez só.
 
-Depois de acertar o código uma vez, aquele telemóvel ou browser só volta a
-pedi-lo daqui a 30 dias. Noutro aparelho, ou numa janela anónima, pede outra vez.
+**Só entra quem estiver na lista** (`PAINEL_EMAILS`). Um email que não esteja não
+recebe nada — mas o ecrã responde exactamente o mesmo, porque distinguir
+transformaria o formulário numa ferramenta para descobrir quem tem acesso.
 
-> **Quem controla a caixa de correio controla o painel.** É a natureza do
-> segundo passo por email — mais fraco do que uma app de códigos, e muito mais
-> fácil para quem não quer instalar nada. **O email que recebe os códigos deve
-> ele próprio ter verificação em dois passos ligada.**
+### O que isto é, e o que não é
+
+**É autenticação de factor único, e assumimo-lo.** A caixa de correio é a chave
+mestra: quem a controlar, controla o painel.
+
+> **O email de quem entra tem de ter, ele próprio, verificação em dois passos.**
+> É a única coisa que separa o painel de um atacante, e é uma pergunta de trinta
+> segundos ao cliente. Se ele não tiver, vale a pena ajudar a ligar — leva cinco
+> minutos e faz mais pela segurança disto do que qualquer linha de código.
+
+**Endereços individuais, nunca um `geral@`.** Um endereço partilhado por cinco
+pessoas não autentica ninguém.
 
 ---
 
-## Montar — três passos
+## Montar — quatro passos
 
-### 1. As variáveis de ambiente, na Vercel
+### 1. Upstash (os contadores)
 
-Project → Settings → Environment Variables. **Marcar como *Sensitive***, para não
-serem legíveis de volta no dashboard depois de gravadas.
+Vercel → Storage → Marketplace → **Upstash Redis**, plano gratuito. A integração
+injecta `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` sozinha; não há
+nada para copiar.
+
+É aqui que vivem os contadores de tentativas e de pedidos de código. **Sem eles o
+painel recusa-se a abrir em produção** — em serverless não há memória partilhada
+entre instâncias, e um contador que se apaga sozinho não é um contador.
+
+### 2. Resend (o email)
+
+Usar a **conta e o domínio da agência**, já verificados. O domínio verificado
+governa o *remetente*, não o destinatário — dá para enviar para qualquer
+endereço. Verificar o `taskuinhapirata.pt` gastaria a única vaga do plano
+gratuito e obrigava a mexer no DNS do cliente, sem ganho nenhum.
 
 ```
-PAINEL_UTILIZADOR    goncalo
-PAINEL_PASSWORD      a que ele escolher
-PAINEL_EMAIL         goncalo@…            ← para onde vai o código
-RESEND_API_KEY       re_…                 ← do passo 2
-PAINEL_GITHUB_TOKEN  ghp_…                ← do passo 3
+RESEND_API_KEY      re_…
+RESEND_REMETENTE    Painel Taskuinha <noreply@…>
 ```
 
-Escrevem-se à mão e acabou. Não há script para correr nem hash para gerar.
+> No plano gratuito, ao atingir o limite diário o envio pausa em vez de ser
+> cobrado. Para quem está à espera do código isso é indistinguível de uma avaria,
+> e ninguém avisa — vale a pena um alerta de falha do lado do Resend.
 
-Para uma segunda pessoa, é o mesmo trio com um número ao lado —
-`PAINEL_UTILIZADOR_2`, `PAINEL_PASSWORD_2` e `PAINEL_EMAIL_2`, até ao `_5`.
+### 3. A lista de quem entra
 
-> **Faltar o email é o mesmo que o utilizador não existir.** É deliberado: sem
-> email não há segundo passo, e um utilizador que entrasse só com password era
-> uma porta aberta ao lado da que se acabou de trancar.
+```
+PAINEL_EMAILS    goncalo@…,tomas@…
+```
 
-> **O email é fixo aqui, não se escreve no ecrã de entrada.** Se fosse escrito,
-> quem tivesse a password mandava o código para o seu próprio endereço e o
-> segundo passo não valia nada.
+Acrescentar uma pessoa é juntar o email e fazer redeploy. Tirar é apagar da lista.
 
 > **Mudar uma variável não afecta as funções já publicadas.** É preciso um
-> redeploy para a nova valer. Quem mudar a password, testar, e concluir que o
-> painel está partido, está a ver isto.
+> redeploy para a nova valer.
 
-> **Mudar a password revoga tudo.** Sessões abertas, códigos a meio, e todos os
-> aparelhos que estavam lembrados os 30 dias. É de propósito: as chaves saem das
-> próprias credenciais, o que dispensa mais uma variável para gerar — e dá um
-> botão de emergência que é um só e apaga tudo.
+### 4. O token do GitHub
 
-**Escolher a password.** Que não seja a password de mais nada.
+Um **fine-grained personal access token**, criado por alguém com acesso de escrita
+ao `DEVV-TGR/Taskuinha`:
 
-Ela fica em claro nas variáveis de ambiente da Vercel. Guardar um hash protegia
-de quem as conseguisse ler — e essa pessoa lê também o `PAINEL_GITHUB_TOKEN`,
-que já dá escrita no repositório, por isso o hash não fecharia porta nenhuma que
-o token não deixasse aberta. O que se perde mesmo é a password ser reutilizável
-noutro sítio.
-
-**E é aqui que o segundo passo muda a conta.** Uma password sozinha já não
-chega para entrar: quem a souber — porque a adivinhou, porque a viu, ou porque
-leu as variáveis — continua a precisar da caixa de correio do Gonçalo. É essa a
-razão de existir.
-
-### 2. A conta de email (Resend)
-
-O painel precisa de um serviço que envie o email do código.
-
-1. Conta em **[resend.com](https://resend.com)** — grátis até 3000 emails por
-   mês, e isto vai usar uns 20.
-2. **Domains → Add Domain → `taskuinhapirata.pt`.** O Resend dá três registos
-   DNS (SPF, DKIM e um de retorno) para pôr onde o domínio está alojado. É o que
-   permite enviar de `codigo@taskuinhapirata.pt` em vez de um endereço
-   emprestado que aterra no spam. Demora uns minutos a verificar.
-3. **API Keys → Create**, com permissão de envio apenas. Copiar para o
-   `RESEND_API_KEY`.
-
-> Se o Resend estiver em baixo, não se entra em **aparelhos novos**. Os que já
-> estão conhecidos continuam a entrar durante os 30 dias.
-
-### 3. O token do GitHub
-
-Um **fine-grained personal access token**, criado por alguém com acesso de
-escrita ao `DEVV-TGR/Taskuinha`:
-
-- Resource owner: **DEVV-TGR**
+- Resource owner: **DEVV-TGR** ← o engano mais comum é deixar a conta pessoal, e
+  aí o token não vê o repositório e dá 404
 - Repository access: **Only select repositories** → **Taskuinha**
 - Repository permissions: **Contents: Read and write** (o `Metadata: Read-only`
   vem sozinho e é obrigatório)
 - Mais nada. Sem Workflows, sem Pull requests, sem Administration.
 
-> **Caduca.** Um fine-grained PAT dura no máximo um ano. Quando expirar, o painel
-> deixa de gravar — e diz *"o token expirou ou perdeu permissões"* em vez de
-> falhar em silêncio, mas continua a ser preciso alguém renová-lo. Vale a pena um
-> lembrete no calendário.
-
----
-
-## Experimentar na própria máquina
-
-Um `.env.local` chega — o `.gitignore` já o apanha, e não tem nada que ver com
-o que está na Vercel:
-
-```
-PAINEL_UTILIZADOR=…
-PAINEL_PASSWORD=…
-PAINEL_EMAIL=…
-```
-
-**Sem `RESEND_API_KEY`, e só em desenvolvimento, o código do segundo passo sai
-no terminal** onde estiver o `npm run dev`, dentro de uma caixa difícil de não
-ver. Não é uma porta traseira: o código continua a ser gerado, exigido, e a ter
-de bater certo — muda só por onde sai, e sai para a mesma pessoa que está a
-tentar entrar. Em produção o ramo não existe (`NODE_ENV`), e se não houver chave
-o painel recusa-se a deixar entrar.
-
-Sem `PAINEL_GITHUB_TOKEN`, a entrada e o aspecto do painel vêem-se na mesma; os
-ecrãs da ementa e da casa mostram a mensagem de erro do GitHub em vez dos dados.
+> **Caduca ao fim de um ano, no máximo.** Quando expirar, o painel diz *"o token
+> expirou ou perdeu permissões"* em vez de falhar em silêncio — mas continua a
+> ser preciso alguém renová-lo. Vale um lembrete no calendário.
 
 ---
 
 ## Recomendado: a regra de rate limiting
 
-Não é obrigatória para o painel funcionar, mas é o que trava mesmo um bot a
-tentar passwords — e configura-se uma vez, sem código.
+Os contadores do Upstash limitam por email e por código. A regra do firewall
+limita o **volume bruto**, na borda, antes de haver compute — um pedido travado lá
+não custa nada. As duas coisas são complementares.
 
 Dashboard → Projecto → **Firewall** → Configure → New Rule:
 
@@ -171,19 +131,43 @@ Três coisas que decidem se funciona:
 
 - **O filtro `POST` é obrigatório.** A entrada é uma server action, e uma server
   action é um POST para o caminho da própria página. Sem o filtro, a regra conta
-  também os GETs do dono a abrir o ecrã, e o contador esgota-se sozinho.
-- **`Challenge` e não `Deny`.** Quem se engana cinco vezes resolve um desafio e
-  continua; um bot não resolve. Um `Deny` bloqueava o dono um minuto sem
-  explicação nenhuma.
+  também os GETs de quem abre o ecrã, e o contador esgota-se sozinho.
+- **`Challenge` e não `Deny`.** Quem se engana resolve um desafio e continua; um
+  bot não resolve.
 - **Começar com a acção `Log`** durante uns dias, ver quantos pedidos legítimos
   apanharia, e só depois passar a `Challenge`.
 
-Existe no plano Hobby: uma regra de rate limit grátis por projecto, com o
-primeiro milhão de pedidos incluído por mês.
+A regra cobre os dois ecrãs, porque o segundo é `/painel/entrar/codigo`.
 
-Há também um contador em memória no código (`lib/painel/travao.ts`), que apanha
-um script ingénuo e mais nada — está lá explicado porquê. A regra do firewall é
-que é a defesa.
+### Os limites, todos juntos
+
+| Regra | Limite | Janela | Onde |
+|---|---|---|---|
+| Tentativas por código | 5 | vida do código | Upstash |
+| Pedidos de código por email | 3 | 15 min | Upstash |
+| Pedidos por IP | 10 | 15 min | Upstash |
+| Pedidos por IP, na borda | 5 | 60 s | Vercel Firewall |
+| Validade do código | — | 10 min | Upstash (TTL) |
+| Uso do código | 1 vez | — | apagado ao ser aceite |
+
+---
+
+## Experimentar na própria máquina
+
+Um `.env.local` com `PAINEL_EMAILS` chega — o `.gitignore` já o apanha.
+
+**Sem `RESEND_API_KEY`, e só em desenvolvimento, o código sai no terminal** onde
+estiver o `npm run dev`, dentro de uma caixa difícil de não ver. Não é uma porta
+traseira: o código continua a ser gerado, exigido, e a ter de bater certo — muda
+só por onde sai, e sai para a mesma pessoa que está a tentar entrar. Em produção
+o ramo não existe.
+
+**Sem Upstash**, os contadores caem para a memória do processo, com um aviso no
+arranque. Chega para carregar num botão; não chega para produção, e em produção o
+painel recusa-se a abrir sem eles.
+
+Sem `PAINEL_GITHUB_TOKEN`, a entrada e o aspecto do painel vêem-se na mesma; os
+ecrãs da ementa e da casa dizem que falta configurar o token.
 
 ---
 
@@ -191,25 +175,32 @@ que é a defesa.
 
 | O que se vê | O que é |
 |---|---|
-| A entrada não aceita a password certa | a variável mudou mas não houve redeploy — ver o aviso do passo 1 |
-| *"a chave do serviço de email parece estar errada"* | a `RESEND_API_KEY` está errada ou expirou — passo 2 |
-| O código não chega | ver Logs no dashboard do Resend. O mais provável é o domínio ter deixado de estar verificado, ou o email ter ido para o spam |
-| Pede o código todas as vezes | o browser está a apagar cookies ao fechar, ou é uma janela anónima. É o comportamento certo |
-| *"o token expirou ou perdeu permissões"* | o PAT do GitHub caducou — passo 3 |
-| *"alguém gravou entretanto"* | duas pessoas no painel ao mesmo tempo. Recarregar e repetir; **nada foi gravado**, de propósito, para não apagar o trabalho do outro |
-| *"passaram cinco minutos e o site continua na versão anterior"* | o build da Vercel falhou. **O site não caiu** — a Vercel mantém o deploy anterior no ar. A alteração está gravada no repositório; ver os registos da Vercel |
+| O código não chega | ver Logs no Resend. Domínio deixou de estar verificado, limite diário atingido, ou foi para o spam |
+| *"a chave do serviço de email parece estar errada"* | `RESEND_API_KEY` errada ou expirada — passo 2 |
+| Escreveu o email e não recebeu nada, sem erro | o email não está no `PAINEL_EMAILS`. É de propósito que o ecrã não o diz |
+| *"falta configurar o PAINEL_GITHUB_TOKEN"* | passo 4 |
+| *"o token expirou ou perdeu permissões"* | o PAT caducou — passo 4 |
+| *"não encontrou o ficheiro no repositório"* | o token ficou com a conta pessoal como Resource owner, ou o `data/` não existe no ramo |
+| Pede o código todas as vezes | o browser apaga cookies ao fechar, ou é janela anónima. É o comportamento certo |
+| Ninguém entra, e o painel fala em armazenamento | o Upstash caiu ou as variáveis desapareceram — passo 1 |
+
+**Expulsar toda a gente**, se for preciso: apagar a chave `painel:segredo` no
+Upstash. Caem as sessões, os códigos a meio e os aparelhos lembrados.
 
 ---
 
 ## O que fica de fora, e porquê
 
 - **Criar ou apagar categorias.** Escolhem-se de entre as nove que a casa tem.
-- **Os 6 destaques da página inicial.** Têm texto e fotografia próprios e vivem
-  em `lib/menu.ts`. Apagar no painel um prato que é destaque **é recusado**, com
-  a razão dita por extenso — senão o build partia-se.
+- **Os 6 destaques da página inicial.** Têm texto e fotografia próprios e vivem em
+  `lib/menu.ts`. Apagar no painel um prato que é destaque **é recusado**.
 - **Fotografias.** Precisariam de armazenamento de ficheiros e redimensionamento.
+- **Rotação do token de aparelho.** É prática recomendada, e aqui o custo é maior
+  do que o ganho: duas abas correm a rotação ao mesmo tempo e uma fica com um
+  token morto. Com uma ou duas pessoas, a revogação manual — que existe, no fundo
+  do painel — vale mais do que a detecção automática de roubo.
 - **A ementa impressa** (`ementa-impressa/`) é uma cópia manual e continua a
-  dessincronizar-se de cada alteração feita aqui.
+  dessincronizar-se.
 
 ---
 
@@ -217,5 +208,4 @@ que é a defesa.
 
 **Não activar branch protection na `main`** sem tratar disto ao mesmo tempo. O
 `ci.yml` pede essa regra, e faz sentido — mas se for activada sem excepção para o
-autor do PAT, o `PUT` do painel passa a ser recusado e o painel morre em
-silêncio.
+autor do PAT, o `PUT` do painel passa a ser recusado e o painel morre em silêncio.
