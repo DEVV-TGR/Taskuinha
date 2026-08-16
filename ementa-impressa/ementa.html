@@ -176,11 +176,20 @@
     O pirata que recebe à porta, o mesmo que está na página inicial. É um
     recorte com fundo transparente, por isso assenta directamente no papel
     sem caixa nem moldura. A sombra por baixo é o que o impede de flutuar.
+
+    Uma imagem que é flex item encolhe em largura sem a altura a acompanhar:
+    `max-width` e `max-height` aplicam-se cada um por si e o recorte saía
+    esticado a mais de um terço. O `aspect-ratio` de origem (900 × 1363) é
+    que manda agora — a altura enche a caixa e a largura vem dela, com o
+    `object-fit` como rede se algum dia a caixa apertar.
   */
   .capa-pirata img {
-    max-height: 100%;
+    aspect-ratio: 900 / 1363;
+    height: 100%;
     width: auto;
-    max-width: 58%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    object-fit: contain;
     filter: drop-shadow(0 4mm 6mm rgb(43 29 14 / 0.34));
   }
 
@@ -382,13 +391,13 @@
     width: 100%;
   }
 
-  .caveira { width: 13mm; height: auto; fill: var(--tinta); opacity: 0.85; }
-
   .fim-titulo {
     font-family: var(--pergaminho-face);
     font-size: 22pt;
     line-height: 1;
-    margin: 7mm 0 3mm;
+    /* Sem a caveira por cima, o miolo centra-se sozinho: o respiro de 7 mm
+       que a separava do título deixou de ter o que separar. */
+    margin: 0 0 3mm;
   }
 
   .fim-lead {
@@ -812,20 +821,6 @@
   <!-- ================================================== CONTRACAPA -->
   <section class="folha contracapa">
     <div class="fim-miolo">
-      <!-- Os olhos são buracos, não dois círculos cor de papel: com o
-           pergaminho fotografado por baixo, a cor lisa dava-se a ver. -->
-      <svg class="caveira" viewBox="0 0 12 12" aria-hidden="true">
-        <mask id="olhos">
-          <rect width="12" height="12" fill="#fff"></rect>
-          <circle cx="4.5" cy="5.3" r="1" fill="#000"></circle>
-          <circle cx="7.5" cy="5.3" r="1" fill="#000"></circle>
-        </mask>
-        <g mask="url(#olhos)">
-          <circle cx="6" cy="5.5" r="4"></circle>
-          <path d="M3.3,8 Q6,10 8.7,8 L8,9 Q6,10.2 4,9 Z"></path>
-        </g>
-      </svg>
-
       <h2 class="fim-titulo">Bom proveito</h2>
       <p class="fim-lead">
         Se tiver alergias ou intolerâncias, diga à mesa antes de pedir.
