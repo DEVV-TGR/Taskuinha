@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { chave } from "./chaves";
-import { ler, guardar, apagar } from "./redis";
+import { ler, guardar, apagar, ErroDoRedis } from "./redis";
 
 /*
   Os dois cookies que dizem quem está do outro lado.
@@ -98,7 +98,31 @@ async function abrirComo(
   if (partes.length !== 3 || partes[0] !== VERSAO) return null;
   const [, corpo, selo] = partes;
 
-  const esperado = Buffer.from(await assinar(rotulo, corpo));
+  /*
+    A chave que verifica o selo vem do armazenamento, e o armazenamento pode
+    estar em baixo.
+
+    Nesse caso não se consegue dizer se este cookie é nosso — e **não conseguir
+    verificar é motivo para não confiar, nunca para confiar**. Falha fechado:
+    devolve `null`, quem estava lá dentro dá por si no ecrã de entrada, e é lá
+    que a acção explica o que se passa em português.
+
+    O que isto substitui é pior de duas maneiras: o `ErroDoRedis` subia até ao
+    topo e a página do painel rebentava com o ecrã de avaria da Vercel — que não
+    explica nada e, ainda por cima, aparecia igual a quem tinha sessão e a quem
+    não tinha.
+  */
+  let esperado: Buffer;
+  try {
+    esperado = Buffer.from(await assinar(rotulo, corpo));
+  } catch (erro) {
+    if (erro instanceof ErroDoRedis) {
+      console.error(`[painel] ${erro.message}`);
+      return null;
+    }
+    throw erro;
+  }
+
   const recebido = Buffer.from(selo);
   if (esperado.length !== recebido.length) return null;
   if (!timingSafeEqual(esperado, recebido)) return null;

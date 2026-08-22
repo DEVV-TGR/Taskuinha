@@ -23,6 +23,7 @@ import {
   VALIDADE_MS as VALIDADE_DO_DESAFIO,
 } from "@/lib/painel/codigo";
 import { enviarCodigo, ErroAoEnviar } from "@/lib/painel/email";
+import { ErroDoRedis } from "@/lib/painel/redis";
 import { podePedirCodigo, anotar } from "@/lib/painel/limites";
 import { exigirSessaoNaAccao } from "@/lib/painel/porta";
 
@@ -54,56 +55,67 @@ export async function pedirCodigo(
 
   if (!email.includes("@")) return { erro: "Escreve um endereço de email." };
 
-  /*
-    Conta antes de saber se o email existe — ver o comentário do
-    `lib/painel/limites.ts`. Esgotado o orçamento, responde-se a mesma coisa de
-    sempre: quem está a sondar não fica a saber se parou por causa do limite ou
-    por o email não existir.
-  */
-  if (!(await podePedirCodigo(email))) {
-    await anotar("limite de pedidos esgotado", email);
-    return { enviado: true };
-  }
-
-  const quem = autorizado(email);
-
-  if (!quem) {
-    await anotar("pedido para email fora da lista", email);
-    return { enviado: true };
-  }
-
   const frasco = await cookies();
+  let jaConhecido = false;
 
-  /* Já passou pelo código neste aparelho — entra sem repetir. */
-  if (await aparelhoConhecido(frasco.get(NOME_DO_APARELHO)?.value, quem.email)) {
-    frasco.set(NOME_DO_COOKIE, await selar(quem.email), opcoesDoCookie());
-    redirect("/painel");
-  }
+  /*
+    Tudo o que fala com o armazenamento ou com o Resend vive aqui dentro.
 
-  /* Pedir outro código invalida o anterior, para não haver dois válidos. */
-  await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
-
-  const codigo = gerarCodigo();
-
+    O `redirect` **não** — continua fora, no fim, pela razão de sempre: funciona
+    atirando uma excepção que o Next apanha, e um `catch` à volta seria uma
+    forma silenciosa de a engolir. Por isso o que se decide cá dentro é um
+    booleano, e o salto dá-se lá em baixo.
+  */
   try {
-    await enviarCodigo({ para: quem.email, codigo });
+    /*
+      Conta antes de saber se o email existe — ver o comentário do
+      `lib/painel/limites.ts`. Esgotado o orçamento, responde-se a mesma coisa de
+      sempre: quem está a sondar não fica a saber se parou por causa do limite ou
+      por o email não existir.
+    */
+    if (!(await podePedirCodigo(email))) {
+      await anotar("limite de pedidos esgotado", email);
+      return { enviado: true };
+    }
+
+    const quem = autorizado(email);
+
+    if (!quem) {
+      await anotar("pedido para email fora da lista", email);
+      return { enviado: true };
+    }
+
+    /* Já passou pelo código neste aparelho — entra sem repetir. */
+    if (await aparelhoConhecido(frasco.get(NOME_DO_APARELHO)?.value, quem.email)) {
+      frasco.set(NOME_DO_COOKIE, await selar(quem.email), opcoesDoCookie());
+      jaConhecido = true;
+    } else {
+      /* Pedir outro código invalida o anterior, para não haver dois válidos. */
+      await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
+
+      const codigo = gerarCodigo();
+      await enviarCodigo({ para: quem.email, codigo });
+
+      frasco.set(
+        NOME_DO_DESAFIO,
+        await criarDesafio(quem.email, codigo),
+        opcoesDoCookie(VALIDADE_DO_DESAFIO),
+      );
+    }
   } catch (erro) {
+    /*
+      Sem armazenamento não se conta, e sem contar não se deixa entrar — mas
+      isso tem de ser **dito**, não atirado. Era este o buraco: o `ErroDoRedis`
+      subia sem ninguém o apanhar e o que aparecia era o ecrã de avaria da
+      Vercel.
+    */
+    if (erro instanceof ErroDoRedis) return { erro: erro.paraOEcra };
     /* Uma falha de envio nunca pode virar "entra à mesma". */
     if (erro instanceof ErroAoEnviar) return { erro: erro.paraOEcra };
     throw erro;
   }
 
-  frasco.set(
-    NOME_DO_DESAFIO,
-    await criarDesafio(quem.email, codigo),
-    opcoesDoCookie(VALIDADE_DO_DESAFIO),
-  );
-
-  /*
-    Fora de qualquer `try`: o `redirect` funciona atirando uma excepção que o
-    Next apanha, e um `catch` à volta engolia-a.
-  */
-  redirect("/painel/entrar/codigo");
+  redirect(jaConhecido ? "/painel" : "/painel/entrar/codigo");
 }
 
 export type EstadoDoCodigo = { erro?: string; reenviado?: boolean };
@@ -114,30 +126,42 @@ export async function confirmarCodigo(
 ): Promise<EstadoDoCodigo> {
   const frasco = await cookies();
   const escrito = String(dados.get("codigo") ?? "");
-  const veredicto = await conferirCodigo(frasco.get(NOME_DO_DESAFIO)?.value, escrito);
 
-  if (veredicto.estado === "sem-desafio" || veredicto.estado === "expirado") {
+  /* Mesma forma do `pedirCodigo`: o armazenamento dentro, o `redirect` fora. */
+  try {
+    const veredicto = await conferirCodigo(frasco.get(NOME_DO_DESAFIO)?.value, escrito);
+
+    if (veredicto.estado === "sem-desafio" || veredicto.estado === "expirado") {
+      frasco.delete({ name: NOME_DO_DESAFIO, path: "/painel" });
+      return { erro: "O código expirou ou já não serve. Pede outro." };
+    }
+
+    if (veredicto.estado === "errado") {
+      await anotar("código errado", "—");
+      return {
+        erro:
+          veredicto.restam > 0
+            ? `Código errado. Faltam ${veredicto.restam} tentativas.`
+            : "Código errado, e acabaram as tentativas. Pede outro.",
+      };
+    }
+
+    frasco.set(NOME_DO_COOKIE, await selar(veredicto.email), opcoesDoCookie());
+    frasco.set(
+      NOME_DO_APARELHO,
+      await lembrarAparelho(veredicto.email),
+      opcoesDoCookie(VALIDADE_APARELHO_MS),
+    );
     frasco.delete({ name: NOME_DO_DESAFIO, path: "/painel" });
-    return { erro: "O código expirou ou já não serve. Pede outro." };
+  } catch (erro) {
+    /*
+      O contador de tentativas vive no armazenamento. Sem ele não se consegue
+      conferir o código — e **não conseguir conferir nunca pode virar "entra à
+      mesma"**. Falha fechado, com uma frase que se lê.
+    */
+    if (erro instanceof ErroDoRedis) return { erro: erro.paraOEcra };
+    throw erro;
   }
-
-  if (veredicto.estado === "errado") {
-    await anotar("código errado", "—");
-    return {
-      erro:
-        veredicto.restam > 0
-          ? `Código errado. Faltam ${veredicto.restam} tentativas.`
-          : "Código errado, e acabaram as tentativas. Pede outro.",
-    };
-  }
-
-  frasco.set(NOME_DO_COOKIE, await selar(veredicto.email), opcoesDoCookie());
-  frasco.set(
-    NOME_DO_APARELHO,
-    await lembrarAparelho(veredicto.email),
-    opcoesDoCookie(VALIDADE_APARELHO_MS),
-  );
-  frasco.delete({ name: NOME_DO_DESAFIO, path: "/painel" });
 
   redirect("/painel");
 }
@@ -145,31 +169,35 @@ export async function confirmarCodigo(
 /** "Não chegou nada" — outro código, e o anterior deixa de servir. */
 export async function reenviarCodigo(): Promise<EstadoDoCodigo> {
   const frasco = await cookies();
-  const email = await emailDoDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
-
-  if (!email) return { erro: "O código expirou. Volta a escrever o email." };
-
-  /* O reenvio conta como pedido — senão era a porta das traseiras do limite. */
-  if (!(await podePedirCodigo(email))) {
-    await anotar("limite de pedidos esgotado no reenvio", email);
-    return { erro: "Já pediste códigos demais. Espera uns minutos." };
-  }
-
-  await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
-  const codigo = gerarCodigo();
 
   try {
+    const email = await emailDoDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
+
+    if (!email) return { erro: "O código expirou. Volta a escrever o email." };
+
+    /* O reenvio conta como pedido — senão era a porta das traseiras do limite. */
+    if (!(await podePedirCodigo(email))) {
+      await anotar("limite de pedidos esgotado no reenvio", email);
+      return { erro: "Já pediste códigos demais. Espera uns minutos." };
+    }
+
+    await apagarDesafio(frasco.get(NOME_DO_DESAFIO)?.value);
+    const codigo = gerarCodigo();
+
     await enviarCodigo({ para: email, codigo });
+
+    frasco.set(
+      NOME_DO_DESAFIO,
+      await criarDesafio(email, codigo),
+      opcoesDoCookie(VALIDADE_DO_DESAFIO),
+    );
   } catch (erro) {
+    /* Sem armazenamento não há como contar o reenvio, e um reenvio que não se
+       conta é o buraco por onde o limite de pedidos se esvazia. */
+    if (erro instanceof ErroDoRedis) return { erro: erro.paraOEcra };
     if (erro instanceof ErroAoEnviar) return { erro: erro.paraOEcra };
     throw erro;
   }
-
-  frasco.set(
-    NOME_DO_DESAFIO,
-    await criarDesafio(email, codigo),
-    opcoesDoCookie(VALIDADE_DO_DESAFIO),
-  );
 
   return { reenviado: true };
 }

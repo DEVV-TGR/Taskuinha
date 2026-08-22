@@ -37,6 +37,26 @@ export class ErroDoRedis extends Error {
     super(`Não foi possível falar com o armazenamento: ${detalhe}`);
     this.name = "ErroDoRedis";
   }
+
+  /*
+    A frase para quem está do outro lado.
+
+    Existe pela mesma razão que a do `ErroAoEnviar` e a do `ErroDoGithub`: sem
+    ela, o que aparecia era o ecrã de avaria da Vercel — em inglês, com um número
+    de oito algarismos e mais nada. O `docs/PAINEL.md` promete esta frase na
+    tabela de avarias desde que a tabela existe; até agora era só uma promessa.
+
+    Não diz "Redis" nem "Upstash". Quem está a tentar entrar não tem de saber o
+    nome do fornecedor — tem de saber que o problema não é o código que escreveu
+    e que não vale a pena continuar a tentar.
+  */
+  get paraOEcra(): string {
+    return (
+      "O painel não está a conseguir falar com o armazenamento e por isso não " +
+      "deixa entrar ninguém. Não é do teu código nem do teu email. Fala com o " +
+      "Tomás."
+    );
+  }
 }
 
 /*
