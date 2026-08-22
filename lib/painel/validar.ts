@@ -133,6 +133,26 @@ function validarPrato(
   }
 }
 
+/*
+  O `actualizado` que o painel carimba, se já lá vier.
+
+  Quem o escreve é o `carimbar()` do `lib/painel/github.ts`, e escreve-o
+  sempre bem — este teste é para a mão humana que abre o JSON no editor e o
+  troca por "ontem". Sem ele, o efeito seria o `<lastmod>` desaparecer do
+  sitemap sem nada dizer; assim, o painel recusa e explica.
+*/
+function validarCarimbo(dados: Record<string, unknown>, problemas: Problema[]): void {
+  const { actualizado } = dados;
+  if (actualizado === undefined) return;
+
+  if (typeof actualizado !== "string" || Number.isNaN(new Date(actualizado).getTime())) {
+    problemas.push(
+      "O campo actualizado tem de ser uma data como 2026-08-22T09:56:18.000Z. " +
+        "É o painel que o escreve — não se mexe nele à mão.",
+    );
+  }
+}
+
 /** Os problemas do `data/ementa.json`. Lista vazia quer dizer que está bom. */
 export function validarEmenta(dados: unknown): Problema[] {
   const problemas: Problema[] = [];
@@ -141,9 +161,12 @@ export function validarEmenta(dados: unknown): Problema[] {
     return ["A ementa não é um objecto."];
   }
 
+  validarCarimbo(dados as Record<string, unknown>, problemas);
+
   const { categorias } = dados as Record<string, unknown>;
   if (!Array.isArray(categorias) || categorias.length === 0) {
-    return ["A ementa não tem categorias."];
+    problemas.push("A ementa não tem categorias.");
+    return problemas;
   }
 
   const vistos = new Set<string>();
@@ -204,6 +227,7 @@ export function validarCasa(dados: unknown): Problema[] {
   const problemas: Problema[] = [];
 
   if (typeof dados !== "object" || dados === null) return ["A casa não é um objecto."];
+  validarCarimbo(dados as Record<string, unknown>, problemas);
   const { telefone, morada, horario, links } = dados as Record<string, unknown>;
 
   const tel = telefone as Record<string, unknown> | undefined;
