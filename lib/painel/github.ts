@@ -156,6 +156,30 @@ export async function ler<T>(caminho: string): Promise<Ficheiro<T>> {
   };
 }
 
+/*
+  A data em que se gravou, escrita dentro do próprio ficheiro.
+
+  Quem a lê é o `app/sitemap.ts`, para pôr um `<lastmod>` em cada morada. O
+  Google ignora o `changefreq` e o `priority` — o `lastmod` é o único dos três
+  a que dá uso, e só enquanto for de confiança. Daí não ser a data do build:
+  essa dizia que a ementa mudou de cada vez que se corrige uma margem no CSS,
+  e um sitemap que grita "mudei tudo" a toda a hora deixa de ser lido.
+
+  Fica aqui e não em cada uma das duas acções do painel, para não haver a
+  hipótese de um ecrã novo se esquecer dela. Vai sempre como **primeira**
+  chave: o `git log` deste repositório é o histórico de edições da casa, e ler
+  a data logo na primeira linha do diff é mais barato do que ir procurá-la ao
+  fim de mil linhas de pratos.
+*/
+function carimbar(dados: unknown): unknown {
+  if (typeof dados !== "object" || dados === null || Array.isArray(dados)) {
+    return dados;
+  }
+  const resto = { ...(dados as Record<string, unknown>) };
+  delete resto.actualizado;
+  return { actualizado: new Date().toISOString(), ...resto };
+}
+
 export async function gravar({
   caminho,
   dados,
@@ -178,7 +202,7 @@ export async function gravar({
     só, e o histórico em git — que foi a razão de se escolher o GitHub em vez de
     uma base de dados — deixava de valer alguma coisa.
   */
-  const texto = `${JSON.stringify(dados, null, 2)}\n`;
+  const texto = `${JSON.stringify(carimbar(dados), null, 2)}\n`;
 
   const resposta = await fetch(`${API}/repos/${DONO}/${REPO}/contents/${caminho}`, {
     method: "PUT",
