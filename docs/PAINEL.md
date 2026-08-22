@@ -71,15 +71,31 @@ entre instâncias, e um contador que se apaga sozinho não é um contador.
 
 ### 2. Resend (o email)
 
-Usar a **conta e o domínio da agência**, já verificados. O domínio verificado
-governa o *remetente*, não o destinatário — dá para enviar para qualquer
-endereço. Verificar o `taskuinhapirata.pt` gastaria a única vaga do plano
-gratuito e obrigava a mexer no DNS do cliente, sem ganho nenhum.
+Usar a **conta e o domínio da agência**. O domínio verificado governa o
+*remetente*, não o destinatário — dá para enviar para qualquer endereço.
+Verificar o `taskuinhapirata.pt` gastaria a única vaga do plano gratuito e
+obrigava a mexer no DNS do cliente, sem ganho nenhum.
 
 ```
 RESEND_API_KEY      re_…
-RESEND_REMETENTE    Painel Taskuinha <noreply@…>
+RESEND_REMETENTE    Painel Taskuinha <noreply@send.devplus.pt>
 ```
+
+> **O domínio verificado é `send.devplus.pt`, e não `devplus.pt`.** É um
+> subdomínio, e para o Resend a raiz e o subdomínio são dois domínios
+> diferentes: um remetente em `@devplus.pt` é recusado com 403, com a mesma
+> naturalidade com que recusaria um domínio de outra pessoa.
+>
+> Esta linha existe porque a versão anterior deste documento dizia que o domínio
+> da agência estava "já verificado", sem dizer **qual**. Custou uma hora de
+> procura numa chave de API que não tinha problema nenhum. Antes de mexer em
+> seja o que for, abrir o Resend → Domains e copiar o que lá está como
+> *Verified*, à letra.
+
+**Sem domínio verificado nenhum**, o Resend deixa enviar de
+`onboarding@resend.dev` — mas só para o endereço com que a conta foi criada.
+Serve para experimentar a volta completa antes de haver DNS tratado; não serve
+para o cliente receber nada.
 
 > No plano gratuito, ao atingir o limite diário o envio pausa em vez de ser
 > cobrado. Para quem está à espera do código isso é indistinguível de uma avaria,
@@ -176,7 +192,9 @@ ecrãs da ementa e da casa dizem que falta configurar o token.
 | O que se vê | O que é |
 |---|---|
 | O código não chega | ver Logs no Resend. Domínio deixou de estar verificado, limite diário atingido, ou foi para o spam |
-| *"a chave do serviço de email parece estar errada"* | `RESEND_API_KEY` errada ou expirada — passo 2 |
+| *"o domínio do remetente não está verificado"* | o `RESEND_REMETENTE` não usa o domínio que está como *Verified* no Resend — passo 2. É o engano mais provável dos dois |
+| *"a chave do serviço de email foi recusada"* | `RESEND_API_KEY` errada ou revogada — passo 2 |
+| *"falta configurar o RESEND_…"* | a variável não existe nas Environment Variables, ou faltou o redeploy — passo 2 |
 | Escreveu o email e não recebeu nada, sem erro | o email não está no `PAINEL_EMAILS`. É de propósito que o ecrã não o diz |
 | *"falta configurar o PAINEL_GITHUB_TOKEN"* | passo 4 |
 | *"o token expirou ou perdeu permissões"* | o PAT caducou — passo 4 |

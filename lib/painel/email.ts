@@ -16,45 +16,121 @@ import { comEspaco } from "./codigo";
 
   ## O remetente vem de uma variável
 
-  `RESEND_REMETENTE`, com o formato `Nome <endereco@dominio>`. O domínio tem de
-  estar verificado na conta de Resend que estiver a ser usada.
+  `RESEND_REMETENTE`, com o formato `Nome <endereco@dominio>`.
 
-  Não está fixo no código porque o domínio a usar é o da agência, já verificado,
-  e não o da casa: o domínio verificado governa o **remetente**, não o
-  destinatário — dá para enviar para qualquer endereço a partir de um domínio já
-  verificado. Verificar o `taskuinhapirata.pt` gastava a única vaga de domínio do
-  plano gratuito e obrigava a mexer no DNS do cliente, sem ganho nenhum para um
-  email interno de seis algarismos.
+  Não está fixo no código porque o domínio a usar é o da agência, e não o da
+  casa: o domínio verificado governa o **remetente**, não o destinatário — dá
+  para enviar para qualquer endereço a partir de um domínio já verificado.
+  Verificar o `taskuinhapirata.pt` gastava a única vaga de domínio do plano
+  gratuito e obrigava a mexer no DNS do cliente, sem ganho nenhum para um email
+  interno de seis algarismos.
+
+  ## O domínio tem de bater certo à letra
+
+  E é aqui que isto já custou uma noite. O que está verificado no Resend é
+  `send.devplus.pt` — um **subdomínio**. Um remetente em `@devplus.pt` é
+  recusado com 403, porque para o Resend a raiz e o subdomínio são dois domínios
+  diferentes e só um deles foi verificado.
+
+  A regra, sem rodeios: o que vem depois do `@` tem de ser, caracter a caracter,
+  o que aparece como *Verified* no painel do Resend.
 
   A caixa não recebe respostas. O `reply_to` aponta ao próprio remetente e o
   texto do email diz que não vale a pena responder.
 */
 
+/*
+  Não é um estado do Resend — o pedido nem chega a sair. É um número fora da gama
+  do HTTP de propósito, para nunca colidir com uma resposta real. Mesma convenção
+  do `SEM_TOKEN` do `lib/painel/github.ts`, e pela mesma razão: **falta
+  configurar não é o mesmo que está mal configurado**, e um erro que descreve mal
+  a causa manda procurar no sítio errado.
+*/
+const SEM_CONFIGURACAO = 0;
+
+/*
+  Atira, e deixa o detalhe no registo.
+
+  O detalhe é a única coisa que distingue "o domínio não está verificado" de "a
+  chave expirou", e o ecrã nunca o pode mostrar — mostra a frase educada. Se não
+  ficar aqui, não fica em lado nenhum.
+
+  Isto não estava a acontecer, apesar de o comentário da classe dizer que sim: o
+  `catch` das acções devolvia a frase do ecrã e deitava o erro fora. O diagnóstico
+  acabou por ser feito no painel do Resend, que é o sítio onde não devia ter sido
+  preciso ir.
+*/
+function rebentar(estado: number, detalhe: string): never {
+  console.error(`[painel] o envio do código falhou — ${estado} — ${detalhe}`);
+  throw new ErroAoEnviar(estado, detalhe);
+}
+
 function remetente(): string {
   const valor = process.env.RESEND_REMETENTE;
-  if (!valor) throw new ErroAoEnviar(401, "RESEND_REMETENTE em falta.");
+  if (!valor) rebentar(SEM_CONFIGURACAO, "RESEND_REMETENTE em falta.");
   return valor;
 }
 
 export class ErroAoEnviar extends Error {
   readonly estado: number;
+  readonly detalhe: string;
 
   constructor(estado: number, detalhe: string) {
     super(`O Resend respondeu ${estado}: ${detalhe}`);
     this.name = "ErroAoEnviar";
     this.estado = estado;
+    this.detalhe = detalhe;
   }
 
   /*
-    O que se mostra a quem está à espera do código. Nunca o erro do Resend —
-    esse vai para o registo da Vercel, onde é útil, e não para um ecrã onde só
-    assusta.
+    O que se mostra a quem está à espera do código. Nunca o erro cru do Resend —
+    esse vai para o registo pelo `rebentar()`, onde é útil, e não para um ecrã
+    onde só assusta.
+
+    ## Quatro causas, quatro frases
+
+    Isto já disse *"a chave parece estar errada ou expirada"* para três coisas
+    diferentes, porque as duas variáveis em falta também atiravam com `401`. E a
+    causa verdadeira não era nenhuma das três — era o domínio do remetente, que
+    esta frase nem sequer mencionava.
+
+    Uma mensagem errada é pior do que uma genérica: a genérica faz perguntar, a
+    errada faz procurar no sítio errado durante uma hora.
   */
   get paraOEcra(): string {
-    if (this.estado === 401 || this.estado === 403) {
+    if (this.estado === SEM_CONFIGURACAO) {
+      return (
+        `O painel ainda não consegue enviar emails — ${this.detalhe} ` +
+        `Ver docs/PAINEL.md.`
+      );
+    }
+    /*
+      O 403 do Resend é, quase sempre, um remetente cujo domínio não está
+      verificado. A resposta dele até o diz por extenso — mas ninguém a lia,
+      porque era deitada fora antes de chegar ao registo.
+    */
+    if (this.estado === 403) {
+      return (
+        "O painel não conseguiu enviar o código — o domínio do remetente não " +
+        "está verificado no Resend. O RESEND_REMETENTE tem de usar, à letra, o " +
+        "domínio que lá aparece como Verified. Fala com o Tomás."
+      );
+    }
+    if (this.estado === 401) {
       return (
         "O painel não conseguiu enviar o código — a chave do serviço de email " +
-        "parece estar errada ou expirada. Fala com o Tomás."
+        "foi recusada. O mais provável é ter sido revogada. Fala com o Tomás."
+      );
+    }
+    /*
+      O plano gratuito do Resend pausa o envio ao atingir o limite diário, em vez
+      de cobrar. Para quem está à espera do código isso é indistinguível de uma
+      avaria — daí valer uma frase própria.
+    */
+    if (this.estado === 429) {
+      return (
+        "Já se enviaram códigos a mais por hoje e o serviço de email travou o " +
+        "envio. Espera uns minutos; se continuar, fala com o Tomás."
       );
     }
     return (
@@ -70,7 +146,7 @@ export class ErroAoEnviar extends Error {
 */
 function chaveDeApi(): string {
   const valor = process.env.RESEND_API_KEY;
-  if (!valor) throw new ErroAoEnviar(401, "RESEND_API_KEY em falta.");
+  if (!valor) rebentar(SEM_CONFIGURACAO, "RESEND_API_KEY em falta.");
   return valor;
 }
 
@@ -167,6 +243,6 @@ export async function enviarCodigo({
   });
 
   if (!resposta.ok) {
-    throw new ErroAoEnviar(resposta.status, await resposta.text());
+    rebentar(resposta.status, await resposta.text());
   }
 }
