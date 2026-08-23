@@ -1,8 +1,40 @@
 # Ementa impressa
 
-- `ementa.pdf` — **é este que vai para a gráfica.** Seis páginas A4
-  (capa, quatro de ementa, contracapa), 2,9 MB. Três folhas frente e verso.
-- `ementa.html` — a origem. Editar aqui e voltar a gerar o PDF.
+Há aqui **dois documentos diferentes**, e é a primeira coisa a perceber
+antes de mexer em seja o que for:
+
+- `ementa.html` — a origem, 1,5 MB. Imprimindo-a pelo Chrome sai o
+  `Ementa_Teste.pdf`: **seis páginas A4**, 2,9 MB (capa, quatro de ementa,
+  contracapa). Três folhas frente e verso.
+- `Ementa_Teste.pdf` — o resultado dessa impressão. É o que este ficheiro
+  descreve daqui para baixo.
+- `Ementa_Final.pdf` — **doze páginas**, 5,5 MB (a prova chama-lhe 5,2, que
+  é o mesmo número contado em MiB). **Não sai deste HTML.** Ver a secção
+  seguinte.
+
+## O `Ementa_Final.pdf` não vem daqui
+
+Os metadados do ficheiro dizem de onde veio, e não é do repositório:
+
+```
+xmp:CreatorTool   Canva (Renderer) doc=DAHSTRHoWtk
+                  user=UACa7xUfBtg brand=BACa7567IRU
+Producer          Quartz PDFContext, AppendMode 1.1   ← Preview do macOS
+Creator           HeadlessChrome/151 · Skia/PDF m151
+```
+
+Três origens no mesmo ficheiro. O desenho foi feito no **Canva**, saíram
+páginas do **Chrome**, e as duas coisas foram juntas no **Preview do
+macOS** — é o que quer dizer o `AppendMode`. As doze páginas são uma
+montagem feita à mão numa máquina, não a saída de um comando.
+
+**Consequência prática:** quem procurar neste repositório o ficheiro de
+origem do `Ementa_Final.pdf` não o encontra, porque ele não é um ficheiro.
+É um documento numa conta do Canva. Não há nada para dar push que resolva
+isto — só partilhar o design `DAHSTRHoWtk`.
+
+O `ementa.html` que está aqui tem seis `<section>` e gera seis páginas. É
+um documento anterior e autónomo, não uma versão desactualizada do outro.
 
 ## O desenho vem do site
 
@@ -19,9 +51,33 @@ assim abre igual em qualquer computador, na gráfica inclusive, sem rede e
 sem fontes instaladas.
 
 Na capa está o pirata que recebe à porta, o mesmo recorte que está na
-página inicial (`public/images/esqueleto-grande.png`), também embebido.
+página inicial (`public/images/esqueleto-grande.png`, 1200 × 1367),
+também embebido.
 
-## Voltar a fazer o PDF
+## A pasta `origem/`
+
+Tudo o que é preciso para voltar a fazer a ementa e para conferir o que
+lá está vive aqui ao lado, e não em `public/`:
+
+- `origem/fundo-ementa.png` — o fundo de pergaminho do `Ementa_Final.pdf`,
+  2475 × 3500 px, que a 300 DPI dá exactamente um A4. Esteve muito tempo só
+  na máquina do Gonçalo.
+- `origem/livro-antigo/` — as sete fotografias do livro de ementas
+  plastificado, que é de onde tudo foi transcrito. São a única forma de
+  responder às perguntas que ficam em aberto no fim deste ficheiro: o preço
+  borratado do Baileys, o "Desespero" manuscrito por cima do "Chaminé", a
+  grafia do Gin Hendrick's.
+
+**Não estão em `public/` de propósito.** O `public/images/README.md`
+explica a regra: os originais grandes ficam fora, porque o que está em
+`public/` é servido ao visitante e o CSS não o optimiza. Estes ficheiros
+não são usados pelo site — são material de trabalho da ementa impressa, e
+o sítio deles é este.
+
+A figura da capa é a excepção, e está onde sempre esteve: é o
+`public/images/esqueleto-grande.png`, que o site também usa.
+
+## Voltar a fazer o PDF de seis páginas
 
 Abrir `ementa.html` no Chrome e **Imprimir**:
 
@@ -35,6 +91,11 @@ Abrir `ementa.html` no Chrome e **Imprimir**:
 Confirmar sempre que dá **seis** páginas. Se der mais, alguma coisa fez
 as folhas medirem mais de 297 mm — foi o que aconteceu na primeira versão,
 e está explicado no comentário do `@media print`.
+
+**Não voltar a abrir e gravar o resultado no Preview.** É o que estragou o
+`Ementa_Final.pdf`: passar um PDF pelo Preview pode perder tipografias pelo
+caminho. O ficheiro que vai para a gráfica sai do Chrome e não é tocado
+mais. Vê-se nos metadados — tem de dizer `Skia/PDF`, e não `Quartz`.
 
 ## O ar entre pratos é medido, não escolhido
 
@@ -73,11 +134,16 @@ antigo. Nessa resolução dá uns 3 cm impressos, torto e com os riscos todos
 
 ## De onde vêm os pratos e os preços
 
-De `lib/menu.ts`, o mesmo ficheiro que serve a ementa do site, transcrito a
-**13 de Agosto de 2026**. São 154 linhas e conferem uma a uma com o site:
-mesmos nomes, mesmos preços. A única diferença deliberada é a **Sangria**,
-que no papel diz "Sangria, jarro" para não se confundir com o copo, que
-está logo por cima.
+Os **nomes, descrições e fotografias** estão em `lib/menu.ts`. Os **preços
+já não** — mudaram-se para o `data/ementa.json`, que é o que o painel
+edita e escreve directamente no GitHub. Passaram a ter um dono só,
+justamente para o site não poder dizer um número e outro sítio dizer outro.
+O comentário longo em `lib/menu.ts` explica porquê.
+
+O papel foi transcrito a **13 de Agosto de 2026**. São 154 linhas e, à
+data, conferiam uma a uma com o site. A única diferença deliberada é a
+**Sangria**, que no papel diz "Sangria, jarro" para não se confundir com o
+copo, que está logo por cima.
 
 Regra do dono: **o que não tem preço não entra.** Ficaram de fora as
 etiquetas em branco do livro antigo (Baguete, Bacalhau c/ grão, Atum c/
@@ -90,8 +156,42 @@ e queijo, Água Carvalhelhos, Irish Coffee), as linhas riscadas a marcador
 nunca foi confirmado, por isso não está nem no site nem aqui.
 
 > Isto é uma transcrição, não uma ligação automática. Quando um preço
-> mudar, tem de mudar nos dois sítios. O comando que confere os dois está
-> na conversa que gerou este ficheiro e volta a correr em segundos.
+> mudar, tem de mudar nos dois sítios — e agora que o painel mexe nos
+> preços sozinho, o papel envelhece sem ninguém dar por isso. Foi o que
+> aconteceu a seis deles a 14 de Agosto.
+
+## A prova de pré-impressão
+
+Há uma revisão do `Ementa_Final.pdf` feita a 22 de Agosto de 2026 —
+`PROVA-EMENTA.pdf`, nove pontos, cada um com o que foi medido dentro do
+ficheiro. Não está neste repositório. Em resumo:
+
+| # | O quê | Estado |
+|---|---|---|
+| 1 | Sem sangria: o fundo fica 0,14 mm curto e o corte apanha branco | a corrigir |
+| 2 | O pirata da capa está esticado 58% e a ≈172 DPI | a corrigir |
+| 3 | O fundo está a 300 DPI mas com compressão JPEG a mais | a corrigir |
+| 4 | **Seis preços desactualizados** | cinco corrigidos; o sexto era falso alarme |
+| 5 | Quatro traduções inglesas divergem do site; o aviso de alergias diz "meets shellfish" em vez de "comes into contact with" | a corrigir |
+| 6 | Um emoji na contracapa, embebido como fonte Type3 | trocar por imagem |
+| 7 | As duas colunas da contracapa estão 6 mm fora do meio | decisão, não defeito |
+| 8 | Os preços são 1,5 pt mais pequenos que os nomes dos pratos | a decidir |
+| 9 | A Special Elite não aparece em nenhuma das 12 páginas | a decidir |
+
+O ponto 4 é o único que impede mesmo a impressão. E tem uma armadilha
+registada na prova: três dos seis valores antigos repetem-se noutros
+artigos que **não** mudaram — as Lulas ao alho a 12,40, o Bacardi limão a
+5,90 e a Tosta especial a 7,40, esta última com o preço antigo do cachorro.
+Cada troca tem de ser ancorada ao nome do prato, nunca ao valor.
+
+**Cinco dos seis estão corrigidos aqui. O sexto não precisava.** A prova
+diz que a Amêijoa à pirata devia passar de 15,20 para 16,90 — e teve razão
+durante algumas horas. A 22 de Agosto de 2026, às 09:56, o preço foi
+baixado de 16,90 para 15,20 pelo painel (commit `8940031`). A prova foi
+escrita nesse mesmo dia e apanhou o valor de antes.
+
+O papel a dizer 15,20 está certo. É o único ponto da prova que não é para
+executar.
 
 ## Coisas para o dono confirmar antes de ir para a gráfica
 
@@ -100,8 +200,9 @@ Nomes que estão como no livro antigo e que podem estar mal escritos:
 | Está | Provavelmente é |
 |---|---|
 | Gin Hendricks | Gin Hendrick's |
-| Whiskey (em todos) | Whisky, para o Old Parr e o Cutty Sark, que são escoceses |
+| Whiskey (em todos) | Whisky, para o Old Parr e o Cutty Sark, que são escoceses. O Jameson é irlandês e fica *whiskey* |
 | Desespero | o nome manuscrito por cima do "Chaminé" riscado — confirmar mesmo |
+| Quinta Termos | Quinta dos Termos, o produtor da Beira Interior |
 
 Não os corrigi por conta própria para o papel não passar a dizer uma coisa
 e o site outra. Diz qual é a versão boa e mudo nos dois.
