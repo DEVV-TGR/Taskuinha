@@ -20,7 +20,6 @@ node ementa-impressa/gerador/gerar.mjs \
 | `ementa-coluna-unica.html` | gerado. Não editar — perde-se na geração seguinte |
 | `gerador/` | de onde tudo sai |
 | `origem/` | as imagens e o material de referência |
-| `Ementa_Final.pdf` | a versão de 22 de Agosto, guardada como referência de verificação |
 
 ## Os preços vêm do site, e o gerador pára se algo não bater certo
 
