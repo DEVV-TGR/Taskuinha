@@ -1,20 +1,66 @@
 # Ementa impressa
 
-Há aqui **dois documentos diferentes**, e é a primeira coisa a perceber
-antes de mexer em seja o que for:
+## O ficheiro bom é o `Ementa_Aprovada_2026-08-23.pdf`
 
-- `ementa.html` — a origem, 1,5 MB. Imprimindo-a pelo Chrome sai o
-  `Ementa_Teste.pdf`: **seis páginas A4**, 2,9 MB (capa, quatro de ementa,
-  contracapa). Três folhas frente e verso.
+Se só se ler uma linha deste ficheiro, que seja esta. São três PDFs de doze
+e seis páginas com nomes parecidos, e só um está certo:
+
+| Ficheiro | Páginas | O que é |
+|---|---|---|
+| **`Ementa_Aprovada_2026-08-23.pdf`** | 12 | **O documento da casa.** Fechado pelo Tomás a 23 de Agosto, depois da prova desse dia |
+| `Ementa_Final.pdf` | 12 | A versão anterior, de 22 de Agosto. Foi a que a prova mediu — está ultrapassada |
+| `Ementa_Teste.pdf` | 6 | Outro documento, o de seis páginas, que sai do `ementa.html` que está aqui ao lado |
+
+O aprovado bate certo com o site nos **154 preços** — comparei-os um a um
+com o `data/ementa.json`. As duas únicas diferenças são de nome e ambas
+deliberadas: a "Sangria, jarro", para não se confundir com o copo, e a
+etiqueta "ÉPOCA" ao lado dos percebes.
+
+**O que ele já resolve** da prova de pré-impressão: o pirata deixou de
+estar esticado (1623 × 2212 em vez de 1323 × 2376), o fundo passou a PNG
+sem perdas, o emoji Type3 desapareceu, a Special Elite voltou, e os
+preços ficaram todos certos.
+
+**O que falta lá dentro**, e é o que o próximo trabalho tem de apanhar:
+
+- a **sangria** — não tem `BleedBox` nem `TrimBox`, e a caixa é A4 exacto
+  (209,89 × 297,01 mm): o corte da gráfica apanha branco;
+- a **contracapa fora do meio** — 35 mm de margem à esquerda contra 52 mm
+  à direita;
+- o **aviso de alergénios em inglês**, que ainda diz "everything here meets
+  shellfish";
+- **catorze descrições inglesas** que continuam a divergir do site (17 das
+  31 batem certo) — por exemplo "Roasted on a clay tile" no papel contra
+  "on a roof tile" no site;
+- a **amêijoa a 16,90** (o dono confirmou a 26 de Agosto — o site já diz)
+  e o **Baileys**, que continua sem preço.
+
+> **O HTML que gerou este PDF não está aqui.** Está na máquina de quem o
+> fez, e foi pedido. Sem ele, mudar uma linha da ementa obriga a refazer o
+> documento a partir de uma versão anterior — que é precisamente o que este
+> aviso existe para evitar que se faça por distracção. O PDF fica aqui
+> versionado porque, até esse dia, era o único sítio onde a ementa aprovada
+> existia: a pasta de transferências de uma pessoa.
+
+## Os outros dois documentos
+
+- `ementa.html` — a origem do de seis páginas, 1,5 MB. Imprimindo-a pelo
+  Chrome sai o `Ementa_Teste.pdf`: **seis páginas A4**, 2,9 MB (capa,
+  quatro de ementa, contracapa). Três folhas frente e verso.
 - `Ementa_Teste.pdf` — o resultado dessa impressão. É o que este ficheiro
   descreve daqui para baixo.
 - `Ementa_Final.pdf` — **doze páginas**, 5,5 MB (a prova chama-lhe 5,2, que
   é o mesmo número contado em MiB). **Não sai deste HTML.** Ver a secção
   seguinte.
 
-## O `Ementa_Final.pdf` não vem daqui
+## De onde vem o `Ementa_Final.pdf` — e a leitura errada dos metadados
 
-Os metadados do ficheiro dizem de onde veio, e não é do repositório:
+Este ficheiro dizia aqui que o `Ementa_Final.pdf` tinha sido **desenhado no
+Canva** e montado no Preview, e que por isso não havia no repositório
+origem nenhuma para ele. **Metade disso era falso**, e vale a pena deixar
+registado porquê, para não se repetir a leitura.
+
+Os metadados são estes:
 
 ```
 xmp:CreatorTool   Canva (Renderer) doc=DAHSTRHoWtk
@@ -23,15 +69,25 @@ Producer          Quartz PDFContext, AppendMode 1.1   ← Preview do macOS
 Creator           HeadlessChrome/151 · Skia/PDF m151
 ```
 
-Três origens no mesmo ficheiro. O desenho foi feito no **Canva**, saíram
-páginas do **Chrome**, e as duas coisas foram juntas no **Preview do
-macOS** — é o que quer dizer o `AppendMode`. As doze páginas são uma
-montagem feita à mão numa máquina, não a saída de um comando.
+O `xmp:CreatorTool` do Canva **não é do documento — é da imagem de fundo**.
+O `origem/fundo-ementa.png` foi exportado do Canva e traz o XMP colado; um
+PDF impresso pelo Chrome a partir do `ementa.html` deste repositório, sem
+Canva nenhum pelo meio, sai com exactamente a mesma linha. Confirmou-se
+imprimindo o ramo `ementa/pergaminho-e-letra` (PR #39) e comparando.
 
-**Consequência prática:** quem procurar neste repositório o ficheiro de
-origem do `Ementa_Final.pdf` não o encontra, porque ele não é um ficheiro.
-É um documento numa conta do Canva. Não há nada para dar push que resolva
-isto — só partilhar o design `DAHSTRHoWtk`.
+O que se mantém verdadeiro é o **Preview**: `Quartz` e `AppendMode` só
+aparecem no `Ementa_Final.pdf`, e nesse continua a valer a regra de não
+voltar a abrir e gravar um PDF por lá.
+
+**E a origem existe.** O `Ementa_Final.pdf` é o `ementa.html` do primeiro
+commit do PR #39 (`406a8ac`), impresso pelo Chrome. Bate ficheiro a
+ficheiro: doze páginas, a mesma caixa de 594,96 × 841,92, o mesmo fundo de
+2475 × 3500, as mesmas três fontes sem a Special Elite, e o pirata nas
+mesmas 1323 × 2376 — que só esse commit produz, porque o seguinte
+(`b3d1a16`) corrige a deformação e passa-o a 1714 × 2376.
+
+O que **não** tem origem aqui é o `Ementa_Aprovada_2026-08-23.pdf`, que veio
+depois e é o bom. Ver a secção do topo.
 
 O `ementa.html` que está aqui tem seis `<section>` e gera seis páginas. É
 um documento anterior e autónomo, não uma versão desactualizada do outro.
