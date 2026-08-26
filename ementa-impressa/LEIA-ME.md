@@ -32,8 +32,10 @@ preços ficaram todos certos.
 - **catorze descrições inglesas** que continuam a divergir do site (17 das
   31 batem certo) — por exemplo "Roasted on a clay tile" no papel contra
   "on a roof tile" no site;
-- a **amêijoa a 16,90** (o dono confirmou a 26 de Agosto — o site já diz)
-  e o **Baileys**, que continua sem preço.
+- a **amêijoa a 16,90** e o **Baileys a 4,00**, ambos confirmados pelo dono
+  a 26 de Agosto e já no site — o papel é que ainda não os tem. O Baileys
+  é uma linha nova na folha do Bar, que já leva 39: o `--ar` dessa folha
+  tem de ser reafinado.
 
 > **O HTML que gerou este PDF não está aqui.** Está na máquina de quem o
 > fez, e foi pedido. Sem ele, mudar uma linha da ementa obriga a refazer o
@@ -120,9 +122,10 @@ lá está vive aqui ao lado, e não em `public/`:
   na máquina do Gonçalo.
 - `origem/livro-antigo/` — as sete fotografias do livro de ementas
   plastificado, que é de onde tudo foi transcrito. São a única forma de
-  responder às perguntas que ficam em aberto no fim deste ficheiro: o preço
-  borratado do Baileys, o "Desespero" manuscrito por cima do "Chaminé", a
-  grafia do Gin Hendrick's.
+  responder às perguntas que ficam em aberto no fim deste ficheiro: o
+  "Desespero" manuscrito por cima do "Chaminé" e a grafia do Gin
+  Hendrick's. O preço borratado do Baileys era a terceira, e essa foi o
+  dono que a respondeu.
 
 **Não estão em `public/` de propósito.** O `public/images/README.md`
 explica a regra: os originais grandes ficam fora, porque o que está em
@@ -208,8 +211,9 @@ e queijo, Água Carvalhelhos, Irish Coffee), as linhas riscadas a marcador
 (três cervejas, os dois ice teas, o Refrigerante) e os preços apagados
 (Veros, Veros Reserva e o terceiro vinho verde, que ficou sem nome).
 
-**Ainda a faltar:** o **Baileys**. O preço está borratado na fotografia e
-nunca foi confirmado, por isso não está nem no site nem aqui.
+**O Baileys entrou a 26 de Agosto de 2026.** O preço está borratado na
+fotografia do livro e nunca tinha sido confirmado; o dono disse que são
+**4,00 €**. Está no site — no papel, ainda não.
 
 > Isto é uma transcrição, não uma ligação automática. Quando um preço
 > mudar, tem de mudar nos dois sítios — e agora que o painel mexe nos
