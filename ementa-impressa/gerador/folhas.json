@@ -1,0 +1,1236 @@
+[
+ [
+  {
+   "t": "cat",
+   "pt": "Entradas",
+   "en": "Appetizers"
+  },
+  {
+   "t": "art",
+   "nome": "Tábua de presunto e queijo",
+   "preco_papel": 13.5,
+   "en": "Cured ham, aged cheese, olives and bread",
+   "preco": 13.5
+  },
+  {
+   "t": "art",
+   "nome": "Cesto de entradas",
+   "preco_papel": 4.9,
+   "en": "Three pâtés and a small cheese — bread not included",
+   "preco": 4.9
+  },
+  {
+   "t": "art",
+   "nome": "Tremoços",
+   "preco_papel": 1.8,
+   "en": "Lupin beans",
+   "preco": 1.8
+  },
+  {
+   "t": "art",
+   "nome": "Amendoins sem casca",
+   "preco_papel": 1.2,
+   "en": "Shelled peanuts",
+   "preco": 1.2
+  },
+  {
+   "t": "art",
+   "nome": "Azeitonas",
+   "preco_papel": 1.5,
+   "en": "Olives",
+   "preco": 1.5
+  },
+  {
+   "t": "art",
+   "nome": "Queijinhos",
+   "preco_papel": 1.9,
+   "en": "Small cheeses",
+   "preco": 1.9
+  },
+  {
+   "t": "art",
+   "nome": "Patê",
+   "preco_papel": 1.0,
+   "en": "Pâté",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Pão simples",
+   "preco_papel": 2.5,
+   "en": "Bread",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Pão com manteiga",
+   "preco_papel": 1.1,
+   "en": "Bread and butter",
+   "preco": 1.1
+  },
+  {
+   "t": "art",
+   "nome": "Pão com chouriço",
+   "preco_papel": 5.2,
+   "en": "Bread with chorizo",
+   "preco": 5.2
+  },
+  {
+   "t": "art",
+   "nome": "Chouriço assado",
+   "preco_papel": 5.4,
+   "en": "Roasted on a clay tile, in front of whoever ordered it",
+   "preco": 5.4
+  },
+  {
+   "t": "art",
+   "nome": "Alheira",
+   "preco_papel": 5.2,
+   "en": "Bread and game meat sausage",
+   "preco": 5.2
+  },
+  {
+   "t": "art",
+   "nome": "Amêijoa à pirata",
+   "preco_papel": 15.2,
+   "en": "“Pirate” clams",
+   "preco": 15.2
+  },
+  {
+   "t": "art",
+   "nome": "Torrada de lapas",
+   "preco_papel": 11.9,
+   "en": "Limpets with garlic and coriander on toast",
+   "preco": 11.9
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Entradas",
+   "en": "Appetizers"
+  },
+  {
+   "t": "art",
+   "nome": "Percebes Época",
+   "preco_papel": 10.5,
+   "en": "Goose barnacles — only when the sea allows",
+   "preco": 10.5
+  },
+  {
+   "t": "art",
+   "nome": "Navalheira",
+   "preco_papel": 4.9,
+   "en": "Velvet crab",
+   "preco": 4.9
+  },
+  {
+   "t": "art",
+   "nome": "Camarão",
+   "preco_papel": 9.0,
+   "en": "Boiled, served warm with coarse salt",
+   "preco": 9
+  },
+  {
+   "t": "cat",
+   "pt": "Snack",
+   "en": "Hot dishes"
+  },
+  {
+   "t": "art",
+   "nome": "Francesinha",
+   "preco_papel": 12.4,
+   "en": "Bread, steak, sausage, smoked sausage, ham and cheese",
+   "preco": 13.4
+  },
+  {
+   "t": "art",
+   "nome": "Meia francesinha",
+   "preco_papel": 7.9,
+   "en": "Half francesinha",
+   "preco": 8.9
+  },
+  {
+   "t": "art",
+   "nome": "Francesinha com ovo e batata frita",
+   "preco_papel": 12.9,
+   "en": "Francesinha with fried egg and chips",
+   "preco": 13.9
+  },
+  {
+   "t": "art",
+   "nome": "Bacalhau à Brás",
+   "preco_papel": 12.2,
+   "en": "Shredded salt cod, straw potatoes, egg and black olives",
+   "preco": 12.2
+  },
+  {
+   "t": "art",
+   "nome": "Bife na pedra",
+   "preco_papel": 26.9,
+   "en": "Served on a hot stone",
+   "preco": 26.9
+  },
+  {
+   "t": "art",
+   "nome": "Prego no prato",
+   "preco_papel": 11.9,
+   "en": "Beef steak with fried egg and chips",
+   "preco": 11.9
+  },
+  {
+   "t": "art",
+   "nome": "Lulas ao alho com batata frita",
+   "preco_papel": 12.4,
+   "en": "Grilled to order, with garlic and chips",
+   "preco": 12.4
+  },
+  {
+   "t": "art",
+   "nome": "Alheira com ovo e batata frita",
+   "preco_papel": 8.5,
+   "en": "Game meat sausage with fried egg and chips",
+   "preco": 8.5
+  },
+  {
+   "t": "art",
+   "nome": "Salsicha com ovo e batata frita",
+   "preco_papel": 6.9,
+   "en": "Sausage with fried egg and chips",
+   "preco": 6.9
+  },
+  {
+   "t": "art",
+   "nome": "Pataniscas",
+   "preco_papel": 5.2,
+   "en": "Salt cod fritters, made to order",
+   "preco": 5.2
+  },
+  {
+   "t": "art",
+   "nome": "Moelas",
+   "preco_papel": 5.2,
+   "en": "Slow-stewed in red wine",
+   "preco": 5.2
+  },
+  {
+   "t": "art",
+   "nome": "Salada Taskuinha",
+   "preco_papel": 3.5,
+   "en": "House salad",
+   "preco": 3.5
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Extras",
+   "en": "On the side"
+  },
+  {
+   "t": "art",
+   "nome": "Ovo estrelado",
+   "preco_papel": 1.5,
+   "en": "Fried egg",
+   "preco": 1.5
+  },
+  {
+   "t": "art",
+   "nome": "Prato de batata",
+   "preco_papel": 2.5,
+   "en": "Side of chips",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Dose de batatas fritas",
+   "preco_papel": 3.5,
+   "en": "Full portion of chips",
+   "preco": 3.5
+  },
+  {
+   "t": "cat",
+   "pt": "Sandes e tostas",
+   "en": "Sandwiches and toasties"
+  },
+  {
+   "t": "art",
+   "nome": "Bifana",
+   "preco_papel": 3.2,
+   "en": "Stewed the day before in its own sauce",
+   "preco": 3.2
+  },
+  {
+   "t": "art",
+   "nome": "Prego no pão",
+   "preco_papel": 5.9,
+   "en": "Beef steak sandwich",
+   "preco": 6.5
+  },
+  {
+   "t": "art",
+   "nome": "Sande P.O.",
+   "preco_papel": 3.9,
+   "en": "Cured ham and fried egg sandwich",
+   "preco": 3.9
+  },
+  {
+   "t": "art",
+   "nome": "Sande de presunto",
+   "preco_papel": 3.0,
+   "en": "Cured ham sandwich",
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Sandes de fiambre",
+   "preco_papel": 2.0,
+   "en": "Ham sandwich",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Sandes de queijo",
+   "preco_papel": 2.0,
+   "en": "Cheese sandwich",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Sandes mista",
+   "preco_papel": 2.0,
+   "en": "Ham and cheese sandwich",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Cachorro simples",
+   "preco_papel": 4.0,
+   "en": "Hot dog",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Cachorro especial",
+   "preco_papel": 7.4,
+   "en": "Hot dog with cheese and hot sauce",
+   "preco": 8.4
+  },
+  {
+   "t": "art",
+   "nome": "Tosta especial",
+   "preco_papel": 7.4,
+   "en": "Special toastie",
+   "preco": 7.4
+  },
+  {
+   "t": "art",
+   "nome": "Tosta mista",
+   "preco_papel": 2.9,
+   "en": "Ham and cheese toastie",
+   "preco": 2.9
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Sandes e tostas",
+   "en": "Sandwiches and toasties"
+  },
+  {
+   "t": "art",
+   "nome": "Tosta de fiambre",
+   "preco_papel": 2.5,
+   "en": "Ham toastie",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Tosta de queijo",
+   "preco_papel": 2.5,
+   "en": "Cheese toastie",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Torrada",
+   "preco_papel": 1.5,
+   "en": "Buttered toast",
+   "preco": 1.5
+  },
+  {
+   "t": "cat",
+   "pt": "Cafetaria",
+   "en": "Coffee"
+  },
+  {
+   "t": "art",
+   "nome": "Café",
+   "preco_papel": 1.0,
+   "en": "Espresso",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Café duplo",
+   "preco_papel": 2.0,
+   "en": "Double espresso",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Café pingado",
+   "preco_papel": 1.0,
+   "en": "Espresso with a drop of milk",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Café com natas",
+   "preco_papel": 1.4,
+   "en": "Espresso with cream",
+   "preco": 1.4
+  },
+  {
+   "t": "art",
+   "nome": "Descafeinado",
+   "preco_papel": 1.0,
+   "en": "Decaf",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Abatanado",
+   "preco_papel": 1.5,
+   "en": "Long black coffee",
+   "preco": 1.5
+  },
+  {
+   "t": "art",
+   "nome": "Carioca de café",
+   "preco_papel": 1.0,
+   "en": "A weaker, lighter espresso",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Pingo",
+   "preco_papel": 1.0,
+   "en": "Milk with a drop of coffee",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Galão",
+   "preco_papel": 1.8,
+   "en": "Tall milky coffee",
+   "preco": 1.8
+  },
+  {
+   "t": "art",
+   "nome": "Meia de leite",
+   "preco_papel": 1.6,
+   "en": "Half coffee, half milk",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Cappuccino",
+   "preco_papel": 2.0,
+   "en": "Cappuccino",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Copo de leite",
+   "preco_papel": 1.2,
+   "en": "Glass of milk",
+   "preco": 1.2
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Cafetaria",
+   "en": "Coffee"
+  },
+  {
+   "t": "art",
+   "nome": "Cevada",
+   "preco_papel": 0.9,
+   "en": "Barley coffee",
+   "preco": 0.9
+  },
+  {
+   "t": "art",
+   "nome": "Cevada dupla",
+   "preco_papel": 1.5,
+   "en": "Double barley coffee",
+   "preco": 1.5
+  },
+  {
+   "t": "art",
+   "nome": "Chá",
+   "preco_papel": 1.3,
+   "en": "Tea",
+   "preco": 1.3
+  },
+  {
+   "t": "art",
+   "nome": "Carioca de limão",
+   "preco_papel": 1.0,
+   "en": "Hot water with lemon peel",
+   "preco": 1
+  },
+  {
+   "t": "art",
+   "nome": "Carioca de limão duplo",
+   "preco_papel": 1.5,
+   "en": "Double hot water with lemon peel",
+   "preco": 1.5
+  },
+  {
+   "t": "cat",
+   "pt": "Bebidas",
+   "en": "Water & soft drinks"
+  },
+  {
+   "t": "art",
+   "nome": "Água 0,33 L",
+   "preco_papel": 1.1,
+   "en": "Still water",
+   "preco": 1.1
+  },
+  {
+   "t": "art",
+   "nome": "Água 1,5 L",
+   "preco_papel": 2.5,
+   "en": "Still water",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Água das Pedras",
+   "preco_papel": 1.4,
+   "en": "Sparkling water",
+   "preco": 1.4
+  },
+  {
+   "t": "art",
+   "nome": "Água das Pedras limão",
+   "preco_papel": 1.8,
+   "en": "Lemon sparkling water",
+   "preco": 1.8
+  },
+  {
+   "t": "art",
+   "nome": "Água tónica",
+   "preco_papel": 1.7,
+   "en": "Tonic water",
+   "preco": 1.7
+  },
+  {
+   "t": "art",
+   "nome": "Pneu",
+   "preco_papel": 1.6,
+   "en": "Sparkling water with fresh lemon",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Coca-Cola pressão",
+   "preco_papel": 1.7,
+   "en": "Draught Coca-Cola",
+   "preco": 1.7
+  },
+  {
+   "t": "art",
+   "nome": "Coca-Cola lata",
+   "preco_papel": 2.1,
+   "en": "Canned",
+   "preco": 2.1
+  },
+  {
+   "t": "art",
+   "nome": "Coca-Cola zero",
+   "preco_papel": 2.1,
+   "en": "Canned, no sugar",
+   "preco": 2.1
+  },
+  {
+   "t": "art",
+   "nome": "Coca-Cola garrafa",
+   "preco_papel": 2.3,
+   "en": "Bottled",
+   "preco": 2.3
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Bebidas",
+   "en": "Water & soft drinks"
+  },
+  {
+   "t": "art",
+   "nome": "Compal",
+   "preco_papel": 1.9,
+   "en": "Fruit nectar",
+   "preco": 1.9
+  },
+  {
+   "t": "art",
+   "nome": "Snappy",
+   "preco_papel": 1.7,
+   "en": "Sparkling lime soda",
+   "preco": 1.7
+  },
+  {
+   "t": "art",
+   "nome": "Fuze Tea",
+   "preco_papel": 2.1,
+   "en": "Iced tea",
+   "preco": 2.1
+  },
+  {
+   "t": "art",
+   "nome": "Sumo de laranja natural",
+   "preco_papel": 2.5,
+   "en": "Freshly squeezed orange juice",
+   "preco": 2.5
+  },
+  {
+   "t": "cat",
+   "pt": "Cerveja",
+   "en": "Beer"
+  },
+  {
+   "t": "art",
+   "nome": "Fino",
+   "preco_papel": 1.6,
+   "en": "Small draught beer",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Fino preto",
+   "preco_papel": 1.6,
+   "en": "Small draught dark beer",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Caneca 0,5 L",
+   "preco_papel": 4.5,
+   "en": "Half-litre mug",
+   "preco": 4.5
+  },
+  {
+   "t": "art",
+   "nome": "Caneca super",
+   "preco_papel": 3.0,
+   "en": "Large beer mug",
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Caneca de alumínio",
+   "preco_papel": 2.7,
+   "en": "Beer in a tin mug",
+   "preco": 2.7
+  },
+  {
+   "t": "art",
+   "nome": "Caneca de alumínio preta",
+   "preco_papel": 2.7,
+   "en": "Dark beer in a tin mug",
+   "preco": 2.7
+  },
+  {
+   "t": "art",
+   "nome": "Caneca de alumínio tango",
+   "preco_papel": 2.8,
+   "en": "Tin mug, with blackcurrant syrup",
+   "preco": 2.8
+  },
+  {
+   "t": "art",
+   "nome": "Caneca tango",
+   "preco_papel": 3.0,
+   "en": "Beer mug, with blackcurrant syrup",
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Tango",
+   "preco_papel": 1.6,
+   "en": "Beer with blackcurrant syrup",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Panaché",
+   "preco_papel": 1.6,
+   "en": "Beer with lime soda",
+   "preco": 1.6
+  },
+  {
+   "t": "art",
+   "nome": "Super Bock lata",
+   "preco_papel": 2.0,
+   "en": "Canned",
+   "preco": 2
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Cerveja",
+   "en": "Beer"
+  },
+  {
+   "t": "art",
+   "nome": "Super Bock sem álcool",
+   "preco_papel": 1.9,
+   "en": "Alcohol free",
+   "preco": 1.9
+  },
+  {
+   "t": "art",
+   "nome": "Super Bock sem álcool preta",
+   "preco_papel": 1.9,
+   "en": "Alcohol free, dark",
+   "preco": 1.9
+  },
+  {
+   "t": "art",
+   "nome": "Somersby",
+   "preco_papel": 2.5,
+   "en": "Cider",
+   "preco": 2.5
+  },
+  {
+   "t": "cat",
+   "pt": "Vinho",
+   "en": "Wine"
+  },
+  {
+   "t": "sub",
+   "pt": "A copo e em caneca · By the glass"
+  },
+  {
+   "t": "art",
+   "nome": "Copo de vinho tinto",
+   "preco_papel": 2.0,
+   "en": null,
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Copo de vinho branco",
+   "preco_papel": 2.0,
+   "en": null,
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Caneca de vinho pequena",
+   "preco_papel": 3.8,
+   "en": null,
+   "preco": 3.8
+  },
+  {
+   "t": "art",
+   "nome": "Copo de sangria",
+   "preco_papel": 3.0,
+   "en": null,
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Sangria, jarro",
+   "preco_papel": 16.0,
+   "en": "Jug",
+   "preco": 16
+  },
+  {
+   "t": "sub",
+   "pt": "Maduros da Beira"
+  },
+  {
+   "t": "art",
+   "nome": "Montes Ermos",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  },
+  {
+   "t": "art",
+   "nome": "Quinta Termos",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  },
+  {
+   "t": "art",
+   "nome": "Quinta Termos Reserva",
+   "preco_papel": 18.0,
+   "en": null,
+   "preco": 18
+  },
+  {
+   "t": "art",
+   "nome": "Quinta Termos Seleção",
+   "preco_papel": 21.0,
+   "en": null,
+   "preco": 21
+  },
+  {
+   "t": "art",
+   "nome": "Termos Touriga Nacional",
+   "preco_papel": 17.5,
+   "en": null,
+   "preco": 17.5
+  },
+  {
+   "t": "art",
+   "nome": "Termos Vinhas Velhas Reserva",
+   "preco_papel": 17.5,
+   "en": null,
+   "preco": 17.5
+  },
+  {
+   "t": "sub",
+   "pt": "Maduros do Douro"
+  },
+  {
+   "t": "art",
+   "nome": "Diálogo tinto",
+   "preco_papel": 16.5,
+   "en": null,
+   "preco": 16.5
+  },
+  {
+   "t": "art",
+   "nome": "Papa Figos",
+   "preco_papel": 14.0,
+   "en": null,
+   "preco": 14
+  },
+  {
+   "t": "art",
+   "nome": "Esteva tinto",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Vinho",
+   "en": "Wine"
+  },
+  {
+   "t": "art",
+   "nome": "Meia Esteva tinto",
+   "preco_papel": 6.5,
+   "en": "Half bottle",
+   "preco": 6.5
+  },
+  {
+   "t": "sub",
+   "pt": "Maduros do Alentejo"
+  },
+  {
+   "t": "art",
+   "nome": "Desespero",
+   "preco_papel": 33.9,
+   "en": null,
+   "preco": 33.9
+  },
+  {
+   "t": "art",
+   "nome": "Jorna",
+   "preco_papel": 21.0,
+   "en": null,
+   "preco": 21
+  },
+  {
+   "t": "art",
+   "nome": "Monte Velho",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  },
+  {
+   "t": "art",
+   "nome": "Planalto",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  },
+  {
+   "t": "sub",
+   "pt": "Verdes"
+  },
+  {
+   "t": "art",
+   "nome": "Maderne",
+   "preco_papel": 12.5,
+   "en": null,
+   "preco": 12.5
+  },
+  {
+   "t": "art",
+   "nome": "Dibino",
+   "preco_papel": 13.5,
+   "en": null,
+   "preco": 13.5
+  },
+  {
+   "t": "sub",
+   "pt": "Espumantes · Sparkling"
+  },
+  {
+   "t": "art",
+   "nome": "Terras do Demo",
+   "preco_papel": 19.0,
+   "en": null,
+   "preco": 19
+  },
+  {
+   "t": "art",
+   "nome": "Murganheira",
+   "preco_papel": 19.0,
+   "en": null,
+   "preco": 19
+  },
+  {
+   "t": "art",
+   "nome": "Raposeira",
+   "preco_papel": 17.0,
+   "en": null,
+   "preco": 17
+  },
+  {
+   "t": "cat",
+   "pt": "Bar",
+   "en": "Drinks"
+  },
+  {
+   "t": "sub",
+   "pt": "Gin"
+  },
+  {
+   "t": "art",
+   "nome": "Gin Gordon's",
+   "preco_papel": 6.0,
+   "en": null,
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Gin Bombay",
+   "preco_papel": 8.0,
+   "en": null,
+   "preco": 8
+  },
+  {
+   "t": "art",
+   "nome": "Gin Tanqueray",
+   "preco_papel": 8.0,
+   "en": null,
+   "preco": 8
+  },
+  {
+   "t": "art",
+   "nome": "Gin Bulldog",
+   "preco_papel": 9.0,
+   "en": null,
+   "preco": 9
+  },
+  {
+   "t": "art",
+   "nome": "Gin Hendricks",
+   "preco_papel": 9.0,
+   "en": null,
+   "preco": 9
+  },
+  {
+   "t": "art",
+   "nome": "Gin Vigne",
+   "preco_papel": 10.0,
+   "en": null,
+   "preco": 10
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Bar",
+   "en": "Drinks"
+  },
+  {
+   "t": "sub",
+   "pt": "Rum, vodka e cocktails"
+  },
+  {
+   "t": "art",
+   "nome": "Vodka",
+   "preco_papel": 5.0,
+   "en": null,
+   "preco": 5
+  },
+  {
+   "t": "art",
+   "nome": "Vodka com sumo",
+   "preco_papel": 6.0,
+   "en": "With juice",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Bacardi",
+   "preco_papel": 5.0,
+   "en": null,
+   "preco": 5
+  },
+  {
+   "t": "art",
+   "nome": "Bacardi limão",
+   "preco_papel": 5.9,
+   "en": "With lemon",
+   "preco": 5.9
+  },
+  {
+   "t": "art",
+   "nome": "Captain Morgan",
+   "preco_papel": 5.0,
+   "en": "Rum",
+   "preco": 5
+  },
+  {
+   "t": "art",
+   "nome": "Cuba Libre",
+   "preco_papel": 5.0,
+   "en": "Rum, Coca-Cola and lemon",
+   "preco": 5
+  },
+  {
+   "t": "art",
+   "nome": "Caipirinha",
+   "preco_papel": 6.0,
+   "en": "Cachaça, lime and sugar",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Caipirão",
+   "preco_papel": 6.0,
+   "en": "Caipirinha with Beirão liqueur",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Poncha",
+   "preco_papel": 5.0,
+   "en": "Rum, lemon and honey",
+   "preco": 5
+  },
+  {
+   "t": "art",
+   "nome": "Ponche",
+   "preco_papel": 3.0,
+   "en": "Sweet punch liqueur",
+   "preco": 3
+  },
+  {
+   "t": "sub",
+   "pt": "Whiskey"
+  },
+  {
+   "t": "art",
+   "nome": "Whiskey novo",
+   "preco_papel": 4.0,
+   "en": "Blended",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Cutty Sark",
+   "preco_papel": 4.0,
+   "en": "Blended Scotch",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Whiskey Jameson",
+   "preco_papel": 4.5,
+   "en": "Irish",
+   "preco": 4.5
+  },
+  {
+   "t": "art",
+   "nome": "Whiskey velho",
+   "preco_papel": 6.0,
+   "en": "Aged",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Whiskey Old Parr",
+   "preco_papel": 6.0,
+   "en": "Aged blended Scotch",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Whiskey com cola",
+   "preco_papel": 6.0,
+   "en": "With Coca-Cola",
+   "preco": 6
+  }
+ ],
+ [
+  {
+   "t": "cat",
+   "pt": "Bar",
+   "en": "Drinks"
+  },
+  {
+   "t": "sub",
+   "pt": "Vinho do Porto e licores"
+  },
+  {
+   "t": "art",
+   "nome": "Porto novo",
+   "preco_papel": 2.5,
+   "en": "Young Port",
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Porto velho",
+   "preco_papel": 4.0,
+   "en": "Aged Port",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Porto tónico",
+   "preco_papel": 6.0,
+   "en": "Port and tonic",
+   "preco": 6
+  },
+  {
+   "t": "art",
+   "nome": "Favaios",
+   "preco_papel": 2.0,
+   "en": "Sweet muscat wine",
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Favaios com cerveja",
+   "preco_papel": 2.2,
+   "en": "Muscat with beer",
+   "preco": 2.2
+  },
+  {
+   "t": "art",
+   "nome": "Martini",
+   "preco_papel": 2.0,
+   "en": null,
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Martini Bianco",
+   "preco_papel": 3.0,
+   "en": null,
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Martini com cerveja",
+   "preco_papel": 2.2,
+   "en": "With beer",
+   "preco": 2.2
+  },
+  {
+   "t": "art",
+   "nome": "Licor",
+   "preco_papel": 4.0,
+   "en": "Liqueur",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Licor Beirão",
+   "preco_papel": 4.0,
+   "en": null,
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Baileys",
+   "preco_papel": 4.0,
+   "en": "Irish cream liqueur",
+   "preco": 4.0
+  },
+  {
+   "t": "art",
+   "nome": "Amêndoa amarga",
+   "preco_papel": 3.8,
+   "en": "Bitter almond liqueur",
+   "preco": 3.8
+  },
+  {
+   "t": "art",
+   "nome": "Aguardente velha",
+   "preco_papel": 4.0,
+   "en": "Aged wine spirit",
+   "preco": 4
+  },
+  {
+   "t": "art",
+   "nome": "Macieira",
+   "preco_papel": 3.0,
+   "en": "Brandy",
+   "preco": 3
+  },
+  {
+   "t": "art",
+   "nome": "Croft",
+   "preco_papel": 3.0,
+   "en": "Brandy",
+   "preco": 3
+  },
+  {
+   "t": "sub",
+   "pt": "Shots"
+  },
+  {
+   "t": "art",
+   "nome": "Shot",
+   "preco_papel": 2.0,
+   "en": null,
+   "preco": 2
+  },
+  {
+   "t": "art",
+   "nome": "Shot de whiskey",
+   "preco_papel": 2.5,
+   "en": null,
+   "preco": 2.5
+  },
+  {
+   "t": "art",
+   "nome": "Shot de whiskey velho",
+   "preco_papel": 3.0,
+   "en": null,
+   "preco": 3
+  }
+ ]
+]

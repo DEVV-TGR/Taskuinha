@@ -1,269 +1,199 @@
 # Ementa impressa
 
-## O ficheiro bom é o `Ementa_Aprovada_2026-08-23.pdf`
+**Doze páginas A4, uma coluna.** O que vai para a gráfica é o
+`ementa-coluna-unica.pdf`, e ele **gera-se com dois comandos** — não se edita à
+mão.
 
-Se só se ler uma linha deste ficheiro, que seja esta. São três PDFs de doze
-e seis páginas com nomes parecidos, e só um está certo:
+```bash
+python3 ementa-impressa/gerador/montar.py          # escreve o HTML
+node ementa-impressa/gerador/gerar.mjs \
+  "$HOME/.cache/puppeteer/chrome/mac_arm-151.0.7922.71/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" \
+  "file://$PWD/ementa-impressa/ementa-coluna-unica.html" \
+  ementa-impressa/ementa-coluna-unica.pdf          # escreve o PDF
+```
 
-| Ficheiro | Páginas | O que é |
-|---|---|---|
-| **`Ementa_Aprovada_2026-08-23.pdf`** | 12 | **O documento da casa.** Fechado pelo Tomás a 23 de Agosto, depois da prova desse dia |
-| `Ementa_Final.pdf` | 12 | A versão anterior, de 22 de Agosto. Foi a que a prova mediu — está ultrapassada |
-| `Ementa_Teste.pdf` | 6 | Outro documento, o de seis páginas, que sai do `ementa.html` que está aqui ao lado |
+## O que está aqui
 
-O aprovado bate certo com o site nos **154 preços** — comparei-os um a um
-com o `data/ementa.json`. As duas únicas diferenças são de nome e ambas
-deliberadas: a "Sangria, jarro", para não se confundir com o copo, e a
-etiqueta "ÉPOCA" ao lado dos percebes.
+| | |
+|---|---|
+| `ementa-coluna-unica.pdf` | **o que vai para a gráfica** |
+| `ementa-coluna-unica.html` | gerado. Não editar — perde-se na geração seguinte |
+| `gerador/` | de onde tudo sai |
+| `origem/` | as imagens e o material de referência |
+| `Ementa_Final.pdf` | a versão de 22 de Agosto, guardada como referência de verificação |
 
-**O que ele já resolve** da prova de pré-impressão: o pirata deixou de
-estar esticado (1623 × 2212 em vez de 1323 × 2376), o fundo passou a PNG
-sem perdas, o emoji Type3 desapareceu, a Special Elite voltou, e os
-preços ficaram todos certos.
+## Os preços vêm do site, e o gerador pára se algo não bater certo
 
-**O que falta lá dentro**, e é o que o próximo trabalho tem de apanhar:
+O `montar.py` lê os preços do **`data/ementa.json`** a cada geração — o mesmo
+ficheiro que serve o site e onde o painel escreve — e confere as **duas
+direcções**:
 
-- a **sangria** — não tem `BleedBox` nem `TrimBox`, e a caixa é A4 exacto
-  (209,89 × 297,01 mm): o corte da gráfica apanha branco;
-- a **contracapa fora do meio** — 35 mm de margem à esquerda contra 52 mm
-  à direita;
-- o **aviso de alergénios em inglês**, que ainda diz "everything here meets
-  shellfish";
-- **catorze descrições inglesas** que continuam a divergir do site (17 das
-  31 batem certo) — por exemplo "Roasted on a clay tile" no papel contra
-  "on a roof tile" no site;
-- a **amêijoa a 16,90** e o **Baileys a 4,00**, ambos confirmados pelo dono
-  a 26 de Agosto e já no site — o papel é que ainda não os tem. O Baileys
-  é uma linha nova na folha do Bar, que já leva 39: o `--ar` dessa folha
-  tem de ser reafinado.
+- um artigo do papel que já não exista no site → **pára**;
+- um artigo do site que o papel não tenha → **pára**.
 
-> **O HTML que gerou este PDF não está aqui.** Está na máquina de quem o
-> fez, e foi pedido. Sem ele, mudar uma linha da ementa obriga a refazer o
-> documento a partir de uma versão anterior — que é precisamente o que este
-> aviso existe para evitar que se faça por distracção. O PDF fica aqui
-> versionado porque, até esse dia, era o único sítio onde a ementa aprovada
-> existia: a pasta de transferências de uma pessoa.
+A segunda faltava, e é a que interessa mais. Sem ela o gerador corria, dizia
+«155 artigos, preços conferidos», e imprimia 154: **o prato novo desaparecia em
+silêncio entre o painel e a gráfica.** Foi o que quase aconteceu ao Baileys.
 
-## Os outros dois documentos
+> Antes disto o papel era uma transcrição, e uma transcrição envelhece sozinha.
+> Os preços foram copiados a 13 de Agosto de 2026; a 14 o dono subiu seis, e o
+> papel ficou a cobrar menos 1,00 € na francesinha durante uma semana.
 
-- `ementa.html` — a origem do de seis páginas, 1,5 MB. Imprimindo-a pelo
-  Chrome sai o `Ementa_Teste.pdf`: **seis páginas A4**, 2,9 MB (capa,
-  quatro de ementa, contracapa). Três folhas frente e verso.
-- `Ementa_Teste.pdf` — o resultado dessa impressão. É o que este ficheiro
-  descreve daqui para baixo.
-- `Ementa_Final.pdf` — **doze páginas**, 5,5 MB (a prova chama-lhe 5,2, que
-  é o mesmo número contado em MiB). **Não sai deste HTML.** Ver a secção
-  seguinte.
+O `folhas.json` guarda a ordem, os nomes e o inglês — o desenho. **Não guarda a
+verdade sobre preços**, mesmo tendo lá números: são sobrepostos a cada geração.
 
-## De onde vem o `Ementa_Final.pdf` — e a leitura errada dos metadados
+## A pasta `gerador/`
 
-Este ficheiro dizia aqui que o `Ementa_Final.pdf` tinha sido **desenhado no
-Canva** e montado no Preview, e que por isso não havia no repositório
-origem nenhuma para ele. **Metade disso era falso**, e vale a pena deixar
-registado porquê, para não se repetir a leitura.
+| | |
+|---|---|
+| `montar.py` | monta o HTML: a CSS toda, as doze secções, os vãos da capa |
+| `folhas.json` | a ordem dos 155 artigos por folha, os nomes e o inglês |
+| `rever_en.py` | **as revisões do inglês, com a razão de cada uma**, e as perguntas por responder |
+| `fontes.css` | as quatro tipografias em base64 |
+| `gerar.mjs` | gera o PDF pelo Chrome, por DevTools Protocol |
+| `foto.mjs` | fotografa uma página, para se poder olhar sem imprimir |
 
-Os metadados são estes:
+Sem dependências: o Node traz `WebSocket` nativo e o Chrome está em cache do
+Puppeteer. Não entra nada no `package.json`.
+
+## A pasta `origem/`
+
+- **`fundo-ementa.png`** — o pergaminho, 2475 × 3500 px, que a 300 DPI dá
+  exactamente um A4. Esteve muito tempo só na máquina do Gonçalo.
+- **`pirata-capa.png`** — a figura da capa, 723 × 1079 px com transparência.
+  Recortada do `public/images/Esqueleto_Qualidade.jpg`, que trazia o xadrez
+  pintado nos pixéis em vez de canal alfa. O recorte é por cor: o fundo é
+  cinzento neutro e claro, e nada do pirata cai nesse critério — o crânio, a
+  parte mais clara dele, tem saturação 36.
+- **`livro-antigo/`** — as sete fotografias do livro de ementas plastificado, de
+  onde tudo foi transcrito. São a única forma de responder ao que fica em aberto
+  no fim deste ficheiro.
+
+**Não estão em `public/` de propósito**, e o `public/images/README.md` explica a
+regra: o que está em `public/` é servido ao visitante e o CSS não o optimiza.
+Nenhum destes é usado pelo site.
+
+## A leitura errada dos metadados — para não se repetir
+
+Este ficheiro já disse que o `Ementa_Final.pdf` tinha sido **desenhado no Canva**
+e que não havia origem dele no repositório. **Metade disso era falso.**
 
 ```
 xmp:CreatorTool   Canva (Renderer) doc=DAHSTRHoWtk
-                  user=UACa7xUfBtg brand=BACa7567IRU
 Producer          Quartz PDFContext, AppendMode 1.1   ← Preview do macOS
 Creator           HeadlessChrome/151 · Skia/PDF m151
 ```
 
-O `xmp:CreatorTool` do Canva **não é do documento — é da imagem de fundo**.
-O `origem/fundo-ementa.png` foi exportado do Canva e traz o XMP colado; um
-PDF impresso pelo Chrome a partir do `ementa.html` deste repositório, sem
-Canva nenhum pelo meio, sai com exactamente a mesma linha. Confirmou-se
-imprimindo o ramo `ementa/pergaminho-e-letra` (PR #39) e comparando.
+O `xmp:CreatorTool` do Canva **não é do documento — é da imagem de fundo.** O
+`origem/fundo-ementa.png` foi exportado do Canva e traz o XMP colado; um PDF
+impresso pelo Chrome a partir daqui, sem Canva nenhum pelo meio, sai com
+exactamente a mesma linha.
 
-O que se mantém verdadeiro é o **Preview**: `Quartz` e `AppendMode` só
-aparecem no `Ementa_Final.pdf`, e nesse continua a valer a regra de não
-voltar a abrir e gravar um PDF por lá.
+A origem do `Ementa_Final.pdf` era o `ementa.html` do primeiro commit do PR #39,
+e batia ficheiro a ficheiro.
 
-**E a origem existe.** O `Ementa_Final.pdf` é o `ementa.html` do primeiro
-commit do PR #39 (`406a8ac`), impresso pelo Chrome. Bate ficheiro a
-ficheiro: doze páginas, a mesma caixa de 594,96 × 841,92, o mesmo fundo de
-2475 × 3500, as mesmas três fontes sem a Special Elite, e o pirata nas
-mesmas 1323 × 2376 — que só esse commit produz, porque o seguinte
-(`b3d1a16`) corrige a deformação e passa-o a 1714 × 2376.
+O que se mantém verdadeiro é o **Preview**: `Quartz` e `AppendMode` só aparecem
+no `Ementa_Final.pdf`, e continua a valer a regra de **não voltar a abrir e
+gravar um PDF por lá** — pode perder tipografias pelo caminho.
 
-O que **não** tem origem aqui é o `Ementa_Aprovada_2026-08-23.pdf`, que veio
-depois e é o bom. Ver a secção do topo.
+## As medidas, e de onde vieram
 
-O `ementa.html` que está aqui tem seis `<section>` e gera seis páginas. É
-um documento anterior e autónomo, não uma versão desactualizada do outro.
+Saem de medições feitas ao `Ementa_Final.pdf`, não de gosto:
 
-## O desenho vem do site
-
-Papel, tinta e letra são os do pergaminho do site, tirados de
-`app/globals.css`: `--pergaminho` #d9c7a0, `--pergaminho-tinta` #2b1d0e e
-`--pergaminho-queimado` #6b4517. As arestas queimadas são dois gradientes
-por cima da cor lisa.
-
-As quatro fontes são as mesmas quatro do site — **Rye** no nome da capa,
-**IM Fell English SC** nos pratos e nas categorias, **Special Elite** nos
-preços e nas etiquetas, **Alegreya Sans** no inglês — e vão **embebidas no
-ficheiro** em base64. É o que faz o HTML pesar 1,5 MB, e é de propósito:
-assim abre igual em qualquer computador, na gráfica inclusive, sem rede e
-sem fontes instaladas.
-
-Na capa está o pirata que recebe à porta, o mesmo recorte que está na
-página inicial (`public/images/esqueleto-grande.png`, 1200 × 1367),
-também embebido.
-
-## A pasta `origem/`
-
-Tudo o que é preciso para voltar a fazer a ementa e para conferir o que
-lá está vive aqui ao lado, e não em `public/`:
-
-- `origem/fundo-ementa.png` — o fundo de pergaminho do `Ementa_Final.pdf`,
-  2475 × 3500 px, que a 300 DPI dá exactamente um A4. Esteve muito tempo só
-  na máquina do Gonçalo.
-- `origem/livro-antigo/` — as sete fotografias do livro de ementas
-  plastificado, que é de onde tudo foi transcrito. São a única forma de
-  responder às perguntas que ficam em aberto no fim deste ficheiro: o
-  "Desespero" manuscrito por cima do "Chaminé" e a grafia do Gin
-  Hendrick's. O preço borratado do Baileys era a terceira, e essa foi o
-  dono que a respondeu.
-
-**Não estão em `public/` de propósito.** O `public/images/README.md`
-explica a regra: os originais grandes ficam fora, porque o que está em
-`public/` é servido ao visitante e o CSS não o optimiza. Estes ficheiros
-não são usados pelo site — são material de trabalho da ementa impressa, e
-o sítio deles é este.
-
-A figura da capa é a excepção, e está onde sempre esteve: é o
-`public/images/esqueleto-grande.png`, que o site também usa.
-
-## Voltar a fazer o PDF de seis páginas
-
-Abrir `ementa.html` no Chrome e **Imprimir**:
-
-- destino: **Guardar como PDF**
-- tamanho: **A4**
-- margens: **Nenhuma** (as margens estão no ficheiro, 15 mm em cima e 14 mm
-  aos lados)
-- ligar **Gráficos de fundo** — sem isto o papel sai branco, sem o
-  pergaminho nem as arestas queimadas, e a ementa perde metade do que é
-
-Confirmar sempre que dá **seis** páginas. Se der mais, alguma coisa fez
-as folhas medirem mais de 297 mm — foi o que aconteceu na primeira versão,
-e está explicado no comentário do `@media print`.
-
-**Não voltar a abrir e gravar o resultado no Preview.** É o que estragou o
-`Ementa_Final.pdf`: passar um PDF pelo Preview pode perder tipografias pelo
-caminho. O ficheiro que vai para a gráfica sai do Chrome e não é tocado
-mais. Vê-se nos metadados — tem de dizer `Skia/PDF`, e não `Quartz`.
-
-## O ar entre pratos é medido, não escolhido
-
-Cada folha tem o seu `--ar`, no atributo `style` da própria `<section>`:
-
-| Folha | `--ar` |
+| | |
 |---|---|
-| 2 · Entradas, Snack, Extras | 2,95 mm |
-| 3 · Sandes, Cafetaria, Bebidas | 1,03 mm |
-| 4 · Cerveja, Vinho | 1,87 mm |
-| 5 · Bar | 1,89 mm |
+| Margens do texto | 40 mm de cada lado |
+| Coluna dos preços | à direita, a acabar aos 170 mm |
+| Categoria | 18 pt · nome do prato 13 pt · **preço 12,5 pt** · inglês 8,8 pt |
+| Cabeçalho corrido | 9,5 pt |
+| Fios horizontais | 40 → 170,1 mm, 0,26 mm |
+| Rótulo inglês da categoria | 9,5 pt itálico, à direita |
 
-A capa e a contracapa não têm `--ar`: não têm lista nenhuma para afinar.
+O **preço subiu de 11,5 para 12,5 pt** face ao original, a pedido.
 
-As categorias têm tamanhos muito diferentes — o Bar tem 39 linhas, os
-Extras têm 3 — e com um valor único umas folhas fechavam cheias e outras
-ficavam com um terço em branco. Estes quatro números foram encontrados a
-medir onde acaba o último prato de cada folha, até todas fecharem a 6-8 mm
-do fundo da caixa.
+### O ar entre artigos: `--ar: 3.0mm`
 
-**Se acrescentares ou tirares pratos, estes números deixam de servir.** Diz
-e volto a afiná-los.
+É o único número desta ementa que foi escolhido e não medido. A folha mais cheia
+é a do Bar, com **18 artigos** desde que o Baileys entrou, e este valor é o que a
+faz fechar **acima da moldura desenhada no fundo**, que começa aos 274,4 mm.
 
-## O que falta
+Esteve nos 4,1 mm enquanto a folha mais cheia tinha 17. Com 18 a última linha ia
+parar aos ~281 mm, por cima do ornamento. A 3,4 mm ficava a 3 mm dele, que é
+pouco; a 3,0 mm sobra folga que se vê.
 
-**O logótipo.** Na capa está a letra do letreiro de madeira sobre a porta
-— TASKUIИHA em Rye, com o N ao contrário, que é a assinatura da casa e a
-mesma letra que o site usa. Se o dono quiser lá a caveira azul do
-RUMOCEANO, é preciso o ficheiro **vetorial** (`.ai`, `.eps`, `.svg` ou um
-`.pdf` que não seja uma fotografia): trocar o `<div class="capa-nome">`
-por um `<img>`.
+> **Atenção ao que a verificação não apanha.** O `overflow: hidden` corta
+> *pixéis*, mas o texto continua no stream do PDF e a extracção encontra-o na
+> mesma. **Contar artigos não prova que nada foi cortado** — é preciso olhar
+> para a folha mais cheia com o `foto.mjs`.
 
-O logótipo azul só existe fotografado através do plástico riscado do livro
-antigo. Nessa resolução dá uns 3 cm impressos, torto e com os riscos todos
-— não serve para uma ementa nova.
+### O fundo transborda 1 mm
 
-## De onde vêm os pratos e os preços
+Com `cover` puro a folga saía em 0,05 mm — a fotografia e o A4 têm quase a mesma
+proporção — e cinco centésimos não sobrevivem ao arredondamento de quem desenha
+os píxeis: aparecia um fio branco na borda. O `--folga-fundo: 2mm` dá 1 mm de
+cada lado.
 
-Os **nomes, descrições e fotografias** estão em `lib/menu.ts`. Os **preços
-já não** — mudaram-se para o `data/ementa.json`, que é o que o painel
-edita e escreve directamente no GitHub. Passaram a ter um dono só,
-justamente para o site não poder dizer um número e outro sítio dizer outro.
-O comentário longo em `lib/menu.ts` explica porquê.
+Não é sangria a sério. Para a gráfica, a página teria de passar a 216 × 303 mm.
 
-O papel foi transcrito a **13 de Agosto de 2026**. São 154 linhas e, à
-data, conferiam uma a uma com o site. A única diferença deliberada é a
-**Sangria**, que no papel diz "Sangria, jarro" para não se confundir com o
-copo, que está logo por cima.
+## Verificar antes de mandar imprimir
 
-Regra do dono: **o que não tem preço não entra.** Ficaram de fora as
-etiquetas em branco do livro antigo (Baguete, Bacalhau c/ grão, Atum c/
-feijão frade, Sardinhas c/ salada, Caldo verde, Sopa, os extras de presunto
-e queijo, Água Carvalhelhos, Irish Coffee), as linhas riscadas a marcador
-(três cervejas, os dois ice teas, o Refrigerante) e os preços apagados
-(Veros, Veros Reserva e o terceiro vinho verde, que ficou sem nome).
+1. **12 páginas**, A4.
+2. **155 artigos e as descrições inglesas todas** presentes.
+3. **Preços a bater certo** com o `data/ementa.json` — o gerador já pára se não
+   baterem, nas duas direcções.
+4. **A contracapa** confere com o `data/casa.json`: morada, telefone, horário,
+   Instagram.
+5. **Nenhuma fonte Type3** — é assim que um emoji se denuncia.
+6. **`Producer: Skia/PDF`**, e não `Quartz`.
+7. **Olhar para a folha 11**, a mais cheia, e para a capa. Há coisas que nenhuma
+   medição apanha.
 
-**O Baileys entrou a 26 de Agosto de 2026.** O preço está borratado na
-fotografia do livro e nunca tinha sido confirmado; o dono disse que são
-**4,00 €**. Está no site — no papel, ainda não.
+## Por decidir
 
-> Isto é uma transcrição, não uma ligação automática. Quando um preço
-> mudar, tem de mudar nos dois sítios — e agora que o painel mexe nos
-> preços sozinho, o papel envelhece sem ninguém dar por isso. Foi o que
-> aconteceu a seis deles a 14 de Agosto.
+- **O pirata da capa está a 185 DPI.** Aparece com 99 mm de largura e o recorte
+  tem 723 px; a gráfica pede 300. Com a fotografia original em ~1200 px de
+  largura resolvia-se sem mexer no desenho.
+- **O `drop-shadow` da capa** obriga o Chrome a rasterizar a figura a 1623 px, o
+  que engorda o PDF sem acrescentar detalhe.
+- **A sangria de 3 mm**, que a gráfica há-de pedir.
+- **A quebra de linha do aviso de alergias** deixa o «Quase» sozinho no fim da
+  primeira linha.
 
-## A prova de pré-impressão
+## Para o dono confirmar
 
-Há uma revisão do `Ementa_Final.pdf` feita a 22 de Agosto de 2026 —
-`PROVA-EMENTA.pdf`, nove pontos, cada um com o que foi medido dentro do
-ficheiro. Não está neste repositório. Em resumo:
-
-| # | O quê | Estado |
-|---|---|---|
-| 1 | Sem sangria: o fundo fica 0,14 mm curto e o corte apanha branco | a corrigir |
-| 2 | O pirata da capa está esticado 58% e a ≈172 DPI | a corrigir |
-| 3 | O fundo está a 300 DPI mas com compressão JPEG a mais | a corrigir |
-| 4 | **Seis preços desactualizados** | os cinco primeiros estão corrigidos no documento de seis páginas, mas **não** no de doze, que é o que vai para a gráfica; o sexto é a amêijoa, agora a 16,90 |
-| 5 | Quatro traduções inglesas divergem do site; o aviso de alergias diz "meets shellfish" em vez de "comes into contact with" | a corrigir |
-| 6 | Um emoji na contracapa, embebido como fonte Type3 | trocar por imagem |
-| 7 | As duas colunas da contracapa estão 6 mm fora do meio | decisão, não defeito |
-| 8 | Os preços são 1,5 pt mais pequenos que os nomes dos pratos | a decidir |
-| 9 | A Special Elite não aparece em nenhuma das 12 páginas | a decidir |
-
-O ponto 4 é o único que impede mesmo a impressão. E tem uma armadilha
-registada na prova: três dos seis valores antigos repetem-se noutros
-artigos que **não** mudaram — as Lulas ao alho a 12,40, o Bacardi limão a
-5,90 e a Tosta especial a 7,40, esta última com o preço antigo do cachorro.
-Cada troca tem de ser ancorada ao nome do prato, nunca ao valor.
-
-**Os seis são para corrigir**, e o sexto deu uma volta pelo meio. A prova
-diz que a Amêijoa à pirata devia passar de 15,20 para 16,90. Durante
-algumas horas pareceu engano dela: a 22 de Agosto de 2026, às 09:56, o
-preço tinha sido baixado de 16,90 para 15,20 pelo painel (commit
-`8940031`), e a prova, escrita nesse mesmo dia, apanhou o valor de antes.
-
-A 26 de Agosto o dono confirmou que o preço da casa é **16,90** — a
-descida de dia 22 é que era para desfazer. O `data/ementa.json` já o diz,
-e o papel tem de acompanhar.
-
-## Coisas para o dono confirmar antes de ir para a gráfica
-
-Nomes que estão como no livro antigo e que podem estar mal escritos:
+Nomes que estão como no livro antigo e que podem estar mal escritos. As
+fotografias em `origem/livro-antigo/` são o que permite responder:
 
 | Está | Provavelmente é |
 |---|---|
 | Gin Hendricks | Gin Hendrick's |
-| Whiskey (em todos) | Whisky, para o Old Parr e o Cutty Sark, que são escoceses. O Jameson é irlandês e fica *whiskey* |
-| Desespero | o nome manuscrito por cima do "Chaminé" riscado — confirmar mesmo |
+| Whiskey (em todos) | Whisky no Old Parr e no Cutty Sark, que são escoceses. O Jameson é irlandês e fica *whiskey* |
+| Desespero | o nome manuscrito por cima do "Chaminé" riscado |
 | Quinta Termos | Quinta dos Termos, o produtor da Beira Interior |
 
-Não os corrigi por conta própria para o papel não passar a dizer uma coisa
-e o site outra. Diz qual é a versão boa e mudo nos dois.
+**O Baileys já não está nesta lista.** Entrou a 26 de Agosto de 2026, a 4,00 € —
+o preço estava borratado na fotografia e nunca tinha sido confirmado.
+
+E seis descrições inglesas que não descrevem nada, ou que levantam dúvida —
+listadas com a razão no `gerador/rever_en.py`: **Tosta especial**, **Amêijoa à
+pirata**, **Licor**, **Caneca super**, **Croft** e **Pingo**.
+
+Nenhuma foi corrigida por conta própria, para o papel não passar a dizer uma
+coisa e o site outra.
+
+## Uma coisa que fica por fazer no site
+
+O aviso de alergias em inglês foi corrigido aqui — dizia *"Almost everything here
+**meets** shellfish"*, um decalque do «passa por marisco» que em inglês não quer
+dizer nada.
+
+**O site tem o mesmo defeito com outras palavras.** Em `lib/dicionario/en.ts`, na
+chave `alergias`, diz *"Almost everything here **passes through** shellfish"*.
+Está no ar.
+
+O francês e o espanhol são outra conversa: «passer par» e «pasar por» têm um
+alcance idiomático mais próximo do português, por isso podem estar bem. Quem
+souber que confirme.
+
+Se se mexer no site, respeitar o registo: o site trata por **tu** («se tiveres»,
+«diz») e o papel por **você** («se tiver», «diga»).
