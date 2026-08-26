@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   motion,
   AnimatePresence,
@@ -68,8 +69,17 @@ export function Nav({
       comprimento e cada língua ficava com placas de desenho diferente.
     */
     semente: `${caminho(defaultLocale, placa.rota)}${placa.ancora}`.length,
+    /*
+      A rota, para marcar em que página se está — e só para as placas que
+      **são** uma página. As três âncoras da inicial partilham a mesma rota:
+      marcá-las era acender três de quatro ao mesmo tempo, e nenhuma delas
+      diz onde se está, porque isso muda com o scroll. Fica marcada a
+      Ementa quando se está na Ementa, e mais nada.
+    */
+    rota: placa.ancora ? null : caminho(lang, placa.rota),
   }));
   const reduce = useReducedMotion();
+  const pathname = usePathname();
   const { scrollY } = useScroll();
   const backdropOpacity = useTransform(scrollY, [0, 120], [0, 1]);
 
@@ -259,30 +269,96 @@ export function Nav({
                 animate={{ scale: 1 }}
                 exit={reduce ? undefined : { scale: 0.98 }}
                 transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-                className="tabua pointer-events-auto relative max-h-[min(34rem,calc(100dvh-2.5rem))] w-full max-w-[21rem] overflow-y-auto overscroll-contain rounded-[var(--radius-card)] border border-linha shadow-[0_18px_50px_rgb(0_0_0/0.6)]"
+                className="pointer-events-auto relative max-h-[min(34rem,calc(100dvh-2.5rem))] w-full max-w-[21rem] overflow-y-auto overscroll-contain rounded-[var(--radius-card)] border border-linha bg-breu/96 shadow-[0_18px_50px_rgb(0_0_0/0.6)] backdrop-blur-md"
               >
                 <button
                   type="button"
                   onClick={fechar}
                   aria-label={texto.nav.fechar}
-                  className="absolute right-2 top-2 grid h-10 w-10 place-items-center rounded-[var(--radius-card)] text-osso-fraco transition-colors hover:text-lanterna"
+                  className="absolute right-1.5 top-1.5 grid h-11 w-11 place-items-center rounded-[var(--radius-card)] text-osso-fraco transition-colors hover:text-lanterna active:translate-y-px"
                 >
                   <X size={18} weight="bold" aria-hidden />
                 </button>
 
-                <ul className="flex flex-col gap-1 px-5 pb-4 pt-12">
-                  {links.map((link) => (
-                    <li key={link.href}>
-                      <a
-                        href={link.href}
-                        onClick={fechar}
-                        className="gravado block rounded-[var(--radius-card)] px-3 py-3 text-base text-osso transition-colors hover:text-lanterna"
+                {/*
+                  As mesmas placas do computador, e não texto liso — é o que
+                  faz este menu ser desta casa e não de qualquer sítio. Cada
+                  uma com a sua semente de veio, tirada da morada portuguesa
+                  como na barra, para não saírem quatro tábuas iguais.
+
+                  O cartão deixou de ser madeira por causa delas: madeira
+                  sobre madeira não se lê. Fica breu com desfoque, como a
+                  barra, e as placas ficam a flutuar por cima.
+
+                  Não balançam. O balanço lá em cima é resposta ao scroll, e
+                  aqui a página está parada debaixo do véu.
+                */}
+                <motion.ul
+                  className="flex flex-col gap-2.5 px-4 pb-4 pt-14"
+                  initial={reduce ? false : "fechado"}
+                  animate="aberto"
+                  variants={{
+                    aberto: {
+                      transition: { staggerChildren: 0.045, delayChildren: 0.04 },
+                    },
+                  }}
+                >
+                  {links.map((link) => {
+                    const aqui = link.rota !== null && pathname === link.rota;
+
+                    return (
+                      <motion.li
+                        key={link.href}
+                        variants={{
+                          fechado: { opacity: 0, y: 8 },
+                          aberto: {
+                            opacity: 1,
+                            y: 0,
+                            transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+                          },
+                        }}
                       >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                        <Tabua semente={link.semente} className="text-osso">
+                          <a
+                            href={link.href}
+                            onClick={fechar}
+                            aria-current={aqui ? "page" : undefined}
+                            className={`gravado flex min-h-[52px] items-center gap-3 px-4 text-base transition-colors active:translate-y-px ${
+                              aqui ? "text-lanterna" : "hover:text-lanterna"
+                            }`}
+                          >
+                            {/* Onde se está: um risco de lanterna à cabeça da
+                                placa. O `aria-current` acima é que o diz a
+                                quem não vê o risco. */}
+                            <span
+                              aria-hidden
+                              className={`h-4 w-0.5 shrink-0 rounded-[1px] transition-colors ${
+                                aqui ? "bg-lanterna" : "bg-transparent"
+                              }`}
+                            />
+                            {link.label}
+                          </a>
+                        </Tabua>
+                      </motion.li>
+                    );
+                  })}
+                </motion.ul>
+
+                {/*
+                  O telefone tinha de vir para aqui: o véu tapa o CTA da
+                  barra, e ligar é o que a casa quer que se faça. Fica depois
+                  das placas, que é a ordem de quem já escolheu para onde ir.
+                */}
+                <div className="border-t border-linha px-4 py-4">
+                  <Cta
+                    href={`tel:${site.phone.tel}`}
+                    onClick={fechar}
+                    className="w-full px-4 py-3 text-sm"
+                  >
+                    <Phone size={16} weight="bold" aria-hidden />
+                    {texto.geral.reservar}
+                  </Cta>
+                </div>
 
                 {/*
                   As línguas fecham o cartão, separadas por uma linha, e aqui
@@ -291,7 +367,7 @@ export function Nav({
                   entram na armadilha de foco montada no `useEffect` e o Tab
                   continua a circular só dentro do cartão.
                 */}
-                <div className="border-t border-linha px-5 py-4">
+                <div className="border-t border-linha px-4 pb-4 pt-3">
                   <SelectorLingua
                     lang={lang}
                     texto={texto.linguas}
