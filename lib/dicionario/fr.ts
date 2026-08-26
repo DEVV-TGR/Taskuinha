@@ -123,6 +123,7 @@ export const fr = {
     categorias: "Catégories de la carte",
     alergias:
       "Si vous avez des allergies ou des intolérances, dites-le à table avant de commander. Presque tout passe par les fruits de mer.",
+    levar: "Emporter la carte",
   },
 
   erro: {

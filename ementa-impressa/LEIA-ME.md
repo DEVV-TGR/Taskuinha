@@ -1,7 +1,7 @@
 # Ementa impressa
 
 **Doze páginas A4, uma coluna.** O que vai para a gráfica é o
-`ementa-coluna-unica.pdf`, e ele **gera-se com dois comandos** — não se edita à
+`ementa-coluna-unica.pdf`, e ele **gera-se com três comandos** — não se edita à
 mão.
 
 ```bash
@@ -10,7 +10,30 @@ node ementa-impressa/gerador/gerar.mjs \
   "$HOME/.cache/puppeteer/chrome/mac_arm-151.0.7922.71/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" \
   "file://$PWD/ementa-impressa/ementa-coluna-unica.html" \
   ementa-impressa/ementa-coluna-unica.pdf          # escreve o PDF
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.7 \
+   -dPDFSETTINGS=/ebook -dDownsampleColorImages=true \
+   -dColorImageResolution=144 -dNOPAUSE -dBATCH -dQUIET \
+   -sOutputFile=public/ementa-taskuinha.pdf \
+   ementa-impressa/ementa-coluna-unica.pdf          # escreve a cópia do site
 ```
+
+## O terceiro comando, e porque é que ele existe
+
+O PDF da gráfica pesa **19 MB** — o pergaminho está a 300 DPI, como tem de
+estar para imprimir. Mas o site tem um botão **«Levar a ementa»** no fim da
+página, e servir 19 MB a quem está na praia com dados móveis não se faz.
+
+O Ghostscript volta a amostrar as imagens a 144 DPI e o mesmo PDF fica em
+**516 KB** — trinta e sete vezes mais leve, com as doze páginas, o texto
+carácter a carácter igual e o pergaminho a aguentar bem a olho. Não entra nada
+no `package.json`: o `gs` é uma ferramenta do sistema, como o Chrome do
+Puppeteer.
+
+**O `public/ementa-taskuinha.pdf` não se actualiza sozinho.** Se o dono mexer
+nos preços pelo painel, o site muda nesse instante e o PDF do botão fica para
+trás até alguém correr os três comandos. É a mesma armadilha que o `montar.py`
+já apanha entre o site e a gráfica — só que esta ainda não tem quem a apanhe.
 
 ## O que está aqui
 
@@ -20,6 +43,12 @@ node ementa-impressa/gerador/gerar.mjs \
 | `ementa-coluna-unica.html` | gerado. Não editar — perde-se na geração seguinte |
 | `gerador/` | de onde tudo sai |
 | `origem/` | as imagens e o material de referência |
+
+E fora desta pasta:
+
+| | |
+|---|---|
+| `public/ementa-taskuinha.pdf` | a cópia leve que o botão do site descarrega |
 
 ## Os preços vêm do site, e o gerador pára se algo não bater certo
 

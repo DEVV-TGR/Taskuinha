@@ -160,6 +160,7 @@ export const pt = {
     categorias: "Categorias da ementa",
     alergias:
       "Se tiveres alergias ou intolerâncias, diz à mesa antes de pedir. Quase tudo passa por marisco.",
+    levar: "Levar a ementa",
   },
 
   /*

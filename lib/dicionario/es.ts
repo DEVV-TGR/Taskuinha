@@ -123,6 +123,7 @@ export const es = {
     categorias: "Categorías de la carta",
     alergias:
       "Si tienes alergias o intolerancias, dilo en la mesa antes de pedir. Casi todo pasa por el marisco.",
+    levar: "Llevar la carta",
   },
 
   erro: {

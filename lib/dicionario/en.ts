@@ -135,6 +135,7 @@ export const en = {
     categorias: "Menu categories",
     alergias:
       "If you have allergies or intolerances, tell us at the table before you order. Almost everything here passes through shellfish.",
+    levar: "Take the menu with you",
   },
 
   erro: {

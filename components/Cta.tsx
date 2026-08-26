@@ -30,6 +30,8 @@ export function Cta({
   variant = "primary",
   children,
   className = "",
+  target,
+  rel,
   ...rest
 }: {
   href: string;
@@ -40,14 +42,21 @@ export function Cta({
   const classes = `${base} ${variants[variant]} ${className}`;
   const pregos = variant === "primary" ? <Pregos /> : null;
 
-  if (href.startsWith("tel:") || href.startsWith("http")) {
+  /*
+    O `.pdf` está aqui com o `tel:` e o `http` por uma razão prática: o
+    `<Link>` faz prefetch do destino quando o botão entra no ecrã, e o
+    destino, no caso do PDF da ementa, é meio megabyte que ninguém pediu.
+    Um ficheiro estático não é uma rota — sai por `<a>` normal.
+  */
+  const externo = href.startsWith("http");
+
+  if (href.startsWith("tel:") || externo || /\.pdf$/i.test(href)) {
     return (
       <a
         href={href}
         className={classes}
-        {...(href.startsWith("http")
-          ? { target: "_blank", rel: "noreferrer" }
-          : {})}
+        target={target ?? (externo ? "_blank" : undefined)}
+        rel={rel ?? (externo ? "noreferrer" : undefined)}
       >
         {pregos}
         {children}
@@ -56,7 +65,7 @@ export function Cta({
   }
 
   return (
-    <Link href={href} className={classes} {...rest}>
+    <Link href={href} className={classes} target={target} rel={rel} {...rest}>
       {pregos}
       {children}
     </Link>

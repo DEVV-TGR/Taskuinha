@@ -146,6 +146,23 @@ export default async function EmentaPage() {
               ))}
             </div>
           </RoloEmenta>
+
+          {/*
+            Debaixo do rolo, e centrado com ele: a ementa acabou de ser lida,
+            e é aqui que faz sentido oferecer levá-la. Fica dentro do mesmo
+            `div` do rolo para partilhar a largura e o `padding` lateral —
+            alinha com as varas em vez de flutuar por cima do fundo.
+          */}
+          <div className="mt-8 flex justify-center sm:mt-10">
+            <Cta
+              href="/ementa-taskuinha.pdf"
+              variant="secondary"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {dic.ementa.levar}
+            </Cta>
+          </div>
         </div>
 
         <section className="border-t border-linha bg-breu-fundo py-16 sm:py-20">
