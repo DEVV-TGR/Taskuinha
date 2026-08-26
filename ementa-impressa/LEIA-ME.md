@@ -134,6 +134,12 @@ eram os do formato.
 - **`livro-antigo/`** — as sete fotografias do livro de ementas plastificado, de
   onde tudo foi transcrito. São a única forma de responder ao que fica em aberto
   no fim deste ficheiro.
+- **`product-guide.pdf`** — o **Guia de Construção da gráfica**, três páginas.
+  É ele que manda no ficheiro que se entrega: sangria, área de segurança,
+  cores, resolução, fontes e ordem das páginas. Estava numa pasta de
+  transferências de outro projecto, que é o mesmo que não estar em lado nenhum:
+  quem quisesse conferir uma medida tinha de ir pedi-lo. Fica aqui, ao lado do
+  que ele julga.
 
 **Não estão em `public/` de propósito**, e o `public/images/README.md` explica a
 regra: o que está em `public/` é servido ao visitante e o CSS não o optimiza.
