@@ -22,7 +22,9 @@ import dados from "@/data/ementa.json";
   Carvalhelhos, Irish Coffee), as linhas riscadas a marcador (três cervejas,
   os dois ice teas, o Refrigerante) e os preços apagados (Veros, Veros
   Reserva, e o terceiro vinho verde, que ficou sem nome nem preço). O
-  Baileys continua de fora porque o preço dele nunca chegou.
+  Baileys esteve nessa lista até 26 de Agosto de 2026: o preço estava
+  borratado na fotografia e ninguém o sabia ler. O dono disse-o — 4,00 € —
+  e ele entrou, que é o caminho de saída desta lista para os outros.
 
   ## O que se perdeu na passagem a JSON, e vale a pena saber
 

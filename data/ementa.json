@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-26T11:45:26.000Z",
+  "actualizado": "2026-08-26T12:11:01.000Z",
   "categorias": [
     {
       "id": "entradas",
@@ -1097,6 +1097,17 @@
           "id": "licor-beirao",
           "nome": "Licor Beirão",
           "preco": 4
+        },
+        {
+          "id": "baileys",
+          "nome": "Baileys",
+          "preco": 4,
+          "descricao": {
+            "pt": "Licor de natas e whiskey irlandês.",
+            "en": "Irish cream liqueur.",
+            "fr": "Liqueur de crème irlandaise.",
+            "es": "Licor de crema irlandesa."
+          }
         },
         {
           "id": "favaios",
