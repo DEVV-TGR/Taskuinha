@@ -171,7 +171,7 @@ ficheiro. Não está neste repositório. Em resumo:
 | 1 | Sem sangria: o fundo fica 0,14 mm curto e o corte apanha branco | a corrigir |
 | 2 | O pirata da capa está esticado 58% e a ≈172 DPI | a corrigir |
 | 3 | O fundo está a 300 DPI mas com compressão JPEG a mais | a corrigir |
-| 4 | **Seis preços desactualizados** | cinco corrigidos; o sexto era falso alarme |
+| 4 | **Seis preços desactualizados** | os cinco primeiros estão corrigidos no documento de seis páginas, mas **não** no de doze, que é o que vai para a gráfica; o sexto é a amêijoa, agora a 16,90 |
 | 5 | Quatro traduções inglesas divergem do site; o aviso de alergias diz "meets shellfish" em vez de "comes into contact with" | a corrigir |
 | 6 | Um emoji na contracapa, embebido como fonte Type3 | trocar por imagem |
 | 7 | As duas colunas da contracapa estão 6 mm fora do meio | decisão, não defeito |
@@ -184,14 +184,15 @@ artigos que **não** mudaram — as Lulas ao alho a 12,40, o Bacardi limão a
 5,90 e a Tosta especial a 7,40, esta última com o preço antigo do cachorro.
 Cada troca tem de ser ancorada ao nome do prato, nunca ao valor.
 
-**Cinco dos seis estão corrigidos aqui. O sexto não precisava.** A prova
-diz que a Amêijoa à pirata devia passar de 15,20 para 16,90 — e teve razão
-durante algumas horas. A 22 de Agosto de 2026, às 09:56, o preço foi
-baixado de 16,90 para 15,20 pelo painel (commit `8940031`). A prova foi
-escrita nesse mesmo dia e apanhou o valor de antes.
+**Os seis são para corrigir**, e o sexto deu uma volta pelo meio. A prova
+diz que a Amêijoa à pirata devia passar de 15,20 para 16,90. Durante
+algumas horas pareceu engano dela: a 22 de Agosto de 2026, às 09:56, o
+preço tinha sido baixado de 16,90 para 15,20 pelo painel (commit
+`8940031`), e a prova, escrita nesse mesmo dia, apanhou o valor de antes.
 
-O papel a dizer 15,20 está certo. É o único ponto da prova que não é para
-executar.
+A 26 de Agosto o dono confirmou que o preço da casa é **16,90** — a
+descida de dia 22 é que era para desfazer. O `data/ementa.json` já o diz,
+e o papel tem de acompanhar.
 
 ## Coisas para o dono confirmar antes de ir para a gráfica
 
