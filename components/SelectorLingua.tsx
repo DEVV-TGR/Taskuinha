@@ -13,11 +13,14 @@ import { locales, linguas, trocarLingua, type Locale } from "@/lib/i18n";
   o CTA e a argola, e quatro bandeiras seguidas a mais não cabiam sem
   apertar o resto.
 
-  **`fila`, na gaveta do telemóvel.** As quatro seguidas, sem nada para
-  abrir. Na gaveta há largura de sobra e o problema é o inverso: um menu
-  dentro de um menu é um clique a mais para chegar ao mesmo sítio, e a
-  gaveta é `overflow-hidden` por causa da animação de altura, o que corta
-  qualquer lista que caia por cima.
+  **`cartao`, no menu do telemóvel.** As quatro seguidas, sem nada para
+  abrir, mas em alvos de dedo: a bandeira grande por cima das duas letras,
+  49px de lado, a que está em uso com moldura de lanterna. Um menu dentro
+  de um menu era um clique a mais para chegar ao mesmo sítio.
+
+  Havia uma terceira, `fila`, com as quatro numa linha apertada — era o que
+  a gaveta do telemóvel usava. Saiu com a gaveta: o cartão tem largura para
+  alvos a sério, e um componente que ninguém monta é dívida.
 
   ## O que se lê e o que se ouve
 
@@ -40,18 +43,33 @@ export function SelectorLingua({
 }: {
   lang: Locale;
   texto: Texto;
-  variante?: "menu" | "fila";
+  variante?: "menu" | "cartao";
   className?: string;
 }) {
-  return variante === "fila" ? (
-    <Fila lang={lang} texto={texto} className={className} />
+  return variante === "cartao" ? (
+    <Cartao lang={lang} texto={texto} className={className} />
   ) : (
     <Menu lang={lang} texto={texto} className={className} />
   );
 }
 
-/* As quatro seguidas, a que está em uso marcada. */
-function Fila({
+/*
+  As quatro em alvos de dedo, para dentro do menu do telemóvel.
+
+  A bandeira sobe para 1,35rem e ganha as duas letras por baixo em vez de ao
+  lado — não é enfeite: é o que permite ter 49px de altura sem o botão ficar
+  um retângulo comprido, e 49 está acima dos 44 que a Apple e a WCAG pedem
+  para um alvo de toque.
+
+  A que está em uso leva moldura e fundo de lanterna, e não só cor de texto
+  como na `fila`: no meio de quatro bandeiras a cor da letra perde-se.
+
+  **A bandeira não é a informação.** É emoji, e no Windows não desenha
+  bandeira nenhuma — desenha as duas letras do país (ver `lib/i18n.ts`). Por
+  isso as letras estão sempre lá por baixo, e não como legenda opcional: são
+  elas que aguentam a leitura quando a bandeira não aparece.
+*/
+function Cartao({
   lang,
   texto,
   className,
@@ -64,7 +82,7 @@ function Fila({
 
   return (
     <nav aria-label={texto.escolher} className={className}>
-      <ul className="flex items-center gap-0.5">
+      <ul className="grid grid-cols-4 gap-2">
         {locales.map((codigo) => {
           const lingua = linguas[codigo];
           const actual = codigo === lang;
@@ -76,15 +94,19 @@ function Fila({
                 hrefLang={lingua.htmlLang}
                 lang={lingua.htmlLang}
                 aria-current={actual ? "true" : undefined}
-                className={`flex items-center gap-1 rounded-[var(--radius-card)] px-2 py-1.5 text-[0.7rem] tracking-[0.08em] transition-colors ${
-                  actual ? "text-lanterna" : "text-osso-fraco hover:text-osso"
+                className={`flex min-h-[49px] flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border px-1 py-2 transition-colors ${
+                  actual
+                    ? "border-lanterna/55 bg-lanterna/10 text-lanterna"
+                    : "border-linha bg-breu-raso/70 text-osso-fraco hover:border-linha-forte hover:text-osso"
                 }`}
                 style={{ fontFamily: "var(--font-maquina)" }}
               >
-                <span aria-hidden className="text-[0.95rem] leading-none">
+                <span aria-hidden className="text-[1.35rem] leading-none">
                   {lingua.bandeira}
                 </span>
-                <span aria-hidden>{lingua.etiqueta}</span>
+                <span aria-hidden className="text-[0.62rem] tracking-[0.12em]">
+                  {lingua.etiqueta}
+                </span>
                 <span className="sr-only">
                   {actual ? `${lingua.nome} — ${texto.actual}` : lingua.nome}
                 </span>

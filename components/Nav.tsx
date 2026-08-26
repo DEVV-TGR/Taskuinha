@@ -10,7 +10,7 @@ import {
   useSpring,
   useReducedMotion,
 } from "motion/react";
-import { Phone } from "@phosphor-icons/react/dist/ssr";
+import { Phone, X } from "@phosphor-icons/react/dist/ssr";
 import { Wordmark } from "@/components/Wordmark";
 import { Cta } from "@/components/Cta";
 import { SelectorLingua } from "@/components/SelectorLingua";
@@ -90,9 +90,9 @@ export function Nav({
     botaoRef.current?.focus();
   }
 
-  // Fecho com Escape, focus trap enquanto aberta, e overflow:hidden no
-  // <body> — a gaveta é `fixed`, sem isto dava para scrollar o conteúdo
-  // por trás dela.
+  // Fecho com Escape, focus trap enquanto aberto, e overflow:hidden no
+  // <body> — o cartão está por cima da página, e sem isto arrastar no véu
+  // fazia a página correr por baixo dele.
   useEffect(() => {
     if (!aberto) return;
 
@@ -100,6 +100,10 @@ export function Nav({
 
     const primeiroLink = gavetaRef.current?.querySelector<HTMLElement>("a[href]");
     primeiroLink?.focus();
+
+    // `a[href]` já não chega: o botão de fechar está dentro do cartão e,
+    // sem ele na lista, o Tab saltava-o e caía na página por trás.
+    const FOCAVEIS = "a[href], button:not([disabled])";
 
     function aoTeclar(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -110,7 +114,7 @@ export function Nav({
 
       const el = gavetaRef.current;
       if (!el) return;
-      const focaveis = Array.from(el.querySelectorAll<HTMLElement>("a[href]"));
+      const focaveis = Array.from(el.querySelectorAll<HTMLElement>(FOCAVEIS));
       if (focaveis.length === 0) return;
       const primeiro = focaveis[0];
       const ultimo = focaveis[focaveis.length - 1];
@@ -198,44 +202,103 @@ export function Nav({
         </div>
       </nav>
 
+      {/*
+        O menu do telemóvel: um cartão ao meio do ecrã, sobre véu.
+
+        Era uma gaveta encostada ao cabeçalho, que animava de altura. O
+        cartão ao centro põe as quatro placas debaixo do polegar em vez de
+        no topo do ecrã — num telemóvel grande, o cimo é a parte que a mão
+        não alcança sem mudar de pega.
+
+        A mudança de sítio trouxe as obrigações de um diálogo, e nenhuma
+        delas é decoração:
+
+        - **o véu** separa o cartão da página e dá onde tocar para fechar;
+        - **`role="dialog"` e `aria-modal`** dizem ao leitor de ecrã que a
+          página por trás deixou de contar;
+        - **o botão de fechar vive dentro do cartão**, porque a argola que o
+          abriu ficou debaixo do véu e já não se lhe pode tocar;
+        - **`max-h` com `dvh`** e scroll interno, para o cartão caber num
+          telemóvel deitado — são 380px de altura, e a barra do browser come
+          parte deles, que é o que o `vh` não sabe e o `dvh` sabe.
+
+        A animação deixa de ser de altura, que era coisa de gaveta: o véu
+        aparece e o cartão cresce de 0,96, a partir do meio. Com movimento
+        reduzido não há nem uma coisa nem outra — o `initial={false}` põe-no
+        já no sítio, como no resto do site.
+      */}
       <AnimatePresence>
         {aberto && (
           <motion.div
-            id="menu-movel"
-            ref={gavetaRef}
-            initial={reduce ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reduce ? { height: 0 } : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-            className="tabua relative overflow-hidden border-t border-linha md:hidden"
+            className="fixed inset-0 z-50 md:hidden"
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <ul className="flex flex-col gap-1 px-5 py-4">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={fechar}
-                    className="gravado block rounded-[var(--radius-card)] px-3 py-3 text-base text-osso transition-colors hover:text-lanterna"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div
+              aria-hidden
+              onClick={fechar}
+              className="absolute inset-0 bg-[var(--veu)] backdrop-blur-[2px]"
+            />
 
             {/*
-              As línguas fecham a gaveta, separadas por uma linha, e aqui
-              ficam as quatro seguidas: há largura para elas, e um menu
-              dentro de um menu era um clique a mais para o mesmo sítio.
-              São ligações, por isso entram na armadilha de foco montada no
-              `useEffect` e o Tab continua a circular só dentro da gaveta.
+              A grelha que centra o cartão cobre o ecrã inteiro, portanto
+              apanhava ela os toques que eram para o véu — e tocar ao lado
+              do cartão não fechava nada. `pointer-events-none` aqui e
+              `auto` no cartão devolvem o véu a quem lhe toca.
             */}
-            <div className="border-t border-linha px-5 py-3">
-              <SelectorLingua
-                lang={lang}
-                texto={texto.linguas}
-                variante="fila"
-              />
+            <div className="pointer-events-none absolute inset-0 grid place-items-center p-5">
+              <motion.div
+                id="menu-movel"
+                ref={gavetaRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label={texto.nav.principal}
+                initial={reduce ? false : { scale: 0.96 }}
+                animate={{ scale: 1 }}
+                exit={reduce ? undefined : { scale: 0.98 }}
+                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                className="tabua pointer-events-auto relative max-h-[min(34rem,calc(100dvh-2.5rem))] w-full max-w-[21rem] overflow-y-auto overscroll-contain rounded-[var(--radius-card)] border border-linha shadow-[0_18px_50px_rgb(0_0_0/0.6)]"
+              >
+                <button
+                  type="button"
+                  onClick={fechar}
+                  aria-label={texto.nav.fechar}
+                  className="absolute right-2 top-2 grid h-10 w-10 place-items-center rounded-[var(--radius-card)] text-osso-fraco transition-colors hover:text-lanterna"
+                >
+                  <X size={18} weight="bold" aria-hidden />
+                </button>
+
+                <ul className="flex flex-col gap-1 px-5 pb-4 pt-12">
+                  {links.map((link) => (
+                    <li key={link.href}>
+                      <a
+                        href={link.href}
+                        onClick={fechar}
+                        className="gravado block rounded-[var(--radius-card)] px-3 py-3 text-base text-osso transition-colors hover:text-lanterna"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                {/*
+                  As línguas fecham o cartão, separadas por uma linha, e aqui
+                  ficam as quatro seguidas: um menu dentro de um menu era um
+                  clique a mais para o mesmo sítio. São ligações, por isso
+                  entram na armadilha de foco montada no `useEffect` e o Tab
+                  continua a circular só dentro do cartão.
+                */}
+                <div className="border-t border-linha px-5 py-4">
+                  <SelectorLingua
+                    lang={lang}
+                    texto={texto.linguas}
+                    variante="cartao"
+                  />
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         )}
