@@ -78,11 +78,49 @@ verdade sobre preços**, mesmo tendo lá números: são sobrepostos a cada gera�
 | `folhas.json` | a ordem dos 155 artigos por folha, os nomes e o inglês |
 | `rever_en.py` | **as revisões do inglês, com a razão de cada uma**, e as perguntas por responder |
 | `fontes.css` | as quatro tipografias em base64 |
+| `qr.py` | **o QR code da contracapa**, codificado aqui e não por uma biblioteca |
 | `gerar.mjs` | gera o PDF pelo Chrome, por DevTools Protocol |
 | `foto.mjs` | fotografa uma página, para se poder olhar sem imprimir |
 
 Sem dependências: o Node traz `WebSocket` nativo e o Chrome está em cache do
 Puppeteer. Não entra nada no `package.json`.
+
+## O QR code da contracapa
+
+A contracapa tem um QR para **`https://www.taskuinhapirata.pt`**, e o endereço
+vem do **`lib/site.ts`** — o `montar.py` lê-o de lá e **pára** se não o
+encontrar. É a mesma disciplina dos preços, pela mesma razão: um endereço
+transcrito à mão envelhece sozinho, e um endereço errado não se corrige depois
+de mil folhas impressas.
+
+O código é **gerado em Python, aqui dentro** (`gerador/qr.py`), e sai em **SVG
+vector**. Não entra `segno` nem `qrcode` no sistema — pela mesma regra do
+`package.json` — nem se vai buscar a imagem a um serviço online, que era pior:
+o gerador deixava de correr sem rede e deixava de dar sempre o mesmo ficheiro.
+Versão 3 (29×29) com correcção **Q**, que corrige 25% dos módulos: isto vai
+para papel que se dobra e apanha gordura, impresso sobre pergaminho texturado.
+
+**Os 34 mm são do SVG inteiro, zona de silêncio incluída.** O quadrado escuro
+que se vê mede 26,6 mm — 29 dos 37 módulos — e cada módulo 0,92 mm. Esteve nos
+28 mm, que davam módulos de 0,76 mm, da ordem da textura do fundo. Quem lê a
+zona de silêncio como se fosse margem engana-se em quase um quinto do tamanho.
+
+### Como se confere que lê
+
+Uma matriz pode passar em todas as verificações internas e na mesma não ler.
+O que conta é um leitor:
+
+```bash
+python3 ementa-impressa/gerador/qr.py            # escreve qr.png
+```
+
+Aponta-se o telemóvel ao ficheiro. Foi assim que se apanhou o engano que deu
+origem a este parágrafo: os bits do formato estavam a assentar na grelha do
+menos significativo para o mais, o código parecia um QR perfeito, o valor de 15
+bits batia certo com a tabela da norma — e **não lia**. Só apareceu ao comparar
+os 841 módulos, um a um, com o gerador do próprio macOS (`CIQRCodeGenerator`,
+correcção Q, que dá exactamente esta versão): batiam todos menos oito, e os oito
+eram os do formato.
 
 ## A pasta `origem/`
 

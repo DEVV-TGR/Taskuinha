@@ -29,6 +29,64 @@ _precos = {_chave(p["nome"]): p["preco"]
 _precos[_chave("Percebes Época")] = _precos[_chave("Percebes")]
 _precos[_chave("Sangria, jarro")] = _precos[_chave("Sangria")]
 
+
+# ---------------------------------------------------------------------------
+#  O endereço do QR da contracapa vem do lib/site.ts, pela mesma razão que os
+#  preços vêm do data/ementa.json: uma cópia transcrita envelhece sozinha, e
+#  um endereço errado no papel não se corrige depois de impresso.
+#
+#  O `lib/site.ts` explica lá porque é que o valor leva `www.`: o domínio sem
+#  ele responde 308 para o `www`, portanto o `www` é a morada e não o atalho.
+#  Mandar mil ementas apontar para o redireccionamento era mandar toda a gente
+#  dar uma volta antes de chegar.
+# ---------------------------------------------------------------------------
+import qr
+
+_ts = open(os.path.join(_raiz, "lib", "site.ts"), encoding="utf-8").read()
+_m = re.search(r'^\s*url:\s*"([^"]+)"', _ts, re.M)
+if not _m:
+    raise SystemExit(
+        "Não encontrei o `url:` no lib/site.ts.\n"
+        "O endereço do QR sai de lá e de mais lado nenhum — se o ficheiro "
+        "mudou de forma, é para actualizar aqui, não para escrever o endereço "
+        "à mão."
+    )
+SITE = _m.group(1)
+
+
+def qr_svg(texto, lado_mm, silencio=4):
+    """O QR em SVG, vector, sem fundo — o pergaminho passa por baixo.
+
+    A **zona de silêncio** de quatro módulos entra no `viewBox` em vez de ser
+    margem em CSS: é parte do código, não do espaçamento da folha, e sobre um
+    fundo texturado é ela que faz a diferença entre ler e não ler.
+
+    Um `<path>` só, e não um `<rect>` por módulo: são umas quatrocentas formas,
+    e o Chrome escreve-as todas no stream do PDF.
+    """
+    grelha = qr.codificar(texto)
+    n = len(grelha)
+    partes = []
+    for y, linha in enumerate(grelha):
+        x = 0
+        while x < n:
+            if linha[x]:
+                largura = 1
+                while x + largura < n and linha[x + largura]:
+                    largura += 1
+                partes.append("M%d %dh%dv1h-%dz" % (x + silencio, y + silencio,
+                                                    largura, largura))
+                x += largura
+            else:
+                x += 1
+    lado = n + 2 * silencio
+    return (
+        '<svg class="fim-qr-codigo" viewBox="0 0 %d %d" width="%smm" '
+        'height="%smm" shape-rendering="crispEdges" role="img" '
+        'aria-label="%s"><path d="%s" fill="currentColor"></path></svg>'
+        % (lado, lado, lado_mm, lado_mm, html.escape(texto), "".join(partes))
+    )
+
 # --- 1ª direcção: o papel tem artigos que o site já não tem? ---
 _mudou, _orfaos = [], []
 for _bl in folhas:
@@ -153,10 +211,27 @@ contra = """  <section class="folha contracapa">
           <p>@taskuinhadopirata</p>
         </div>
       </div>
+
+      <div class="fim-qr">
+        __QR__
+        <span class="fim-qr-morada">__MORADA__</span>
+      </div>
     </div>
 
     <div class="fim-pe">O Caminho de Santiago passa &agrave; porta</div>
   </section>"""
+
+# 34 mm, e o número é o do SVG **inteiro** — zona de silêncio incluída. O
+# quadrado escuro que se vê na folha é menor: 29 dos 37 módulos, ou seja
+# 26,6 mm, o que dá **0,92 mm por módulo**.
+#
+# Foi por isto que não ficou nos 28 mm que pareciam chegar: aí o código
+# impresso media 22 mm e cada módulo 0,76 mm, que é da ordem da textura do
+# pergaminho. Quem mede a zona de silêncio como se fosse margem engana-se em
+# quase um quinto do tamanho — e só dá por isso com o papel na mão.
+contra = (contra
+          .replace("__QR__", qr_svg(SITE, 34))
+          .replace("__MORADA__", html.escape(re.sub(r"^https?://", "", SITE))))
 
 CSS = """
 /*
@@ -603,6 +678,39 @@ body {
   font-size: 9.5pt;
   line-height: 1.45;
   font-variant-numeric: tabular-nums;
+}
+
+/*
+  ## O QR
+
+  Os vãos são números escolhidos, como os da capa — não sobras:
+
+      .fim-qr margin-top   11mm  ← afasta o quadrado dos dois blocos
+      lado do quadrado     28mm  ← no `qr_svg(SITE, 34)`, não aqui
+      morada margin-top     3mm
+
+  O quadrado é **vector e sem fundo branco**: o pergaminho passa por baixo e os
+  módulos são a tinta da folha, como o resto do texto. A zona de silêncio já
+  vem dentro do SVG — não se acrescenta margem a fingir que é ela.
+*/
+
+.fim-qr {
+  margin-top: 11mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--tinta);
+}
+
+.fim-qr-codigo {
+  display: block;
+}
+
+.fim-qr-morada {
+  margin-top: 3mm;
+  font-size: 8.5pt;
+  letter-spacing: 0.14em;
+  color: var(--tinta-fraca);
 }
 
 .fim-pe {
