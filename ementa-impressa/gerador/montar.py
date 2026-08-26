@@ -246,7 +246,17 @@ CSS = """
   A capa e a contracapa são as folhas 1 e 12, por fazer.
 */
 
-@page { size: A4; margin: 0; }
+/*
+  A folha do **ficheiro** é maior que a folha **cortada**: 216 x 303 mm contra
+  os 210 x 297 do A4. Os 3 mm a mais de cada lado são a sangria que a gráfica
+  pede, e são para deitar fora — a guilhotina corta lá dentro.
+
+  O desenho não muda de sítio: o `--sangria` entra também nas margens, portanto
+  cada elemento fica à mesma distância da **linha de corte** que estava antes.
+  O que muda é que o pergaminho passa a existir para lá dela, e um corte que
+  fuja 1 mm apanha pergaminho em vez de branco.
+*/
+@page { size: 216mm 303mm; margin: 0; }
 
 :root {
   --tinta:      #2b1d0e;   /* o texto */
@@ -256,6 +266,7 @@ CSS = """
   --linha:       rgb(43 29 14 / 0.30);
 
   /* Medidas tiradas do Ementa_Final.pdf */
+  --sangria: 3mm;         /* o que a guilhotina come — ver o @page acima */
   --margem-lado:  40mm;
   --margem-cima:  20mm;
   --margem-baixo: 17mm;
@@ -287,9 +298,11 @@ body {
 
 .folha {
   position: relative;
-  width: 210mm;
-  height: 297mm;
-  padding: var(--margem-cima) var(--margem-lado) var(--margem-baixo);
+  width:  calc(210mm + 2 * var(--sangria));
+  height: calc(297mm + 2 * var(--sangria));
+  padding: calc(var(--margem-cima) + var(--sangria))
+           calc(var(--margem-lado) + var(--sangria))
+           calc(var(--margem-baixo) + var(--sangria));
   background-color: var(--pergaminho);
   /*
     Duas camadas: um véu branco por cima da fotografia, e a fotografia.
@@ -298,7 +311,7 @@ body {
   */
   background-image:
     linear-gradient(rgba(255,255,255,var(--clarear)), rgba(255,255,255,var(--clarear))),
-    url("origem/fundo-ementa.png");
+    url("origem/fundo-ementa-sangria.png");
   /*
     A imagem transborda a página em 1mm de cada lado.
 
@@ -485,7 +498,8 @@ body {
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  padding: 40mm 18mm 26mm;
+  padding: calc(40mm + var(--sangria)) calc(18mm + var(--sangria))
+           calc(26mm + var(--sangria));
 }
 
 /*
@@ -596,7 +610,8 @@ body {
 .contracapa {
   align-items: center;
   text-align: center;
-  padding: 24mm 20mm 26mm;
+  padding: calc(24mm + var(--sangria)) calc(20mm + var(--sangria))
+           calc(26mm + var(--sangria));
 }
 
 .fim-miolo {
@@ -686,7 +701,8 @@ body {
   Os vãos são números escolhidos, como os da capa — não sobras:
 
       .fim-qr margin-top   11mm  ← afasta o quadrado dos dois blocos
-      lado do quadrado     28mm  ← no `qr_svg(SITE, 34)`, não aqui
+      lado do quadrado     34mm  ← no `qr_svg(SITE, 34)`, não aqui;
+                                   destes, 26,6mm são o quadrado escuro
       morada margin-top     3mm
 
   O quadrado é **vector e sem fundo branco**: o pergaminho passa por baixo e os
@@ -754,11 +770,26 @@ body {
   para a folha mais cheia, com o `foto.mjs`.
 
   Se um dia se acrescentarem ou tirarem pratos, é este número que deixa de
-  servir. Conta-se as páginas depois de gerar: **têm de ser doze**.
+  servir. Conta-se as páginas depois de gerar: **têm de ser catorze**.
 */
 """
 
-paginas = [capa] + [folha(bl, i+2) for i, bl in enumerate(folhas)] + [contra]
+"""
+  Os dois versos: as costas da capa e as costas da contracapa.
+
+  Levam o pergaminho como todas as outras — a mesma imagem, a mesma sangria —
+  e nada por cima. Não são páginas em branco: numa ementa impressa frente e
+  verso, o que se vê ao abrir a capa é este pergaminho, e uma folha branca ali
+  no meio dava a entender que faltava alguma coisa.
+
+  Ficam nos dois sítios onde a folha tem duas faces e só uma delas foi
+  desenhada: logo a seguir à capa, e logo antes da contracapa.
+"""
+verso = '  <section class="folha verso"></section>'
+
+paginas = ([capa, verso]
+           + [folha(bl, i+3) for i, bl in enumerate(folhas)]
+           + [verso, contra])
 
 doc = f"""<!doctype html>
 <html lang="pt-PT">
