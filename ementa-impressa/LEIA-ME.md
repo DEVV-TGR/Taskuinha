@@ -207,6 +207,61 @@ cada lado.
 
 Não é sangria a sério. Para a gráfica, a página teria de passar a 216 × 303 mm.
 
+## O que a gráfica exige, e onde estamos
+
+O guia é o **`origem/product-guide.pdf`**, três páginas. Isto foi medido no
+`ementa-coluna-unica.pdf` a 26 de Agosto de 2026, com o `pdfinfo`, o `pdffonts`
+e o `pdfimages`:
+
+| O guia pede | Estado |
+|---|---|
+| PDF sem protecção por password | ✓ |
+| Páginas individuais, por ordem de leitura | ✓ doze, A4, sem *spreads* |
+| Fontes incorporadas ou em curvas | ✓ as quatro, em subset |
+| Área de segurança de 1 cm | ✓ a caixa mais apertada é o pé do miolo, a 17 mm; a contracapa tem 20 mm de lado e a tinta dela não passa dos 52 mm |
+| **300 DPI ou superior** | ✗ **296** — e a razão está já a seguir |
+| **Sangria de 3 mm** | ✗ falta: `MediaBox`, `TrimBox` e `BleedBox` são os três o A4 exacto |
+| **CMYK**, FOGRA39 ou ISO Coated v2 ECI | ✗ falta: dezassete objectos `DeviceRGB`, zero CMYK |
+
+O número de páginas comprado é o **máximo** que a gráfica imprime — na compra
+escolhem-se **12**.
+
+### Os 296 DPI são consequência do transbordo, não um descuido
+
+O pergaminho tem 2475 × 3500 px, que num A4 davam 300 DPI certos. Só que o
+`--folga-fundo: 2mm` estica-o para **212,1 × 299,1 mm**, e os mesmos píxeis
+espalhados por mais folha dão **296 × 297 DPI** — um pouco abaixo do mínimo.
+
+Não se resolve mudando o número em lado nenhum. Resolve-se quando a sangria a
+sério entrar: a folha passa a 216 × 303 mm e o fundo tem de **voltar ao
+original** com 2551 × 3579 px. Reamostrar o que já cá está não acrescenta
+detalhe — só peso.
+
+### O QR da contracapa, medido no ficheiro
+
+| | |
+|---|---|
+| destino lido do PDF | `https://www.taskuinhapirata.pt` |
+| lê a 300 e a 150 DPI | ✓ no PDF da gráfica **e** na cópia leve do site |
+| quadrado escuro | **26,7 mm** (34 mm contando a zona de silêncio) |
+| módulo | 0,92 mm |
+| contraste sobre o pergaminho | **11,6:1** — `#2D1F10` sobre `#EBDAB9` |
+| aresta mais próxima | 91,5 mm — muito para lá do 1 cm exigido |
+
+Lido com o detector de QR do próprio macOS, o mesmo que a câmara do telemóvel
+usa, a partir das páginas renderizadas — não da matriz em memória, que é onde
+um erro de codificação se esconde.
+
+**Duas coisas do #50 ficaram por fazer.** O issue pede o quadrado com **≥ 30 mm**
+e o que está tem 26,7; e pede uma **legenda curta em português e inglês** por
+baixo, que não existe — o que lá está é a morada. Nenhuma das duas impede que
+leia; ambas são decisões de desenho para se tomar com a folha à frente.
+
+> O comentário do `montar.py`, na linha 689, ainda diz «lado do quadrado 28mm»
+> na mesma linha em que cita `qr_svg(SITE, 34)`. Fica para quem regenerar a
+> seguir: corrigi-lo sozinho desencontrava o HTML commitado do PDF, e é preciso
+> ter o Chrome for Testing e o `gs` para refazer os dois.
+
 ## Verificar antes de mandar imprimir
 
 1. **12 páginas**, A4.
