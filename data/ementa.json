@@ -54,7 +54,7 @@
           "preco": 5.4,
           "descricao": {
             "pt": "Assado na telha, à frente de quem o pede.",
-            "en": "Roasted on a roof tile, in front of whoever ordered it.",
+            "en": "Flame-grilled chorizo on a terracotta roasting dish.",
             "fr": "Grillé sur la tuile, devant celui qui le commande.",
             "es": "Asado en la teja, delante de quien lo pide."
           }
@@ -133,7 +133,7 @@
           "preco": 9,
           "descricao": {
             "pt": "Cozido, servido morno com sal grosso.",
-            "en": "Boiled, served warm with coarse salt.",
+            "en": "Shrimp (boiled, served warm with coarse salt).",
             "fr": "Cuites, servies tièdes avec du gros sel.",
             "es": "Cocidos, servidos templados con sal gruesa."
           }
@@ -166,7 +166,7 @@
           "preco": 13.4,
           "descricao": {
             "pt": "Pão, bife, salsicha, chouriço, fiambre e queijo.",
-            "en": "Bread, steak, sausage, chouriço, ham and cheese.",
+            "en": "“Francesinha” sandwich (made with thick slices of white loaf bread, steak, sausage, smoked sausage, ham and cheese).",
             "fr": "Pain, steak, saucisse, chouriço, jambon et fromage.",
             "es": "Pan, filete, salchicha, chouriço, jamón de york y queso."
           }
@@ -204,7 +204,7 @@
           "preco": 11.9,
           "descricao": {
             "pt": "Com ovo estrelado e batata frita.",
-            "en": "With a fried egg and chips.",
+            "en": "With a fried egg and French fries (USA) / potato chips (UK).",
             "fr": "Avec œuf au plat et frites.",
             "es": "Con huevo frito y patatas fritas."
           }
@@ -230,7 +230,7 @@
           "preco": 12.4,
           "descricao": {
             "pt": "Grelhadas na hora, com alho.",
-            "en": "Grilled to order, with garlic.",
+            "en": "Garlic squid, grilled to order, with French fries (USA) / potato chips (UK).",
             "fr": "Grillés à la minute, à l'ail.",
             "es": "A la plancha al momento, con ajo."
           }
@@ -241,7 +241,7 @@
           "preco": 5.2,
           "descricao": {
             "pt": "Estufadas devagar em vinho tinto.",
-            "en": "Slow-stewed in red wine.",
+            "en": "Chicken gizzards, slow-stewed in red wine.",
             "fr": "Mijotés doucement au vin rouge.",
             "es": "Guisadas despacio en vino tinto."
           }
@@ -315,7 +315,7 @@
           "preco": 3.2,
           "descricao": {
             "pt": "Estufada de véspera no seu molho.",
-            "en": "Stewed the day before in its own sauce.",
+            "en": "Thinly sliced pork sandwich, stewed the day before in its own marinade.",
             "fr": "Mijotée la veille dans sa sauce.",
             "es": "Guisada la víspera en su salsa."
           }
@@ -661,7 +661,7 @@
           "preco": 2.8,
           "descricao": {
             "pt": "Com groselha.",
-            "en": "With blackcurrant cordial.",
+            "en": "Beer with redcurrant syrup in a tin mug.",
             "fr": "Avec du sirop de groseille.",
             "es": "Con grosella."
           }
@@ -672,7 +672,7 @@
           "preco": 3,
           "descricao": {
             "pt": "Com groselha.",
-            "en": "With blackcurrant cordial.",
+            "en": "Beer with redcurrant syrup in a mug.",
             "fr": "Avec du sirop de groseille.",
             "es": "Con grosella."
           }
@@ -683,7 +683,7 @@
           "preco": 1.6,
           "descricao": {
             "pt": "Cerveja com groselha.",
-            "en": "Beer with blackcurrant cordial.",
+            "en": "Beer with redcurrant syrup.",
             "fr": "Bière au sirop de groseille.",
             "es": "Cerveza con grosella."
           }

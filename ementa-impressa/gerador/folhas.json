@@ -79,7 +79,7 @@
    "t": "art",
    "nome": "Chouriço assado",
    "preco_papel": 5.4,
-   "en": "Roasted on a clay tile, in front of whoever ordered it",
+   "en": "Flame-grilled chorizo on a terracotta roasting dish",
    "preco": 5.4
   },
   {
@@ -128,7 +128,7 @@
    "t": "art",
    "nome": "Camarão",
    "preco_papel": 9.0,
-   "en": "Boiled, served warm with coarse salt",
+   "en": "Shrimp (boiled, served warm with coarse salt)",
    "preco": 9
   },
   {
@@ -140,7 +140,7 @@
    "t": "art",
    "nome": "Francesinha",
    "preco_papel": 12.4,
-   "en": "Bread, steak, sausage, smoked sausage, ham and cheese",
+   "en": "“Francesinha” sandwich (made with thick slices of white loaf bread, steak, sausage, smoked sausage, ham and cheese)",
    "preco": 13.4
   },
   {
@@ -168,35 +168,35 @@
    "t": "art",
    "nome": "Bife na pedra",
    "preco_papel": 26.9,
-   "en": "Served on a hot stone",
+   "en": "Steak served on a sizzling hot stone",
    "preco": 26.9
   },
   {
    "t": "art",
    "nome": "Prego no prato",
    "preco_papel": 11.9,
-   "en": "Beef steak with fried egg and chips",
+   "en": "Beef steak with fried egg and French fries (USA) / potato chips (UK)",
    "preco": 11.9
   },
   {
    "t": "art",
    "nome": "Lulas ao alho com batata frita",
    "preco_papel": 12.4,
-   "en": "Grilled to order, with garlic and chips",
+   "en": "Garlic squid, grilled to order, with French fries (USA) / potato chips (UK)",
    "preco": 12.4
   },
   {
    "t": "art",
    "nome": "Alheira com ovo e batata frita",
    "preco_papel": 8.5,
-   "en": "Game meat sausage with fried egg and chips",
+   "en": "Game meat sausage with fried egg and French fries (USA) / potato chips (UK)",
    "preco": 8.5
   },
   {
    "t": "art",
    "nome": "Salsicha com ovo e batata frita",
    "preco_papel": 6.9,
-   "en": "Sausage with fried egg and chips",
+   "en": "Sausage with fried egg and French fries (USA) / potato chips (UK)",
    "preco": 6.9
   },
   {
@@ -210,7 +210,7 @@
    "t": "art",
    "nome": "Moelas",
    "preco_papel": 5.2,
-   "en": "Slow-stewed in red wine",
+   "en": "Chicken gizzards, slow-stewed in red wine",
    "preco": 5.2
   },
   {
@@ -238,14 +238,14 @@
    "t": "art",
    "nome": "Prato de batata",
    "preco_papel": 2.5,
-   "en": "Side of chips",
+   "en": "Side of French fries (USA) / potato chips (UK)",
    "preco": 2.5
   },
   {
    "t": "art",
    "nome": "Dose de batatas fritas",
    "preco_papel": 3.5,
-   "en": "Full portion of chips",
+   "en": "Full portion of French fries (USA) / potato chips (UK)",
    "preco": 3.5
   },
   {
@@ -257,7 +257,7 @@
    "t": "art",
    "nome": "Bifana",
    "preco_papel": 3.2,
-   "en": "Stewed the day before in its own sauce",
+   "en": "Thinly sliced pork sandwich, stewed the day before in its own marinade",
    "preco": 3.2
   },
   {
@@ -423,7 +423,7 @@
    "t": "art",
    "nome": "Galão",
    "preco_papel": 1.8,
-   "en": "Tall milky coffee",
+   "en": "Milky coffee, served in a tall glass",
    "preco": 1.8
   },
   {
@@ -547,21 +547,21 @@
    "t": "art",
    "nome": "Coca-Cola lata",
    "preco_papel": 2.1,
-   "en": "Canned",
+   "en": "Coca-Cola, canned",
    "preco": 2.1
   },
   {
    "t": "art",
    "nome": "Coca-Cola zero",
    "preco_papel": 2.1,
-   "en": "Canned, no sugar",
+   "en": "No sugar Coca-Cola, canned",
    "preco": 2.1
   },
   {
    "t": "art",
    "nome": "Coca-Cola garrafa",
    "preco_papel": 2.3,
-   "en": "Bottled",
+   "en": "Coca-Cola, bottled",
    "preco": 2.3
   }
  ],
@@ -615,7 +615,7 @@
    "t": "art",
    "nome": "Fino preto",
    "preco_papel": 1.6,
-   "en": "Small draught dark beer",
+   "en": "Small draught stout beer",
    "preco": 1.6
   },
   {
@@ -643,28 +643,28 @@
    "t": "art",
    "nome": "Caneca de alumínio preta",
    "preco_papel": 2.7,
-   "en": "Dark beer in a tin mug",
+   "en": "Stout beer in a tin mug",
    "preco": 2.7
   },
   {
    "t": "art",
    "nome": "Caneca de alumínio tango",
    "preco_papel": 2.8,
-   "en": "Tin mug, with blackcurrant syrup",
+   "en": "Beer with redcurrant syrup in a tin mug",
    "preco": 2.8
   },
   {
    "t": "art",
    "nome": "Caneca tango",
    "preco_papel": 3.0,
-   "en": "Beer mug, with blackcurrant syrup",
+   "en": "Beer with redcurrant syrup in a mug",
    "preco": 3
   },
   {
    "t": "art",
    "nome": "Tango",
    "preco_papel": 1.6,
-   "en": "Beer with blackcurrant syrup",
+   "en": "Beer with redcurrant syrup",
    "preco": 1.6
   },
   {
@@ -678,7 +678,7 @@
    "t": "art",
    "nome": "Super Bock lata",
    "preco_papel": 2.0,
-   "en": "Canned",
+   "en": "Super Bock beer, canned",
    "preco": 2
   }
  ],
@@ -692,14 +692,14 @@
    "t": "art",
    "nome": "Super Bock sem álcool",
    "preco_papel": 1.9,
-   "en": "Alcohol free",
+   "en": "Alcohol free Super Bock beer",
    "preco": 1.9
   },
   {
    "t": "art",
    "nome": "Super Bock sem álcool preta",
    "preco_papel": 1.9,
-   "en": "Alcohol free, dark",
+   "en": "Alcohol free Super Bock stout beer",
    "preco": 1.9
   },
   {
@@ -716,46 +716,46 @@
   },
   {
    "t": "sub",
-   "pt": "A copo e em caneca · By the glass"
+   "pt": "A copo e em caneca · By the glass or in a jug"
   },
   {
    "t": "art",
    "nome": "Copo de vinho tinto",
    "preco_papel": 2.0,
-   "en": null,
+   "en": "Glass of red wine",
    "preco": 2
   },
   {
    "t": "art",
    "nome": "Copo de vinho branco",
    "preco_papel": 2.0,
-   "en": null,
+   "en": "Glass of white wine",
    "preco": 2
   },
   {
    "t": "art",
    "nome": "Caneca de vinho pequena",
    "preco_papel": 3.8,
-   "en": null,
+   "en": "Wine jug, small",
    "preco": 3.8
   },
   {
    "t": "art",
    "nome": "Copo de sangria",
    "preco_papel": 3.0,
-   "en": null,
+   "en": "Glass of sangria",
    "preco": 3
   },
   {
    "t": "art",
    "nome": "Sangria, jarro",
    "preco_papel": 16.0,
-   "en": "Jug",
+   "en": "Jug of sangria",
    "preco": 16
   },
   {
    "t": "sub",
-   "pt": "Maduros da Beira"
+   "pt": "Maduros da Beira · Mature wines from the Beira region"
   },
   {
    "t": "art",
@@ -801,7 +801,7 @@
   },
   {
    "t": "sub",
-   "pt": "Maduros do Douro"
+   "pt": "Maduros do Douro · Mature wines from Douro"
   },
   {
    "t": "art",
@@ -840,7 +840,7 @@
   },
   {
    "t": "sub",
-   "pt": "Maduros do Alentejo"
+   "pt": "Maduros do Alentejo · Mature wines from Alentejo"
   },
   {
    "t": "art",
@@ -872,7 +872,7 @@
   },
   {
    "t": "sub",
-   "pt": "Verdes"
+   "pt": "Verdes · Vinho verde (young wines)"
   },
   {
    "t": "art",
@@ -890,7 +890,7 @@
   },
   {
    "t": "sub",
-   "pt": "Espumantes · Sparkling"
+   "pt": "Espumantes · Sparkling wines"
   },
   {
    "t": "art",
