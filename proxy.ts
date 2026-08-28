@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { politicaDeConteudo } from "./lib/cabecalhos";
 
 /*
   O que noutras versões do Next se chamava `middleware.ts`.
@@ -26,9 +27,54 @@ import { NextResponse, type NextRequest } from "next/server";
   Não abrir o selo aqui tem uma segunda vantagem, prática: sem tocar em
   segredos, o caminho de quem não tem sessão funciona num ambiente onde não há
   variáveis de ambiente nenhumas — que é exactamente o do `npm run fumo` no CI.
+
+  ## A segunda coisa que isto faz: a CSP do painel
+
+  O painel é a única parte deste site com uma sessão autenticada do outro lado, e
+  é a única que pode ter CSP com nonce sem pagar nada por isso — já é dinâmica, e
+  já passa por aqui a cada pedido. As oito páginas públicas continuam a ser
+  servidas do CDN, com a política sem nonce que o `next.config.ts` lhes põe. Ver
+  o comentário longo do `lib/cabecalhos.ts`.
+
+  O `next.config.ts` **não** emite CSP nenhuma para `/painel`, de propósito: duas
+  linhas `Content-Security-Policy` na mesma resposta resolvem-se pela intersecção
+  das duas, que é a maneira mais cara que há de ninguém perceber porque é que um
+  script deixou de correr.
 */
 
 const NOME_DO_COOKIE = "taskuinha_sessao";
+
+/*
+  Um nonce por pedido, e tem mesmo de ser por pedido: um nonce reutilizado é o
+  mesmo que não haver nenhum, porque quem conseguisse injectar um script uma vez
+  passava a poder assiná-lo para sempre.
+
+  `randomUUID` porque a Web Crypto existe em qualquer runtime onde o proxy corra
+  e não obriga a importar `node:crypto` aqui. São 122 bits de aleatoriedade
+  criptográfica, a mesma ordem de grandeza dos 128 que a recomendação pede — e o
+  que interessa a um nonce é ser impossível de adivinhar dentro da vida de **um**
+  pedido, não resistir a análise offline. Os hífenes saem para o valor caber nos
+  caracteres que uma directiva de CSP aceita sem aspas a mais.
+
+  O nonce viaja em dois sítios, e os dois são precisos: no cabeçalho da resposta,
+  que é o que o browser lê, e no `x-nonce` dos cabeçalhos do **pedido**, que é
+  onde o Next o vai buscar para o pôr nas suas etiquetas `<script>`. Sem o
+  segundo, o painel abre em branco — a política bloqueia os próprios scripts de
+  hidratação do Next.
+*/
+function comCabecalhosDoPainel(request: NextRequest): NextResponse {
+  const nonce = crypto.randomUUID().replace(/-/g, "");
+  const politica = politicaDeConteudo(nonce);
+
+  const cabecalhos = new Headers(request.headers);
+  cabecalhos.set("x-nonce", nonce);
+  cabecalhos.set("Content-Security-Policy", politica);
+
+  const resposta = NextResponse.next({ request: { headers: cabecalhos } });
+  resposta.headers.set("Content-Security-Policy", politica);
+
+  return resposta;
+}
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -40,13 +86,19 @@ export function proxy(request: NextRequest) {
     passo ainda não tem cookie de sessão, e mandá-lo daqui para trás era um
     ciclo.
   */
-  if (pathname.startsWith("/painel/entrar")) return NextResponse.next();
+  if (pathname.startsWith("/painel/entrar")) {
+    return comCabecalhosDoPainel(request);
+  }
 
+  /*
+    Um redireccionamento não tem corpo e não corre script nenhum — não leva CSP,
+    leva a resposta que a seguir a levará.
+  */
   if (!request.cookies.has(NOME_DO_COOKIE)) {
     return NextResponse.redirect(new URL("/painel/entrar", request.nextUrl));
   }
 
-  return NextResponse.next();
+  return comCabecalhosDoPainel(request);
 }
 
 /*

@@ -196,6 +196,48 @@ try {
   );
 
   /*
+    A CSP do painel — a única com nonce, emitida pelo `proxy.ts`.
+
+    São quatro verificações e nenhuma delas é decorativa:
+
+    - **Uma só.** O `next.config.ts` exclui `/painel` da entrada genérica de
+      propósito. Se alguém lá voltar a pôr um `/(.*)`, a resposta passa a ter
+      duas linhas `Content-Security-Policy` e o browser resolve-as pela
+      intersecção. O `fetch` junta cabeçalhos repetidos com vírgulas, por isso
+      duas políticas dão dois `default-src` na mesma string.
+    - **Com nonce e sem `'unsafe-inline'`** — é a razão de tudo isto existir.
+      Com um nonce presente, o browser ignora o `'unsafe-inline'`; deixá-lo lá
+      não partia nada e escondia a regressão do dia em que o nonce
+      desaparecesse.
+    - **Todos os `<script>` da página com `nonce=`.** Esta é a que apanha o
+      caso mau de verdade: se o `x-nonce` deixar de chegar aos cabeçalhos do
+      pedido, a política continua perfeita e o painel abre em branco, porque a
+      própria hidratação do Next fica bloqueada. Um cabeçalho certo com uma
+      página morta é o pior dos dois mundos.
+  */
+  console.log("\nA CSP do painel:");
+  const cspPainel = entrada.headers.get("content-security-policy") ?? "";
+  const scriptSrc = cspPainel.match(/script-src ([^;]*)/)?.[1] ?? "";
+
+  verificar(
+    (cspPainel.match(/default-src/g) ?? []).length === 1,
+    "o painel traz uma só política, e não duas sobrepostas",
+  );
+  verificar(scriptSrc.includes("'nonce-"), "o script-src do painel leva nonce");
+  verificar(
+    !scriptSrc.includes("unsafe-inline"),
+    "…e já não leva 'unsafe-inline'",
+  );
+
+  const html = await entrada.text();
+  const etiquetas = html.match(/<script[^>]*>/g) ?? [];
+  verificar(etiquetas.length > 0, `a página tem scripts (${etiquetas.length})`);
+  verificar(
+    etiquetas.every((etiqueta) => etiqueta.includes("nonce=")),
+    "e todos levam nonce — sem isto o painel abria em branco",
+  );
+
+  /*
     O segundo passo da entrada. Sem um desafio a meio — que é o que a CI tem,
     sem variável nenhuma definida — tem de mandar para o princípio, e não pode
     rebentar a tentar derivar chaves que não existem.
