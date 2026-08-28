@@ -53,6 +53,11 @@ export const fr = {
     actual: "Langue utilisée",
   },
 
+  som: {
+    ligar: "Activer la musique",
+    desligar: "Couper la musique",
+  },
+
   hero: {
     titulo: "La mer est à vingt pas.",
     frase:

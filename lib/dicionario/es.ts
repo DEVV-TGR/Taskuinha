@@ -53,6 +53,11 @@ export const es = {
     actual: "Idioma en uso",
   },
 
+  som: {
+    ligar: "Activar la música",
+    desligar: "Silenciar la música",
+  },
+
   hero: {
     titulo: "El mar está a veinte pasos.",
     frase:

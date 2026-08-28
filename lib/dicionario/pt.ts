@@ -85,6 +85,11 @@ export const pt = {
     actual: "Língua em uso",
   },
 
+  som: {
+    ligar: "Ligar a música",
+    desligar: "Desligar a música",
+  },
+
   hero: {
     titulo: "O mar fica a vinte passos.",
     frase:

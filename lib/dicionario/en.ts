@@ -66,6 +66,11 @@ export const en = {
     actual: "Language in use",
   },
 
+  som: {
+    ligar: "Turn the music on",
+    desligar: "Turn the music off",
+  },
+
   hero: {
     titulo: "The sea is twenty steps away.",
     frase:

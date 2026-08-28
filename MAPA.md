@@ -70,6 +70,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |
 | Dados estruturados para o Google | `app/layout.tsx` → `StructuredData` |
 | O que os motores de busca indexam | `app/robots.ts`, `app/sitemap.ts` |
+| Cabeçalhos de segurança e CSP | `lib/cabecalhos.ts` (o `next.config.ts` diz onde se aplicam; o `proxy.ts` emite a do painel, com nonce) |
 
 ---
 
