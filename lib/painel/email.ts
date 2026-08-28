@@ -1,5 +1,6 @@
 import "server-only";
 import { comEspaco } from "./codigo";
+import { meioEscondido } from "./utilizadores";
 
 /*
   Mandar o código por email.
@@ -49,6 +50,28 @@ import { comEspaco } from "./codigo";
 const SEM_CONFIGURACAO = 0;
 
 /*
+  A resposta do Resend com os endereços mascarados, e cortada.
+
+  O corpo de um erro do Resend leva o destinatário com frequência — *"You can
+  only send testing emails to your own email address (tomas@…)"* é a mais comum
+  de todas. Isso é o endereço de quem está a entrar no painel, e não tem nada que
+  ficar por extenso no registo da Vercel; o mesmo `meioEscondido()` do
+  `anotar()`, e pela mesma razão.
+
+  O corte aos 300 caracteres é contra outra coisa: uma resposta que não seja JSON
+  — uma página de erro de um proxy pelo meio, por exemplo — despejava kilobytes
+  de HTML para dentro do registo.
+*/
+function semEnderecos(detalhe: string): string {
+  const limpo = detalhe.replace(
+    /[^\s"'<>@]+@[^\s"'<>@]+\.[a-z]{2,}/gi,
+    (endereco) => meioEscondido(endereco),
+  );
+
+  return limpo.length > 300 ? `${limpo.slice(0, 300)}…` : limpo;
+}
+
+/*
   Atira, e deixa o detalhe no registo.
 
   O detalhe é a única coisa que distingue "o domínio não está verificado" de "a
@@ -59,10 +82,15 @@ const SEM_CONFIGURACAO = 0;
   `catch` das acções devolvia a frase do ecrã e deitava o erro fora. O diagnóstico
   acabou por ser feito no painel do Resend, que é o sítio onde não devia ter sido
   preciso ir.
+
+  O que se escreve é o detalhe já passado pelo `semEnderecos()` — e o que a
+  excepção leva também, porque a mensagem de um `Error` acaba, mais dia menos
+  dia, em cima de outro registo.
 */
 function rebentar(estado: number, detalhe: string): never {
-  console.error(`[painel] o envio do código falhou — ${estado} — ${detalhe}`);
-  throw new ErroAoEnviar(estado, detalhe);
+  const seguro = semEnderecos(detalhe);
+  console.error(`[painel] o envio do código falhou — ${estado} — ${seguro}`);
+  throw new ErroAoEnviar(estado, seguro);
 }
 
 function remetente(): string {

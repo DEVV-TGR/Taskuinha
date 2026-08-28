@@ -163,8 +163,74 @@ A regra cobre os dois ecrãs, porque o segundo é `/painel/entrar/codigo`.
 | Pedidos de código por email | 3 | 15 min | Upstash |
 | Pedidos por IP | 10 | 15 min | Upstash |
 | Pedidos por IP, na borda | 5 | 60 s | Vercel Firewall |
+| **Envios ao todo** | **40** | **24 h** | **Upstash** |
 | Validade do código | — | 10 min | Upstash (TTL) |
 | Uso do código | 1 vez | — | apagado ao ser aceite |
+
+### Porque é que há um limite que não tem chave nenhuma
+
+Todos os outros contam por alguma coisa: por email, por endereço de rede, por
+código. Nenhum deles vê o total, e é isso que um ataque repartido por muitos IPs
+explora — cada um deles dentro do seu limite, e a soma a gastar a quota que
+interessa: os **100 envios diários** do plano gratuito do Resend, que ao serem
+atingidos param o envio e fecham o painel a quem tem acesso a sério.
+
+Com dois endereços na lista, os limites por chave deixavam passar ~576 envios por
+dia. O teto de 40 é o que fecha essa conta. Está muito acima do uso real — duas
+pessoas, e aparelhos lembrados 30 dias que nem chegam a pedir código — e muito
+abaixo dos cem.
+
+Se for atingido, fica no registo da Vercel: `teto diário de envios esgotado`. Em
+condições normais isso não acontece, e se acontecer o número é que está errado.
+
+### Os emails nos registos vão mascarados
+
+`g•••••o@dominio.pt`, e não o endereço por extenso. Chega para perceber de que
+domínio vem uma sondagem e se é sempre o mesmo a insistir; o que deixa de existir
+é uma lista de endereços legível no registo da Vercel. O mesmo vale para o que o
+Resend responde quando um envio falha.
+
+---
+
+## Os dados, e como se repõem
+
+**Não há base de dados, e por isso não há backup para montar.** Cada gravação do
+painel é um commit no `DEVV-TGR/Taskuinha` — os dados são o repositório, com o
+histórico todo, no GitHub e em cada clone que exista.
+
+Repor uma alteração é git, e mais nada:
+
+```sh
+git log --oneline -- data/          # qual foi o commit
+git revert <commit>                 # desfazer inteiro
+git checkout <commit>^ -- data/ementa.json   # ou só um ficheiro
+git push
+```
+
+O push refaz o deploy e o site volta ao que era em ~2 minutos. **Testado**, num
+clone, sobre um commit verdadeiro do painel: o ficheiro reposto passa na
+validação do `lib/painel/validar.ts` e o `next build` corre.
+
+No Upstash não há nada para repor. Tudo o que lá vive tem prazo — códigos de 10
+minutos, contadores de 15, aparelhos de 30 dias — e a única chave que não expira,
+o `painel:segredo`, nasce sozinha outra vez se desaparecer. O preço de a perder é
+toda a gente ter de voltar a entrar, que é precisamente o botão de emergência.
+
+---
+
+## Alertas
+
+O que é código já cá está: as falhas de autenticação, os limites esgotados e os
+erros de envio ficam no registo da Vercel com o prefixo `[painel]`. O resto são
+dois interruptores em painéis de terceiros, e não se ligam a partir do
+repositório:
+
+- **Vercel** → Projecto → Observability → Alerts: um alerta de picos de erro 5xx
+  e de invocações. É o que avisa que alguma coisa está a acontecer antes de
+  alguém telefonar.
+- **Resend** → Settings → Notificações de falha de envio. O plano gratuito pausa
+  o envio ao atingir o limite diário **sem avisar ninguém** — para quem está à
+  espera do código, isso é indistinguível de uma avaria.
 
 ---
 

@@ -2,6 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { headers } from "next/headers";
 import { somar } from "./redis";
+import { meioEscondido } from "./utilizadores";
 
 /*
   Quantas vezes se pode pedir um código, e de onde.
@@ -28,6 +29,22 @@ import { somar } from "./redis";
   diferentes a partir do mesmo sítio — a sondagem de quem procura descobrir que
   emails têm acesso.
 
+  **Ao todo, 40 por dia.** Os três limites de cima são todos por chave: por
+  email, ou por endereço de rede. Nenhum deles vê o total. Um ataque repartido
+  por muitos IPs, cada um dentro do seu limite, gasta na mesma a quota partilhada
+  que interessa aqui — os **100 envios diários** do plano gratuito do Resend, que
+  ao serem atingidos param o envio e fecham o painel a quem tem acesso a sério.
+
+  Com dois endereços na lista, os limites por chave deixavam passar ~576 envios
+  por dia. Este teto é o que fecha essa conta, e é o que os outros três não
+  conseguem fazer por construção: é preciso um contador que não tenha chave
+  nenhuma além do dia.
+
+  Quarenta é muito acima do uso real — duas pessoas, e um aparelho lembrado
+  durante 30 dias que nem chega a pedir código — e muito abaixo dos cem. Se
+  alguma vez for atingido em condições normais, o número está errado; se for
+  atingido por ataque, fica no registo a dizê-lo.
+
   ## O que isto não faz, e quem faz
 
   Não trava volume bruto na borda: para isso está a regra do Vercel Firewall
@@ -39,6 +56,9 @@ const JANELA_S = 15 * 60;
 const POR_EMAIL = 3;
 const POR_IP = 10;
 
+const TETO_DIARIO = 40;
+const DIA_S = 24 * 60 * 60;
+
 /*
   O email vai em hash para a chave do Redis.
 
@@ -49,6 +69,18 @@ const POR_IP = 10;
 function chaveDoEmail(email: string): string {
   const digest = createHash("sha256").update(email.toLowerCase()).digest("hex");
   return `pedidos:${digest.slice(0, 32)}`;
+}
+
+/*
+  A chave do teto diário — uma por dia, e o Redis apaga-a sozinho ao fim de 24h.
+
+  A data em UTC, e não a de Lisboa: o que interessa é a janela ter o tamanho
+  certo e mudar num instante previsível, não coincidir com a meia-noite de
+  ninguém. `toISOString()` dá `2026-08-28` sem depender do fuso da máquina que
+  estiver a correr a função — que em serverless não é sempre a mesma.
+*/
+function chaveDoDia(): string {
+  return `envios:dia:${new Date().toISOString().slice(0, 10)}`;
 }
 
 /*
@@ -76,10 +108,24 @@ async function origem(): Promise<string> {
   evitar.
 */
 export async function podePedirCodigo(email: string): Promise<boolean> {
-  const [porEmail, porIp] = await Promise.all([
+  const [porEmail, porIp, noDia] = await Promise.all([
     somar(chaveDoEmail(email), JANELA_S),
     somar(`pedidos-ip:${await origem()}`, JANELA_S),
+    somar(chaveDoDia(), DIA_S),
   ]);
+
+  /*
+    O teto merece uma linha no registo à parte, e os outros dois não.
+
+    Um limite por email ou por IP esgotado é o sistema a funcionar: alguém
+    insistiu de mais, e o `anotar()` de quem o chamou já o diz. O teto diário
+    esgotado é outra coisa — quer dizer que o dia inteiro ficou sem envios, para
+    toda a gente, e a única forma de o saber é isto ficar escrito.
+  */
+  if (noDia > TETO_DIARIO) {
+    await anotar(`teto diário de envios esgotado (${noDia})`, email);
+    return false;
+  }
 
   return porEmail <= POR_EMAIL && porIp <= POR_IP;
 }
@@ -88,9 +134,19 @@ export async function podePedirCodigo(email: string): Promise<boolean> {
   Fica no registo de execução da Vercel. Se algum dia houver um ataque a sério, é
   a única forma de saber que houve — e de ver de onde veio.
 
-  O email vai em claro aqui, ao contrário do que vai para o Redis: um registo de
-  servidor serve para se perceber o que aconteceu, e um hash não serve para isso.
+  ## O email vai mascarado, e continua a servir
+
+  Já foi em claro, com o argumento de que um hash não deixa perceber o que
+  aconteceu. O argumento estava certo e a conclusão não: entre o endereço
+  completo e um hash há o `meioEscondido()`, que é o que o segundo ecrã da
+  entrada já mostra.
+
+  `g•••••o@dominio.pt` chega para tudo o que este registo tem de responder — de
+  que domínio vem a sondagem, se é sempre o mesmo endereço a insistir, se é o
+  endereço de quem tem acesso ou um inventado. O que deixa de existir é uma lista
+  de endereços legível no registo da Vercel, que é onde ninguém a foi lá pôr de
+  propósito e onde ela não faz falta nenhuma.
 */
 export async function anotar(o_que: string, email: string): Promise<void> {
-  console.warn(`[painel] ${o_que} — ${email} — de ${await origem()}`);
+  console.warn(`[painel] ${o_que} — ${meioEscondido(email)} — de ${await origem()}`);
 }
