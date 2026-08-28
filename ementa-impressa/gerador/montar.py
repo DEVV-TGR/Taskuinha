@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json, os, html, re
+import json, os, sys, html, re
 # tudo o que este ficheiro precisa vive ao lado dele
 D = os.path.dirname(os.path.abspath(__file__))
 folhas = json.load(open(f"{D}/folhas.json"))
@@ -758,23 +758,269 @@ body {
 */
 """
 
-paginas = [capa] + [folha(bl, i+2) for i, bl in enumerate(folhas)] + [contra]
+# ---------------------------------------------------------------------------
+#  A versão da gráfica: 216 × 303 mm, sangria de 3 mm e a goteira das argolas
+# ---------------------------------------------------------------------------
+#
+#  `python3 ementa-impressa/gerador/montar.py --grafica`
+#
+#  Sai um segundo HTML — `ementa-grafica.html` — que só difere deste em três
+#  coisas. Todas elas vêm do `origem/guia-360imprimir.pdf`, que é o guia de
+#  construção da gráfica onde isto foi encomendado:
+#
+#  1. **A folha cresce para 216 × 303 mm.** São os 3 mm de sangria em todo o
+#     redor. Tudo o que é margem passa a contar a partir do corte, e não da
+#     borda do papel — daí o `--sangria` somado a cada `padding`.
+#
+#  2. **Aparece uma goteira de 10 mm do lado da encadernação.** É a área de
+#     segurança que o guia pede, e é por onde as argolas furam. O desenho todo
+#     — moldura, ornamentos, texto — encolhe `--k` (200/210) na horizontal e
+#     encosta-se ao lado de fora. Na vertical não se mexe em nada: a folha do
+#     Bar fecha a 3 mm do ornamento de baixo e não tem folga para dar.
+#
+#  3. **A goteira troca de lado a cada página.** A encadernação é à esquerda e
+#     a impressão é frente e verso, portanto o verso de cada folha tem as
+#     argolas à direita — é a página dupla do guia, `A | B` com a perfuração
+#     ao meio. As ímpares levam `impar`, as pares levam `par`, e o fundo das
+#     pares é o mesmo ficheiro virado com `scaleX(-1)`.
+#
+#  E são **catorze** páginas, não doze: o guia manda enviar as páginas todas,
+#  soltas e por ordem de leitura, e o miolo leva o verso da capa e a frente da
+#  contracapa em branco. Sem elas a paridade saía trocada da página 2 em diante
+#  e as argolas apareciam do lado errado em metade da ementa.
+#
+#  O fundo vem do `fundo.py` e não deste ficheiro. Ver lá porquê.
 
-doc = f"""<!doctype html>
+CSS_GRAFICA = """
+/* ---------- a folha da gráfica ---------- */
+
+@page { size: 216mm 303mm; margin: 0; }
+
+:root {
+  --sangria: 3mm;
+  --argolas: 10mm;
+  --k: 0.952381;       /* 200/210: o que sobra da largura depois das argolas */
+}
+
+.folha {
+  width: 216mm;
+  height: 303mm;
+  --lado: var(--margem-lado);
+  padding-top:    calc(var(--sangria) + var(--margem-cima));
+  padding-bottom: calc(var(--sangria) + var(--margem-baixo));
+  padding-left:   calc(var(--sangria) + var(--argolas) + var(--lado) * var(--k));
+  padding-right:  calc(var(--sangria) + var(--lado) * var(--k));
+  background-image: none;              /* o fundo passa a ser um elemento */
+}
+
+.capa { --lado: 18mm; }
+.contracapa { --lado: 20mm; }
+
+.capa {
+  padding-top:    calc(var(--sangria) + 40mm);
+  padding-bottom: calc(var(--sangria) + 26mm);
+}
+.contracapa {
+  padding-top:    calc(var(--sangria) + 24mm);
+  padding-bottom: calc(var(--sangria) + 26mm);
+}
+
+/*
+  As pares são o verso de cada folha: a mesma argola, vista do outro lado.
+  Duas classes, portanto ganha isto ao `.folha` e ao `.capa` de cima.
+*/
+.folha.par {
+  padding-left:  calc(var(--sangria) + var(--lado) * var(--k));
+  padding-right: calc(var(--sangria) + var(--argolas) + var(--lado) * var(--k));
+}
+
+/*
+  O fundo deixa de estar na folha e passa a ser um elemento por baixo de tudo,
+  só para se poder virar nas pares. O `background-size: 100% 100%` é exacto e
+  não `cover`: o `fundo-grafica.jpg` já tem 216 × 303 mm a 300 DPI, medida a
+  medida. Também já não precisa da `--folga-fundo` — o rebordo branco da
+  fotografia foi cortado no `fundo.py` em vez de ser empurrado para fora.
+
+  E **não leva o véu do `--clarear`**: ele vem cozido na imagem, também do
+  `fundo.py`, que o lê daqui. Tinha de sair da CSS por causa da capa — lá o
+  pirata está dentro da mesma imagem, e um véu por cima do `.fundo` clareava-o
+  a ele também.
+*/
+.fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("fundo-grafica.jpg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.folha.par .fundo { transform: scaleX(-1); }
+.folha > *:not(.fundo) { position: relative; z-index: 1; }
+
+/*
+  A capa tem fundo próprio, com o pirata e a sombra já lá dentro.
+
+  Não é gosto: o `printToPDF` do Chrome bloqueia indefinidamente numa página
+  que tenha o fundo grande **e** uma segunda imagem, e a capa tinha as duas. A
+  nota com as medições está no `gerador/fundo.py`.
+
+  A figura sai do HTML mas o **vão que ela ocupava tem de ficar**, senão o
+  título sobe 143 mm: a capa distribui-se por vãos explícitos e o `.capa-titulo`
+  desenha-se por cima da figura com um `margin-top` negativo. O `::before`
+  reserva exactamente a mesma caixa — 58 % da largura, na proporção do
+  `pirata-capa.png` — e o `fundo.py` desenha o pirata nessa mesma medida.
+*/
+.capa .fundo { background-image: url("fundo-capa.jpg"); }
+.capa-pirata::before {
+  content: "";
+  display: block;
+  width: 58%;
+  aspect-ratio: 723 / 1079;
+}
+
+/* a medida do texto encolhe com o resto, para a mancha ficar como estava */
+.nome { max-width: calc(105mm * var(--k)); }
+.en   { max-width: calc(118mm * var(--k)); }
+
+/* o verso da capa e a frente da contracapa: pergaminho e mais nada */
+.branca { padding: 0; }
+
+/*
+  A folha que vai ao lixo. Branca, sem fundo nenhum, com a palavra ao meio.
+  O cinzento é deliberado: em CMYK sai um cinzento composto e não um preto
+  chapado, o que deixa claro a quem estiver a montar que aquilo é uma marca de
+  produção e não conteúdo.
+*/
+.corte {
+  padding: 0;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+}
+.corte span {
+  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
+  font-size: 14pt;
+  letter-spacing: .38em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+}
+
+@media screen {
+  .folha { outline: .2mm dashed rgb(255 0 120 / .55); outline-offset: -3mm; }
+}
+"""
+
+BRANCA = '  <section class="folha branca"></section>'
+
+# ---------------------------------------------------------------------------
+#  A folha a deitar fora
+# ---------------------------------------------------------------------------
+#
+#  A gráfica não vende catorze páginas: o degrau é aos **dezasseis**. Em vez de
+#  se encomendar dezasseis e receber duas em branco de graça — que ficavam
+#  encadernadas e ninguém sabia porquê — encomendam-se dezasseis e uma das
+#  folhas vem com **«Cortar» ao meio, dos dois lados, em papel branco**.
+#
+#  Branca a sério, sem pergaminho: é para se ver de fora do livro que aquela
+#  folha não é da ementa, e para não se gastar tinta numa folha que vai ao lixo.
+#
+#  Fica em **último lugar do miolo**, logo antes da branca da contracapa: é o
+#  sítio onde menos incomoda se alguém se esquecer de a cortar, e cortá-la
+#  devolve exactamente a ementa de catorze páginas.
+CORTE = ('  <section class="folha corte"><span>Cortar</span></section>\n'
+         '  <section class="folha corte"><span>Cortar</span></section>')
+
+
+def vestir(sec, i):
+    """Põe a classe da paridade e mete o fundo por baixo do conteúdo.
+
+    A folha de corte não leva fundo: é branca de propósito."""
+    # a pergunta faz-se **antes** de a classe da paridade entrar, senão o
+    # `folha corte` deixa de casar e a folha branca vem com pergaminho
+    branca_de_corte = "folha corte" in sec
+    cls = "par" if i % 2 else "impar"
+    sec = sec.replace('<section class="folha', f'<section class="folha {cls}', 1)
+    if branca_de_corte:
+        return sec
+    fim = sec.index(">") + 1
+    return sec[:fim] + '\n    <div class="fundo" aria-hidden="true"></div>' + sec[fim:]
+
+
+GRAFICA = "--grafica" in sys.argv
+
+
+def documento(partes, extra=""):
+    return f"""<!doctype html>
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8">
 <title>Ementa da Taskuinha</title>
 <style>
 {fontes}
-{CSS}
+{CSS}{extra}
 </style>
 </head>
 <body>
-{chr(10).join(paginas)}
+{chr(10).join(partes)}
 </body>
 </html>
 """
-saida = os.path.join(os.path.dirname(D), "ementa-coluna-unica.html")
-open(saida, "w", encoding="utf-8").write(doc)
-print(f"escrito {saida} — {os.path.getsize(saida)//1024} KB, {len(paginas)} secções")
+
+
+def escrever(nome, texto, quantas):
+    caminho = os.path.join(os.path.dirname(D), nome)
+    open(caminho, "w", encoding="utf-8").write(texto)
+    print(f"escrito {caminho} — {os.path.getsize(caminho)//1024} KB, {quantas} secções")
+
+
+if GRAFICA:
+    # a figura vem no fundo; ver a nota da `.capa .fundo` na CSS_GRAFICA
+    capa = capa.replace('<img src="origem/pirata-capa.png" alt="">', "")
+    paginas = ([capa, BRANCA]
+               + [folha(bl, i + 2) for i, bl in enumerate(folhas)]
+               + CORTE.split("\n")
+               + [BRANCA, contra])
+    paginas = [vestir(sec, i) for i, sec in enumerate(paginas)]
+
+    if len(paginas) != 16:
+        raise SystemExit(f"{len(paginas)} páginas, e a gráfica só vende 16")
+
+    if len(paginas) % 2:
+        raise SystemExit(f"{len(paginas)} páginas: a impressão é frente e verso e o "
+                         "número tem de ser par, senão a última sai sozinha")
+
+    for f in ("fundo-grafica.jpg", "fundo-capa.jpg"):
+        caminho = os.path.join(os.path.dirname(D), f)
+        if not os.path.exists(caminho):
+            raise SystemExit(f"falta o {f} — correr primeiro o gerador/fundo.py")
+        if os.path.getmtime(caminho) < os.path.getmtime(os.path.join(
+                os.path.dirname(D), "origem", "fundo-ementa.png")):
+            raise SystemExit(f"o {f} é mais velho que o pergaminho de origem "
+                             "— voltar a correr o gerador/fundo.py")
+
+    # ------------------------------------------------------------------
+    #  Dois ficheiros, e é por obrigação do Chrome
+    # ------------------------------------------------------------------
+    #
+    #  O `Page.printToPDF` bloqueia indefinidamente quando o documento tem
+    #  **mais do que uma imagem grande** — e o limite é do documento inteiro,
+    #  não da página. Medido:
+    #
+    #      13 páginas de miolo, um fundo de 9 Mpx      imprime em 6 s
+    #      a capa sozinha, um fundo de 9 Mpx           imprime em 4 s
+    #      capa + uma página de miolo, dois fundos     pendura
+    #      tudo num só ficheiro de 18 Mpx (os dois
+    #        fundos empilhados e apanhados por
+    #        `background-position`)                    pendura
+    #
+    #  A capa tem fundo próprio porque o pirata vem cozido lá dentro, e por
+    #  isso não há maneira de o documento ter um fundo só. Separam-se: cada
+    #  ficheiro leva **uma** imagem, imprime-se cada um, e o `grafica.py` junta
+    #  os dois no mesmo `gs` que já corria para o CMYK — sem passo a mais e sem
+    #  segunda recodificação.
+    escrever("ementa-grafica-capa.html", documento(paginas[:1], CSS_GRAFICA), 1)
+    escrever("ementa-grafica-miolo.html", documento(paginas[1:], CSS_GRAFICA),
+             len(paginas) - 1)
+else:
+    paginas = [capa] + [folha(bl, i + 2) for i, bl in enumerate(folhas)] + [contra]
+    escrever("ementa-coluna-unica.html", documento(paginas), len(paginas))

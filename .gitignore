@@ -43,17 +43,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# imagens
-# O original da tabuleta tem 6000×6000 e 30 MB. O que vai para o site é a
-# tableta-escura.webp a 1800px, gerada dele — ver public/images/README.md.
-/public/images/tableta-escura.png
-# O mesmo com o rolo da ementa: 3000×3375 e 12,4 MB de origem, rolo-ementa.webp
-# a 1600px no site.
-/public/images/pregaminho-ementa.png
-
 # claude code
 # worktrees são cópias de trabalho; skills são symlinks para instalações
 # globais e ficariam quebrados noutra máquina.
 .claude/worktrees/
 .claude/skills/
 .claude/settings.local.json
+
+# Intermédios da ementa impressa: quase 40 MB entre todos, e regeneram-se
+# sempre iguais com o gerador/fundo.py e o gerador/gerar.mjs. Só o
+# ementa-grafica-cmyk.pdf, que é o que se envia, é que fica no repositório.
+ementa-impressa/fundo-grafica.png
+ementa-impressa/fundo-grafica.jpg
+ementa-impressa/fundo-capa.png
+ementa-impressa/fundo-capa.jpg
+ementa-impressa/ementa-grafica-capa.pdf
+ementa-impressa/ementa-grafica-miolo.pdf
+ementa-impressa/gerador/__pycache__/
