@@ -39,7 +39,7 @@ jobs:
       - run: npm ci
 
       - name: Vulnerabilidades nas dependências
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=moderate
 
       - name: Tipos
         run: npm run tipos
