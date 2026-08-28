@@ -6,6 +6,7 @@ import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 import { Tralha } from "@/components/decor/Tralha";
 import { Chegada } from "@/components/Chegada";
 import { Travessia } from "@/components/Travessia";
+import { Musica } from "@/components/Musica";
 import "../globals.css";
 
 /*
@@ -167,6 +168,12 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         */}
         <Travessia />
         {children}
+        {/*
+          A música da casa e o botão para a calar. Aqui, no layout, pelo mesmo
+          motivo da <Chegada />: o layout persiste entre navegações de cliente,
+          por isso a faixa não reinicia quando se vai à ementa e se volta.
+        */}
+        <Musica texto={dic.som} />
         {/*
           Camada de tralha decorativa: aranha e rede. Uma vez, aqui, depois
           de {children} — fixed inset-0, por isso a ordem no DOM não afecta
