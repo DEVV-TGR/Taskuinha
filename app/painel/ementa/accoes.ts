@@ -28,6 +28,24 @@ export type EstadoDaEmenta =
   for ver o `git log` daqui a um ano quer ler "3 preços, 1 prato novo" e não ter
   de abrir o diff para saber se vale a pena olhar.
 */
+
+/*
+  O resumo que o ecrã escreve vai para a primeira linha da mensagem do commit, e
+  por isso passa por aqui primeiro.
+
+  Não é defesa contra injecção — o resumo viaja dentro de um corpo JSON para a
+  API do GitHub, e não há aspas para escapar. É contra as duas maneiras banais de
+  estragar um histórico: uma mudança de linha, que parte o assunto do commit ao
+  meio e empurra o resto para o corpo; e um texto sem fim, colado de outro sítio
+  sem querer, que faz um `git log --oneline` ilegível para sempre.
+
+  Cinquenta é o comprimento clássico de um assunto de commit; cem dá folga a quem
+  escreve em português sem transformar a linha num parágrafo.
+*/
+function primeiraLinha(texto: string): string {
+  const limpo = texto.split(/[\r\n]/)[0].trim();
+  return limpo.length > 100 ? `${limpo.slice(0, 99)}…` : limpo;
+}
 export async function publicarEmenta(
   _estado: EstadoDaEmenta,
   dados: FormData,
@@ -35,7 +53,7 @@ export async function publicarEmenta(
   const { email } = await exigirSessaoNaAccao();
 
   const sha = String(dados.get("sha") ?? "");
-  const resumo = String(dados.get("resumo") ?? "").trim();
+  const resumo = primeiraLinha(String(dados.get("resumo") ?? ""));
   let ementa: unknown;
 
   try {

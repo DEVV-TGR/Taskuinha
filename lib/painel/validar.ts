@@ -14,6 +14,19 @@ import type { CategoriaDeDados, PratoDeDados } from "@/lib/menu";
   painel a escrevê-los, essa rede desapareceu — e o que a substitui é isto,
   mais o `next build`, que continua a correr sobre o ficheiro já gravado.
 
+  ## Os comprimentos
+
+  Cada campo tem um tecto, e nenhum deles é apertado: os maiores que a ementa
+  tem hoje são um nome de 34 caracteres, uma descrição de 65 e uma introdução de
+  100 — os limites estão três a quatro vezes acima disso, e ninguém que esteja a
+  escrever uma ementa a sério lhes chega.
+
+  Não são contra quem escreve, são contra o acidente: um texto colado de outro
+  sítio por engano entra num campo, é gravado, é commitado, e passa a ter de ser
+  corrigido à mão no repositório. E são a única coisa que impede um ficheiro de
+  dados de crescer sem limite nenhum — o `data/ementa.json` vai inteiro para o
+  build de cada uma das oito páginas.
+
   As duas redes apanham coisas diferentes e são as duas precisas. Esta corre
   **antes** do commit e recusa; o build corre depois e, se alguma coisa lhe
   escapar na mesma, a Vercel mantém o deploy anterior no ar — o site não cai,
@@ -28,6 +41,19 @@ import type { CategoriaDeDados, PratoDeDados } from "@/lib/menu";
 */
 
 export type Problema = string;
+
+/*
+  Os tectos, num sítio só para se poderem ler de uma vez. Ver o comentário do
+  topo: são folga sobre o que existe, não um espartilho.
+*/
+const LIMITES = {
+  nome: 120,
+  descricao: 400,
+  nota: 120,
+  titulo: 80,
+  intro: 400,
+  ligacao: 300,
+} as const;
 
 /*
   As categorias são as nove que existem e mais nenhuma.
@@ -68,7 +94,16 @@ export function identificadorLivre(nome: string, ocupados: Set<string>): string 
   }
 }
 
-function eTexto(valor: unknown): valor is Texto {
+/*
+  Um `Texto` é o mesmo campo nas quatro línguas, e o português é obrigatório —
+  é a língua a partir da qual as outras são escritas, e é a que o site serve a
+  quem chega sem prefixo de língua.
+
+  O limite aplica-se a **cada** língua e não à soma: um nome francês mais
+  comprido do que o português é normal, e somar os quatro dava um tecto que
+  dependia de quantas traduções já existem.
+*/
+function eTexto(valor: unknown, maximo: number): valor is Texto {
   if (typeof valor !== "object" || valor === null) return false;
   const registo = valor as Record<string, unknown>;
 
@@ -76,7 +111,9 @@ function eTexto(valor: unknown): valor is Texto {
     return false;
   }
   return locales.every(
-    (l) => registo[l] === undefined || typeof registo[l] === "string",
+    (l) =>
+      registo[l] === undefined ||
+      (typeof registo[l] === "string" && (registo[l] as string).length <= maximo),
   );
 }
 
@@ -117,6 +154,10 @@ function validarPrato(
 
   if (typeof nome !== "string" || nome.trim() === "") {
     problemas.push(`${onde}: um prato tem de ter nome.`);
+  } else if (nome.length > LIMITES.nome) {
+    problemas.push(
+      `${onde}: o nome não pode passar dos ${LIMITES.nome} caracteres.`,
+    );
   }
 
   if (!precoValido(preco)) {
@@ -125,11 +166,17 @@ function validarPrato(
     );
   }
 
-  if (descricao !== undefined && !eTexto(descricao)) {
-    problemas.push(`${onde}: a descrição tem de ter, pelo menos, português.`);
+  if (descricao !== undefined && !eTexto(descricao, LIMITES.descricao)) {
+    problemas.push(
+      `${onde}: a descrição tem de ter, pelo menos, português, e não pode ` +
+        `passar dos ${LIMITES.descricao} caracteres.`,
+    );
   }
-  if (nota !== undefined && !eTexto(nota)) {
-    problemas.push(`${onde}: a nota tem de ter, pelo menos, português.`);
+  if (nota !== undefined && !eTexto(nota, LIMITES.nota)) {
+    problemas.push(
+      `${onde}: a nota tem de ter, pelo menos, português, e não pode passar ` +
+        `dos ${LIMITES.nota} caracteres.`,
+    );
   }
 }
 
@@ -191,8 +238,16 @@ export function validarEmenta(dados: unknown): Problema[] {
       categoriasVistas.add(id);
     }
 
-    if (!eTexto(titulo)) problemas.push(`${onde}: falta o título em português.`);
-    if (!eTexto(intro)) problemas.push(`${onde}: falta a introdução em português.`);
+    if (!eTexto(titulo, LIMITES.titulo)) {
+      problemas.push(
+        `${onde}: falta o título em português, ou passa dos ${LIMITES.titulo} caracteres.`,
+      );
+    }
+    if (!eTexto(intro, LIMITES.intro)) {
+      problemas.push(
+        `${onde}: falta a introdução em português, ou passa dos ${LIMITES.intro} caracteres.`,
+      );
+    }
 
     if (!Array.isArray(pratos)) {
       problemas.push(`${onde}: não tem lista de pratos.`);
@@ -269,12 +324,36 @@ export function validarCasa(dados: unknown): Problema[] {
   const lig = links as Record<string, unknown> | undefined;
   for (const campo of ["instagram", "facebook", "tripadvisor", "restaurantGuru"]) {
     const valor = lig?.[campo];
-    if (typeof valor !== "string" || !valor.startsWith("https://")) {
-      problemas.push(`A ligação do ${campo} tem de começar por https://`);
+    if (typeof valor !== "string" || !ligacaoValida(valor)) {
+      problemas.push(
+        `A ligação do ${campo} tem de ser um endereço https:// completo, ` +
+          `com menos de ${LIMITES.ligacao} caracteres.`,
+      );
     }
   }
 
   return problemas;
+}
+
+/*
+  Um endereço destes acaba num `href` da página inicial e do rodapé.
+
+  O `startsWith("https://")` sozinho não chegava: `https://` é, ele próprio, uma
+  string que começa por `https://`, e ia parar ao atributo tal e qual. O `new
+  URL` é o que separa "começa pelas letras certas" de "é mesmo um endereço".
+
+  O protocolo confere-se depois de construído, e não pelo prefixo, porque é o
+  `URL` que resolve os casos que um prefixo não vê — maiúsculas, espaços à
+  frente, e o `javascript:` que é a razão de isto se verificar de todo.
+*/
+function ligacaoValida(valor: string): boolean {
+  if (valor.length > LIMITES.ligacao) return false;
+
+  try {
+    return new URL(valor).protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 /*
