@@ -1,8 +1,13 @@
 # Ementa impressa
 
-**Doze páginas A4, uma coluna.** O que vai para a gráfica é o
-`ementa-coluna-unica.pdf`, e ele **gera-se com três comandos** — não se edita à
-mão.
+**Catorze páginas, uma coluna, A4 depois de cortadas.** O que vai para a
+gráfica é o `ementa-coluna-unica.pdf`, e ele **gera-se com quatro comandos** —
+não se edita à mão.
+
+Sai em **216 x 303 mm**: o A4 mais 3 mm de sangria de cada lado, que a
+guilhotina come. Em **CMYK**, com o perfil que a gráfica nomeia. Quem o abrir no
+Preview vê uma folha maior que o A4, com o desenho aparentemente encostado às
+bordas — é o ficheiro por cortar, e é assim que tem de ser.
 
 ```bash
 python3 ementa-impressa/gerador/montar.py          # escreve o HTML
@@ -11,28 +16,55 @@ node ementa-impressa/gerador/gerar.mjs \
   "file://$PWD/ementa-impressa/ementa-coluna-unica.html" \
   ementa-impressa/ementa-coluna-unica.pdf          # escreve o PDF
 
-gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.7 \
+# 3 — RGB para CMYK, e as caixas de corte
+ICC="/Library/Application Support/Adobe/Color/Profiles/Recommended/CoatedFOGRA39.icc"
+gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
+   --permit-file-read="$ICC" \
+   -dCompatibilityLevel=1.4 \
+   -sColorConversionStrategy=CMYK -sProcessColorModel=DeviceCMYK \
+   -sOutputICCProfile="$ICC" \
+   -dAutoRotatePages=/None \
+   -dDownsampleColorImages=false -dAutoFilterColorImages=false \
+   -dColorImageFilter=/FlateEncode \
+   -sOutputFile=/tmp/cmyk.pdf ementa-impressa/ementa-coluna-unica.pdf
+python3 ementa-impressa/gerador/caixas.py \
+   /tmp/cmyk.pdf ementa-impressa/ementa-coluna-unica.pdf
+
+# 4 — a cópia leve do site, já cortada em A4
+python3 ementa-impressa/gerador/caixas.py /tmp/rgb.pdf /tmp/rgb-caixas.pdf
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.7 -dUseTrimBox=true \
    -dPDFSETTINGS=/ebook -dDownsampleColorImages=true \
    -dColorImageResolution=144 -dNOPAUSE -dBATCH -dQUIET \
-   -sOutputFile=public/ementa-taskuinha.pdf \
-   ementa-impressa/ementa-coluna-unica.pdf          # escreve a cópia do site
+   -sOutputFile=public/ementa-taskuinha.pdf /tmp/rgb-caixas.pdf
 ```
 
-## O terceiro comando, e porque é que ele existe
+> O comando 2 escreve um PDF em RGB e com sangria — guarde-se uma cópia em
+> `/tmp/rgb.pdf` antes do comando 3, que é dela que sai a do site.
+
+## O `-dSAFER` e o perfil ICC
+
+O comando 3 leva `--permit-file-read` com o caminho do perfil. Sem isso o
+Ghostscript corre os catorze páginas todas e **rebenta no fim** com
+`Permission denied`, deixando lá um ficheiro do tamanho certo e por acabar. O
+`-dSAFER` não deixa ler nada fora da pasta de trabalho, e o perfil está na
+biblioteca da Adobe.
+
+## O quarto comando, e porque é que ele existe
 
 O PDF da gráfica pesa **19 MB** — o pergaminho está a 300 DPI, como tem de
 estar para imprimir. Mas o site tem um botão **«Levar a ementa»** no fim da
 página, e servir 19 MB a quem está na praia com dados móveis não se faz.
 
-O Ghostscript volta a amostrar as imagens a 144 DPI e o mesmo PDF fica em
-**516 KB** — trinta e sete vezes mais leve, com as doze páginas, o texto
-carácter a carácter igual e o pergaminho a aguentar bem a olho. Não entra nada
-no `package.json`: o `gs` é uma ferramenta do sistema, como o Chrome do
-Puppeteer.
+O Ghostscript volta a amostrar as imagens a 144 DPI e **corta a sangria** — o
+`-dUseTrimBox` faz a folha voltar ao A4, que é o que um cliente espera
+descarregar. O mesmo PDF fica em **471 KB**, quarenta vezes mais leve, com as
+catorze páginas, o texto carácter a carácter igual e o pergaminho a aguentar
+bem a olho. Não entra nada no `package.json`: o `gs` é uma ferramenta do
+sistema, como o Chrome.
 
 **O `public/ementa-taskuinha.pdf` não se actualiza sozinho.** Se o dono mexer
 nos preços pelo painel, o site muda nesse instante e o PDF do botão fica para
-trás até alguém correr os três comandos. É a mesma armadilha que o `montar.py`
+trás até alguém correr os quatro comandos. É a mesma armadilha que o `montar.py`
 já apanha entre o site e a gráfica — só que esta ainda não tem quem a apanhe.
 
 ## O que está aqui
@@ -79,6 +111,7 @@ verdade sobre preços**, mesmo tendo lá números: são sobrepostos a cada gera�
 | `rever_en.py` | **as revisões do inglês, com a razão de cada uma**, e as perguntas por responder |
 | `fontes.css` | as quatro tipografias em base64 |
 | `qr.py` | **o QR code da contracapa**, codificado aqui e não por uma biblioteca |
+| `caixas.py` | escreve o `TrimBox` e o `BleedBox`, e refaz o xref |
 | `gerar.mjs` | gera o PDF pelo Chrome, por DevTools Protocol |
 | `foto.mjs` | fotografa uma página, para se poder olhar sem imprimir |
 
@@ -124,8 +157,12 @@ eram os do formato.
 
 ## A pasta `origem/`
 
-- **`fundo-ementa.png`** — o pergaminho, 2475 × 3500 px, que a 300 DPI dá
-  exactamente um A4. Esteve muito tempo só na máquina do Gonçalo.
+- **`fundo-ementa.png`** — o pergaminho como veio, 2475 × 3500 px. Esteve muito
+  tempo só na máquina do Gonçalo. **Já não é ele que o CSS usa**, desde que a
+  folha cresceu com a sangria.
+- **`fundo-ementa-sangria.png`** — o mesmo, reamostrado para 2600 × 3640 px.
+  É o que dá 303 DPI na folha de 216 × 303 mm. Ver acima porque é que uma
+  reamostragem serve aqui e não serviria noutro sítio.
 - **`pirata-capa.png`** — a figura da capa, 723 × 1079 px com transparência.
   Recortada do `public/images/Esqueleto_Qualidade.jpg`, que trazia o xadrez
   pintado nos pixéis em vez de canal alfa. O recorte é por cor: o fundo é
@@ -134,6 +171,12 @@ eram os do formato.
 - **`livro-antigo/`** — as sete fotografias do livro de ementas plastificado, de
   onde tudo foi transcrito. São a única forma de responder ao que fica em aberto
   no fim deste ficheiro.
+- **`product-guide.pdf`** — o **Guia de Construção da gráfica**, três páginas.
+  É ele que manda no ficheiro que se entrega: sangria, área de segurança,
+  cores, resolução, fontes e ordem das páginas. Estava numa pasta de
+  transferências de outro projecto, que é o mesmo que não estar em lado nenhum:
+  quem quisesse conferir uma medida tinha de ir pedi-lo. Fica aqui, ao lado do
+  que ele julga.
 
 **Não estão em `public/` de propósito**, e o `public/images/README.md` explica a
 regra: o que está em `public/` é servido ao visitante e o CSS não o optimiza.
@@ -192,18 +235,80 @@ pouco; a 3,0 mm sobra folga que se vê.
 > mesma. **Contar artigos não prova que nada foi cortado** — é preciso olhar
 > para a folha mais cheia com o `foto.mjs`.
 
-### O fundo transborda 1 mm
+### O fundo transborda 1 mm, **para lá da sangria**
 
-Com `cover` puro a folga saía em 0,05 mm — a fotografia e o A4 têm quase a mesma
-proporção — e cinco centésimos não sobrevivem ao arredondamento de quem desenha
-os píxeis: aparecia um fio branco na borda. O `--folga-fundo: 2mm` dá 1 mm de
-cada lado.
+Com `cover` puro a folga saía em 0,05 mm — a fotografia e a folha têm quase a
+mesma proporção — e cinco centésimos não sobrevivem ao arredondamento de quem
+desenha os píxeis: aparecia um fio branco na borda. O `--folga-fundo: 2mm` dá
+1 mm de cada lado.
 
-Não é sangria a sério. Para a gráfica, a página teria de passar a 216 × 303 mm.
+Isto é **outra coisa** que a sangria, e as duas convivem: a sangria são 3 mm de
+desenho para lá do corte, e esta folga é 1 mm para lá da própria sangria, contra
+o fio branco. O fio, se aparecesse, cairia agora a 4 mm do corte — bem dentro do
+que se deita fora.
+
+## O que a gráfica exige, e onde estamos
+
+O guia é o **`origem/product-guide.pdf`**, três páginas. Isto foi medido no
+`ementa-coluna-unica.pdf` a 26 de Agosto de 2026, com o `pdfinfo`, o `pdffonts`
+e o `pdfimages`:
+
+| O guia pede | Estado |
+|---|---|
+| PDF sem protecção por password | ✓ |
+| Páginas individuais, por ordem de leitura | ✓ catorze, sem *spreads* |
+| Fontes incorporadas ou em curvas | ✓ as quatro, em subset |
+| Área de segurança de 1 cm | ✓ a caixa mais apertada é o pé do miolo, a 17 mm da linha de corte |
+| 300 DPI ou superior | ✓ **303** — o fundo tem 2600 x 3640 px |
+| Sangria de 3 mm | ✓ folha de 216 x 303 mm, com `TrimBox` no A4 e `BleedBox` na folha inteira |
+| CMYK, FOGRA39 ou ISO Coated v2 ECI | ✓ **zero** objectos `DeviceRGB`; convertido com o `CoatedFOGRA39.icc` |
+
+O número de páginas comprado é o **máximo** que a gráfica imprime, e o ficheiro
+tem **catorze**. Comprar o escalão de **16** serve: imprime as catorze e fica-se
+por aí.
+
+### O fundo teve de crescer com a folha
+
+Com a sangria a folha passou a 216 x 303 mm, e o fundo desenha-se numa caixa de
+218 x 305 mm. Os 2475 x 3500 px de origem dariam aí **288 DPI**, abaixo do
+mínimo — por isso existe o **`origem/fundo-ementa-sangria.png`**, com
+2600 x 3640 px, que dá **303**.
+
+**É uma reamostragem, e diz-se que é.** Não há original maior no repositório: o
+`fundo-ementa.png` é o que veio do Canva. São 5% de aumento numa textura de
+pergaminho, que é o caso em que isso não se vê — não seria assim num texto ou
+numa linha fina. Se um dia aparecer o ficheiro grande, é trocar o caminho no
+`montar.py` e voltar a gerar.
+
+### O QR da contracapa, medido no ficheiro
+
+| | |
+|---|---|
+| destino lido do PDF | `https://www.taskuinhapirata.pt` |
+| lê a 300 e a 150 DPI | ✓ no PDF da gráfica **e** na cópia leve do site |
+| quadrado escuro | **26,7 mm** (34 mm contando a zona de silêncio) |
+| módulo | 0,92 mm |
+| contraste sobre o pergaminho | **11,6:1** — `#2D1F10` sobre `#EBDAB9` |
+| aresta mais próxima | 91,5 mm — muito para lá do 1 cm exigido |
+
+Lido com o detector de QR do próprio macOS, o mesmo que a câmara do telemóvel
+usa, a partir das páginas renderizadas — não da matriz em memória, que é onde
+um erro de codificação se esconde.
+
+**Duas coisas do #50 continuam por fazer.** O issue pede o quadrado com
+**≥ 30 mm** e o que está tem 26,7; e pede uma **legenda curta em português e
+inglês** por baixo, que não existe — o que lá está é a morada. Nenhuma das duas
+impede que leia, e as medições acima foram refeitas no ficheiro com sangria e
+já em CMYK: lê a 300 e a 150 DPI, na mesma.
+
+> O comentário do `montar.py`, na linha 689, ainda diz «lado do quadrado 28mm»
+> na mesma linha em que cita `qr_svg(SITE, 34)`. Fica para quem regenerar a
+> seguir: corrigi-lo sozinho desencontrava o HTML commitado do PDF, e é preciso
+> ter o Chrome for Testing e o `gs` para refazer os dois.
 
 ## Verificar antes de mandar imprimir
 
-1. **12 páginas**, A4.
+1. **14 páginas**, folha de 216 x 303 mm, `TrimBox` no A4.
 2. **155 artigos e as descrições inglesas todas** presentes.
 3. **Preços a bater certo** com o `data/ementa.json` — o gerador já pára se não
    baterem, nas duas direcções.
@@ -221,7 +326,6 @@ Não é sangria a sério. Para a gráfica, a página teria de passar a 216 × 30
   largura resolvia-se sem mexer no desenho.
 - **O `drop-shadow` da capa** obriga o Chrome a rasterizar a figura a 1623 px, o
   que engorda o PDF sem acrescentar detalhe.
-- **A sangria de 3 mm**, que a gráfica há-de pedir.
 - **A quebra de linha do aviso de alergias** deixa o «Quase» sozinho no fim da
   primeira linha.
 

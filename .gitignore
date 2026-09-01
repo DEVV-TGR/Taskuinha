@@ -57,3 +57,6 @@ next-env.d.ts
 .claude/worktrees/
 .claude/skills/
 .claude/settings.local.json
+
+# o import do qr.py pelo montar.py deixa cá isto
+__pycache__/

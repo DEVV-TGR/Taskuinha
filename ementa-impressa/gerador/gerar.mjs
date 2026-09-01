@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { setTimeout as esperar } from "node:timers/promises";
 
 /*
@@ -8,7 +10,7 @@ import { setTimeout as esperar } from "node:timers/promises";
 
   Sem dependências: o Node 26 traz WebSocket nativo, e o DevTools Protocol
   chega-se por aí. As definições são as do ementa-impressa/LEIA-ME.md —
-  A4, margens 0 (estão no próprio ficheiro) e fundos ligados, que é o que
+  216 x 303 mm, margens 0 (estão no próprio ficheiro) e fundos ligados, que é o que
   faz o papel sair em pergaminho em vez de branco.
 */
 
@@ -24,7 +26,9 @@ const chrome = spawn(CHROME, [
   "--disable-gpu",
   "--hide-scrollbars",
   "--force-color-profile=srgb",
-  "--user-data-dir=" + process.env.TMPDIR + "chrome-ementa",
+  "--user-data-dir=" + mkdtempSync(join(tmpdir(), "chrome-ementa-")),
+  "--no-first-run",
+  "--no-default-browser-check",
 ], { stdio: "ignore" });
 
 async function versao() {
@@ -73,17 +77,33 @@ await enviar("Runtime.evaluate", {
 }, sessionId);
 await esperar(500);
 
-const { data } = await enviar("Page.printToPDF", {
+/*
+  O PDF vem **por fluxo**, e não numa trama única.
+
+  Com `ReturnAsBase64` a resposta são vinte e tal megabytes de base64 numa só
+  mensagem de WebSocket, e o `WebSocket` nativo do Node fica lá — sem erro,
+  sem nada, com o processo a 0% e o ficheiro por escrever. Aos pedaços de
+  256 KB não há trama grande nenhuma.
+*/
+const { stream } = await enviar("Page.printToPDF", {
   printBackground: true,      // sem isto sai branco, sem pergaminho
-  paperWidth: 8.2677,         // A4
-  paperHeight: 11.6929,
+  paperWidth: 8.5039,         // 216mm — A4 mais 3mm de sangria de cada lado
+  paperHeight: 11.9291,       // 303mm
   marginTop: 0, marginBottom: 0, marginLeft: 0, marginRight: 0,
   preferCSSPageSize: true,
   displayHeaderFooter: false,
-  transferMode: "ReturnAsBase64",
+  transferMode: "ReturnAsStream",
 }, sessionId);
 
-writeFileSync(SAIDA, Buffer.from(data, "base64"));
+const pedacos = [];
+for (;;) {
+  const r = await enviar("IO.read", { handle: stream, size: 262144 }, sessionId);
+  if (r.data) pedacos.push(Buffer.from(r.data, r.base64Encoded ? "base64" : "utf8"));
+  if (r.eof) break;
+}
+await enviar("IO.close", { handle: stream }, sessionId);
+
+writeFileSync(SAIDA, Buffer.concat(pedacos));
 console.log("escrito:", SAIDA);
 
 ws.close();
