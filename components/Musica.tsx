@@ -7,27 +7,35 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 /*
-  A faixa da casa — "O pirata", com letra sobre Vila Chã.
+  A faixa da casa.
 
-  ## Porque é que é MP3 e não AAC
+  ## O formato
 
-  Esteve aqui um `.m4a` de 3,0 MB, metade do peso deste ficheiro, feito com o
-  `afconvert` do macOS. O browser recusou-o: `MEDIA_ERR_SRC_NOT_SUPPORTED`,
-  duração `NaN`, e isto **apesar** de o mesmo browser responder `probably` ao
+  AAC em ADTS cru — 98 kbps, 2,9 MB, três minutos e meio a repetir em ciclo.
+
+  Um aviso a quem passar por aqui e tiver a tentação de mexer: esteve neste
+  sítio um AAC dentro de um `.m4a`, feito com o `afconvert` do macOS, e o
+  browser recusou-o — `MEDIA_ERR_SRC_NOT_SUPPORTED`, duração `NaN` —, e isto
+  **apesar** de o mesmo browser responder `probably` ao
   `canPlayType("audio/mp4; codecs=\"mp4a.40.2\"")` e de o ficheiro estar
-  estruturalmente correcto — `ftyp` válido, codec `mp4a`, `esds` presente,
+  estruturalmente correcto: `ftyp` válido, codec `mp4a`, `esds` presente,
   `moov` à frente do `mdat`, e a descodificar sem queixas no próprio Mac.
+  Nunca se chegou à causa. Foi essa recusa que trouxe para cá, durante uns
+  tempos, um MP3 de 6,9 MB.
 
-  Não se chegou à causa, e não vale a pena: um formato que toca em todo o lado
-  há vinte e cinco anos ganha a um que poupa 3,9 MB e não toca. Se um dia
-  houver `ffmpeg` na máquina, um AAC feito por ele provavelmente resolve — mas
-  só se trocar depois de ouvir, não antes.
+  Este é outro caso: ADTS não tem contentor MP4 pelo meio, e o caminho de
+  descodificação no browser é outro. Mas a lição fica — trocar de ficheiro
+  **depois** de o ouvir no Chrome e no Safari, nunca antes.
 
-  Os 6,9 MB doem menos do que parece: o `preload="none"` faz com que não saia
-  do servidor um único byte enquanto ninguém tocar no site, e a partir daí o
-  browser vai buscando por pedaços em vez de esperar pelo ficheiro todo.
+  A extensão também não é decoração. O ficheiro chegou do download chamado
+  `.jpeg`, e com esse nome a Vercel servia-o como `image/jpeg` e o browser
+  recusava-o sem sequer tentar.
+
+  O peso não pesa: o `preload="none"` faz com que não saia do servidor um
+  único byte enquanto ninguém tocar no site, e a partir daí o browser vai
+  buscando por pedaços em vez de esperar pelo ficheiro todo.
 */
-const FICHEIRO = "/audio/o-pirata.mp3";
+const FICHEIRO = "/audio/musica.aac";
 
 /* Música de fundo, não concerto. A 1,0 tapava a conversa de quem está a ler a
    ementa em voz alta ao lado. */
