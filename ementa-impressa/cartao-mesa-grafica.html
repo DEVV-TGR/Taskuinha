@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8">
-<title>Ementa da Taskuinha</title>
+<title>Cartão de mesa da Taskuinha</title>
 <style>
 @font-face {
     font-family: "Tabuleta";
@@ -34,44 +34,35 @@
   }
 
 /*
-  A ementa impressa — dez folhas de conteúdo, uma coluna.
-
-  Refaz em HTML o desenho que vivia num documento do Canva, e que por isso não
-  se conseguia corrigir a partir daqui. A ordem dos artigos, o corte entre
-  folhas e os tamanhos de letra saem todos de medições feitas ao
-  `Ementa_Final.pdf`; os **preços** vêm do `data/ementa.json`, que é a mesma
-  fonte que serve o site — é isso que faz o papel deixar de se dessincronizar.
-
-  A capa e a contracapa são as folhas 1 e 12, por fazer.
+  O cartão de mesa. A tipografia é a da ementa e as medidas são as da capa
+  reduzidas — ver o `mesa.py`, que é de onde isto sai.
 */
 
-@page { size: A4; margin: 0; }
-
 :root {
-  --tinta:      #2b1d0e;   /* o texto */
-  --queimado:   #6b4517;   /* categorias e inglês */
-  --pergaminho: #d9c7a0;   /* a cor por baixo, se a imagem faltar */
-  --tinta-fraca: rgb(43 29 14 / 0.60);
-  --linha:       rgb(43 29 14 / 0.30);
+  --tinta:       #241708;
+  --queimado:    #4a2c0d;
+  --pergaminho:  #d9c7a0;
+  --tinta-fraca: rgb(36 23 8 / 0.88);
+  --linha:       rgb(36 23 8 / 0.55);
 
-  /* Medidas tiradas do Ementa_Final.pdf */
-  --margem-lado:  40mm;
-  --margem-cima:  20mm;
-  --margem-baixo: 17mm;
+  /*
+    **Mais escuro que na ementa, e de propósito.** A ementa é uma página que se
+    pega e se lê de perto, e lá o cinzento fraco é elegância. Isto é um
+    autocolante colado num tampo, lido de pé, de relance e muitas vezes contra
+    o reflexo do vinil brilhante — e aí o mesmo cinzento é só letra que não se
+    vê. A tinta desceu de #2b1d0e para #241708, o queimado dos subtítulos de
+    #6b4517 para #4a2c0d, o pé de 60 % para 88 % de opacidade e os riscos de
+    30 % para 55 %.
 
-  --clarear: .12;         /* o véu branco sobre o fundo — só este número */
-  --folga-fundo: 2mm;     /* o fundo transborda 1mm de cada lado */
+    O véu branco por cima da fotografia **sobe** em vez de descer: clarear o
+    pergaminho afasta-o da tinta, e é contraste ganho do outro lado.
+  */
+  --clarear: .18;
 
-  --t-categoria: 18pt;
-  --t-nome:      13pt;
-  --t-preco:     12.5pt;
-  --t-en:        8.8pt;
-  --t-corrida:   9.5pt;
-  --t-cat-en:    9.5pt;   /* o rótulo inglês da categoria, à direita */
-
-  --traco: .26mm;         /* os fios horizontais, medidos no Ementa_Final */
-
-  --ar: 3.0mm;             /* o ar entre artigos — ver nota no fim */
+  --trim-l: 74.0mm;
+  --trim-a: 105.0mm;
+  --media-l: 78.0mm;
+  --media-a: 109.0mm;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,1364 +75,194 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.folha {
+/*
+  Três caixas, e a do meio é a que faz o trabalho:
+
+      .cartao   o lugar na folha — é só ele que sabe onde o cartão está
+      .pose     o cartão inteiro, e é a **única** que roda ou encolhe
+      .fundo    o pergaminho, e .miolo o que está escrito
+
+  O fundo tem de estar **dentro** da caixa que roda. Esteve fora, ao lado do
+  miolo, enquanto o cartão ficava sempre ao alto; com os oito da folha
+  A4 deitados, um fundo por rodar deixava o pergaminho ao alto por baixo de um
+  texto deitado — e como a moldura é quase simétrica, isso vê-se pelos
+  ornamentos dos cantos e não pelo resto.
+
+  O que muda entre as duas folhas é a `--pose` desta caixa, e mais nada. O
+  desenho lá dentro é o mesmo objecto nos dois ficheiros.
+*/
+.cartao {
   position: relative;
-  width: 210mm;
-  height: 297mm;
-  padding: var(--margem-cima) var(--margem-lado) var(--margem-baixo);
+  overflow: hidden;
   background-color: var(--pergaminho);
-  /*
-    Duas camadas: um véu branco por cima da fotografia, e a fotografia.
-    O véu clareia o pergaminho sem tocar no ficheiro de origem — e fica por
-    baixo do texto, que continua a ser desenhado à cor cheia.
-  */
+}
+
+.pose {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  transform: var(--pose, none);
+}
+
+.fundo {
+  position: absolute;
+  inset: 0;
+  /* o véu branco por cima da fotografia, como na ementa */
   background-image:
     linear-gradient(rgba(255,255,255,var(--clarear)), rgba(255,255,255,var(--clarear))),
-    url("origem/fundo-ementa.png");
-  /*
-    A imagem transborda a página em 1mm de cada lado.
-
-    Com `cover` puro a folga saía em 0,05mm — a fotografia e o A4 têm quase a
-    mesma proporção (0,70714 contra 0,70667) — e cinco centésimos não sobrevivem
-    ao arredondamento de quem desenha os píxeis: aparecia um fio branco na borda.
-  */
-  background-size:
-    calc(100% + var(--folga-fundo)) calc(100% + var(--folga-fundo)),
-    calc(100% + var(--folga-fundo)) calc(100% + var(--folga-fundo));
+    url("cartao-mesa-fundo.jpg");
+  background-repeat: no-repeat;
   background-position: center, center;
-  overflow: hidden;
+}
+
+.miolo {
+  position: absolute;
+  width: var(--trim-l);
+  height: var(--trim-a);
+  padding: 10mm 6mm 9mm;
   display: flex;
   flex-direction: column;
-  break-after: page;
-  page-break-after: always;
-}
-.folha:last-child { break-after: auto; page-break-after: auto; }
-
-/* no ecrã, folhas soltas com sombra; na impressão, nada disto */
-@media screen {
-  .folha { margin: 12mm auto; box-shadow: 0 2mm 8mm rgba(0,0,0,.45); }
-}
-
-/* ---------- cabeçalho corrido ---------- */
-
-.corrida {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--t-corrida);
-  line-height: 1;
-  color: var(--queimado);
-  letter-spacing: .02em;
-  padding-bottom: 2.4mm;
-  border-bottom: var(--traco) solid var(--queimado);
-  margin-bottom: 6mm;
-  flex: none;
-}
-
-/*
-  O corpo da folha — tudo menos o cabeçalho corrido.
-
-  Encosta ao topo, e é deliberado. Chegou a centrar-se na altura, para as folhas
-  mais leves não ficarem com um vazio em baixo — mas empurrava tudo para o meio
-  da página e lia-se pior. Uma ementa lê-se de cima para baixo: o primeiro prato
-  tem de estar onde o olho começa, e o ar que sobra fica no fim.
-*/
-.corpo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 0;
-}
-
-/* ---------- categorias ---------- */
-
-.categoria {
-  font-size: var(--t-categoria);
-  font-weight: 400;
-  line-height: 1.1;
-  color: var(--queimado);
-  margin-top: 8mm;
-  padding-bottom: 2.2mm;
-  border-bottom: var(--traco) solid var(--queimado);
-  margin-bottom: 3.4mm;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;   /* o rótulo inglês encosta à direita */
-  gap: 6mm;
-  flex: none;
-}
-/*
-  A primeira categoria da folha não leva ar por cima — já o tem do cabeçalho.
-
-  O selector aponta ao `.corpo` e não à `.folha`: quando o corpo passou a ser um
-  bloco próprio, a categoria deixou de ser filha directa da folha e esta regra
-  deixou de casar em silêncio. O resultado foi 8mm a mais no topo de cada folha,
-  que empurraram o texto todo para baixo.
-*/
-.corpo > .categoria:first-child { margin-top: 0; }
-
-/*
-  O rótulo inglês da categoria: 9,5 pt, itálico, encostado à direita — medido
-  no Ementa_Final, onde acaba sempre aos 170 mm, como os preços. Não é o mesmo
-  corpo das descrições dos pratos (8,8 pt), e por isso tem variável própria.
-*/
-.categoria .en {
-  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
-  font-size: var(--t-cat-en);
-  font-style: italic;
-  line-height: 1;
-  flex: none;
-}
-
-.sub {
-  font-size: calc(var(--t-nome) - .5pt);
-  font-weight: 400;
-  font-style: italic;
-  color: var(--queimado);
-  margin: 2.8mm 0 1.4mm;
-  flex: none;
-}
-
-/* ---------- artigos ---------- */
-
-.artigos { list-style: none; flex: none; }
-.artigos li { margin-bottom: var(--ar); }
-.artigos li:last-child { margin-bottom: 0; }
-
-.linha {
-  display: flex;
-  align-items: baseline;
-  width: 100%;
-}
-
-.nome {
-  font-size: var(--t-nome);
-  line-height: 1.15;
-  flex: none;
-  max-width: 105mm;
-}
-
-/* a nota do prato — só os Percebes a têm */
-.nota {
-  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
-  font-size: 7pt;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--queimado);
-  margin-left: 2.5mm;
-  flex: none;
-}
-
-/* o fio que liga o nome ao preço, como nas ementas de sempre */
-.pontos {
-  flex: 1 1 auto;
-  min-width: 4mm;
-  margin: 0 2mm;
-  border-bottom: .18mm dotted color-mix(in srgb, var(--queimado) 55%, transparent);
-  transform: translateY(-.9mm);
-}
-
-.preco {
-  font-size: var(--t-preco);
-  font-variant-numeric: tabular-nums;
-  flex: none;
-  white-space: nowrap;
-}
-
-.en {
-  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
-  font-size: var(--t-en);
-  font-style: italic;
-  line-height: 1.3;
-  color: var(--queimado);
-  margin-top: .5mm;
-  max-width: 118mm;
-}
-
-/* ---------- a capa ---------- */
-
-/*
-  Copiada do `ementa.html`, a folha por folha. Só muda a figura, que passa a ser
-  o recorte novo (`origem/pirata-capa.png`) em vez do que lá estava embebido.
-
-  O pirata vem em cima e ocupa o espaço que sobra; o título, o risco e o
-  «Ementa» ficam no meio; a morada assenta no pé, com filete a toda a largura.
-  O `justify-content: space-between` da folha é o que os separa.
-*/
-
-/*
-  A margem de baixo é 26mm e não os 14mm do `ementa.html`.
-
-  O `ementa.html` assentava em pergaminho liso; este fundo tem uma moldura
-  desenhada que ocupa **23,8mm em cima e 22,6mm em baixo** — medidos no
-  `origem/fundo-ementa.png`. Com 14mm, a morada caía dentro do ornamento e
-  praticamente não se lia.
-
-  Como a folha distribui com `space-between`, aumentar a margem de baixo sobe
-  a morada e, com ela, o bloco do título — sem mexer na centragem horizontal.
-*/
-.capa {
-  align-items: center;
-  justify-content: flex-start;
-  text-align: center;
-  padding: 40mm 18mm 26mm;
-}
-
-/*
-  Os três vãos da capa são números explícitos, e não sobras de um
-  `space-between`. Foi o que permitiu mexer nos três ao mesmo tempo sem que um
-  empurrasse o outro:
-
-      padding-top da capa   40mm   ← sobe ou desce a figura
-      .capa-titulo margin-top 4mm  ← afasta o título do pé do pirata
-      .capa-pe margin-top    10mm  ← aproxima a morada do resto
-
-  Enquanto a caixa da figura era `flex: 1`, subir a imagem obrigava a alargar o
-  vão de baixo, e os pedidos entravam em conflito uns com os outros.
-*/
-.capa-pirata {
-  flex: none;
-  display: flex;
+  /*
+    O bloco centra-se no que sobra, em vez de o pé ser empurrado para o fundo
+    com um `margin-top: auto`. Com o `auto`, a folga toda — vinte e tal
+    milímetros — caía num sítio só, entre as línguas e o endereço, e o cartão
+    ficava com um buraco a meio. Centrado, a mesma folga reparte-se pelas duas
+    pontas e não se vê.
+  */
   justify-content: center;
-  width: 100%;
+  align-items: center;
+  text-align: center;
 }
 
-.capa-pirata img {
-  width: 58%;
-  height: auto;
-  filter: drop-shadow(0 4mm 6mm rgb(43 29 14 / 0.34));
-}
-
-/*
-  O bloco do título sobe 8mm e passa a desenhar-se **por cima** da fotografia.
-
-  O `z-index` é o que decide: sem ele, a sobreposição punha o pé do pirata
-  em cima das letras. Assim a bota entra ligeiramente atrás do TASKUIИHA, que
-  é o efeito pedido.
-*/
-.capa-titulo {
-  position: relative;
-  z-index: 1;
-  margin-top: 4mm;
-  width: 100%;
-}
-
-.capa-nome {
+.mesa-nome {
   font-family: "Tabuleta", "Rye", Georgia, serif;
-  font-size: 40pt;
+  font-size: 17pt;
   line-height: 1;
   letter-spacing: 0.02em;
 }
-/* o N ao contrário — a assinatura do letreiro sobre a porta */
+/* o N ao contrário — a assinatura do letreiro sobre a porta, como na capa */
 .virado { display: inline-block; transform: scaleX(-1); }
 
-.capa-sub {
+.mesa-sub {
   font-family: "Maquina", "Special Elite", "Courier New", monospace;
-  font-size: 10pt;
+  font-size: 6pt;
   letter-spacing: 0.42em;
   text-indent: 0.42em;
   text-transform: uppercase;
   color: var(--queimado);
-  margin-top: 4mm;
+  margin-top: 2.5mm;
 }
 
-.capa-risco {
-  width: 42mm;
+.mesa-risco {
+  width: 22mm;
   height: 0;
   border-top: 0.3mm solid var(--linha);
-  margin: 7mm auto;
-}
-
-.capa-ementa {
-  font-family: "Pergaminho", "IM Fell English SC", Georgia, serif;
-  font-size: 30pt;
-  line-height: 1;
-}
-
-.capa-pe {
-  /*
-    Dois terços da largura da caixa — 116mm em vez de 174. É o filete que
-    separa o «Ementa» da morada; a toda a largura competia com o risco de 42mm
-    que está mais acima.
-
-    A capa alinha ao centro, por isso estreitar o bloco centra-o sozinho.
-  */
-  width: 66.667%;
-  margin-top: 10mm;
-  border-top: 0.3mm solid var(--linha);
-  padding-top: 3.5mm;
-  font-family: "Maquina", "Special Elite", "Courier New", monospace;
-  font-size: 7.5pt;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--tinta-fraca);
-}
-
-/* ---------- a contracapa ---------- */
-
-/*
-  O conteúdo é o do `ementa.html`, palavra a palavra. Duas diferenças, ambas
-  pedidas:
-
-  1. **Sem a caveira.** O `ementa.html` abre com um SVG de caveira; foi tirado.
-  2. **Uma letra só.** Lá dentro conviviam três famílias — IM Fell no título,
-     Alegreya no texto, Special Elite nos rótulos e no horário. Passa a ser
-     tudo **IM Fell English SC**, a do «Bom proveito».
-
-  A margem de baixo é 26mm e não os 14mm do original, pela mesma razão da capa:
-  a moldura desenhada neste fundo ocupa 22,6mm, e com 14 o pé caía lá dentro.
-*/
-
-.contracapa {
-  align-items: center;
-  text-align: center;
-  padding: 24mm 20mm 26mm;
-}
-
-.fim-miolo {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-/* a família de toda a contracapa — a do «Bom proveito» */
-.contracapa,
-.fim-titulo,
-.fim-lead,
-.fim-blocos,
-.fim-blocos h3,
-.horario dd,
-.fim-pe {
-  font-family: "Pergaminho", "IM Fell English SC", Georgia, serif;
-}
-
-.fim-titulo {
-  font-size: 22pt;
-  line-height: 1;
-  margin: 7mm 0 3mm;
-  font-weight: 400;
-}
-
-.fim-lead {
-  font-size: 10.5pt;
-  line-height: 1.5;
-  max-width: 105mm;
-  margin: 0 auto;
-}
-
-.fim-lead .en-nota {
-  font-style: italic;
-  color: var(--tinta-fraca);
-  display: block;
-  margin-top: 2mm;
-}
-
-.fim-blocos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9mm 12mm;
-  margin-top: 12mm;
-  width: 100%;
-  max-width: 140mm;
-  text-align: left;
-  font-size: 9.5pt;
-  line-height: 1.45;
-}
-.fim-blocos p { margin: 0; }
-
-.fim-blocos h3 {
-  font-size: 8.5pt;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--queimado);
-  margin: 0 0 2mm;
-  padding-bottom: 1.5mm;
-  border-bottom: 0.2mm solid var(--linha);
-}
-
-/* duas colunas: o dia à esquerda, as horas à direita — como no ementa.html */
-.horario {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 4mm;
-  margin: 0;
-}
-.horario dt { margin: 0; color: var(--tinta-fraca); }
-.horario dd {
-  margin: 0;
-  font-size: 9.5pt;
-  line-height: 1.45;
-  font-variant-numeric: tabular-nums;
+  margin: 5mm auto 0;
 }
 
 /*
-  ## O QR
-
-  Os vãos são números escolhidos, como os da capa — não sobras:
-
-      .fim-qr margin-top   11mm  ← afasta o quadrado dos dois blocos
-      lado do quadrado     28mm  ← no `qr_svg(SITE, 34)`, não aqui
-      morada margin-top     3mm
-
   O quadrado é **vector e sem fundo branco**: o pergaminho passa por baixo e os
   módulos são a tinta da folha, como o resto do texto. A zona de silêncio já
   vem dentro do SVG — não se acrescenta margem a fingir que é ela.
 */
+.mesa-qr { margin-top: 5.5mm; color: var(--tinta); }
+.mesa-qr-codigo { display: block; }
 
-.fim-qr {
-  margin-top: 11mm;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--tinta);
-}
-
-.fim-qr-codigo {
-  display: block;
-}
-
-.fim-qr-morada {
-  margin-top: 3mm;
+.mesa-linguas {
+  margin-top: 5mm;
   font-size: 8.5pt;
-  letter-spacing: 0.14em;
-  color: var(--tinta-fraca);
-}
-
-.fim-pe {
-  margin-top: auto;
-  padding-top: 5mm;
-  width: 66.667%;
-  border-top: 0.3mm solid var(--linha);
-  font-size: 8.5pt;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--tinta-fraca);
-}
-
-/* ---------- placeholder, se voltar a ser preciso ---------- */
-
-.porfazer { align-items: center; justify-content: center; }
-.porfazer .marca {
-  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
-  font-size: 11pt;
-  letter-spacing: .18em;
-  text-transform: uppercase;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
   color: var(--queimado);
-  opacity: .5;
 }
 
+.mesa-pe {
+  margin-top: 6mm;
+  width: 72%;
+  border-top: 0.3mm solid var(--linha);
+  padding-top: 2.5mm;
+  font-family: "Maquina", "Special Elite", "Courier New", monospace;
+  font-size: 5.5pt;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  color: var(--tinta-fraca);
+}
+
+/* ---------- a folha da gráfica: um cartão ---------- */
+
+@page { size: 221.10pt 308.98pt; margin: 0; }
+
 /*
-  ## O ar entre artigos
+  O cartão mede a folha, e o fundo mede o cartão. Nada transborda.
 
-  O `--ar` é o único número desta folha que foi escolhido e não medido: a folha
-  mais cheia tem **18** artigos — a do Bar, desde que o Baileys entrou — e este
-  valor é o que a faz fechar **acima da moldura desenhada no fundo**, que começa
-  aos 274,4 mm.
-
-  Esteve nos 4,1 mm enquanto a folha mais cheia tinha 17. Com 18 a última linha
-  ia parar aos ~281 mm, por cima do ornamento. A 3,4 mm ficava a 3 mm dele, que
-  é pouco; a 3,0 mm sobra folga que se vê.
-
-  **Atenção ao que a verificação não apanha:** o `overflow: hidden` corta
-  *pixéis*, mas o texto continua no stream do PDF e a extracção encontra-o na
-  mesma. Contar artigos **não prova** que nada foi cortado — é preciso olhar
-  para a folha mais cheia, com o `foto.mjs`.
-
-  Se um dia se acrescentarem ou tirarem pratos, é este número que deixa de
-  servir. Conta-se as páginas depois de gerar: **têm de ser doze**.
+  **Esteve a transbordar**, para tapar a fresta branca que o Chrome deixa numa
+  aresta ao arredondar a página, e foi pior: ele apara o conteúdo na caixa da
+  CSS antes de arredondar a folha, portanto a fresta ficava na mesma — e o que
+  passava da borda ia parar a uma **segunda página**. A fresta resolve-se na
+  TrimBox, e a explicação está no `trim_alinhada()`.
 */
-
-/* ---------- a folha da gráfica ---------- */
-
-@page { size: 216mm 303mm; margin: 0; }
-
-:root {
-  --sangria: 3mm;
-  --argolas: 10mm;
-  --k: 0.952381;       /* 200/210: o que sobra da largura depois das argolas */
+.cartao {
+  width: var(--media-l);
+  height: var(--media-a);
 }
 
-.folha {
-  width: 216mm;
-  height: 303mm;
-  --lado: var(--margem-lado);
-  padding-top:    calc(var(--sangria) + var(--margem-cima));
-  padding-bottom: calc(var(--sangria) + var(--margem-baixo));
-  padding-left:   calc(var(--sangria) + var(--argolas) + var(--lado) * var(--k));
-  padding-right:  calc(var(--sangria) + var(--lado) * var(--k));
-  background-image: none;              /* o fundo passa a ser um elemento */
-}
-
-.capa { --lado: 18mm; }
-.contracapa { --lado: 20mm; }
-
-.capa {
-  padding-top:    calc(var(--sangria) + 40mm);
-  padding-bottom: calc(var(--sangria) + 26mm);
-}
-.contracapa {
-  padding-top:    calc(var(--sangria) + 24mm);
-  padding-bottom: calc(var(--sangria) + 26mm);
+/* a caixa que roda é, aqui, a folha inteira — e não roda nem encolhe */
+.pose {
+  width: var(--media-l);
+  height: var(--media-a);
 }
 
 /*
-  As pares são o verso de cada folha: a mesma argola, vista do outro lado.
-  Duas classes, portanto ganha isto ao `.folha` e ao `.capa` de cima.
-*/
-.folha.par {
-  padding-left:  calc(var(--sangria) + var(--lado) * var(--k));
-  padding-right: calc(var(--sangria) + var(--argolas) + var(--lado) * var(--k));
-}
+  O fundo **cola-se à folha impressa**, e não à caixa do cartão.
 
-/*
-  O fundo deixa de estar na folha e passa a ser um elemento por baixo de tudo,
-  só para se poder virar nas pares. O `background-size: 100% 100%` é exacto e
-  não `cover`: o `fundo-grafica.jpg` já tem 216 × 303 mm a 300 DPI, medida a
-  medida. Também já não precisa da `--folga-fundo` — o rebordo branco da
-  fotografia foi cortado no `fundo.py` em vez de ser empurrado para fora.
+  O Chrome não desenha o cartão do tamanho que a CSS pede: numa folha de
+  105,18 mm, um `.cartao` de 105 mm sai com **104,60** — quatro décimas a menos,
+  e nem sempre repartidas pelas duas pontas. Fica papel por pintar numa aresta,
+  e num autocolante sem sangria isso é uma linha branca no produto.
 
-  E **não leva o véu do `--clarear`**: ele vem cozido na imagem, também do
-  `fundo.py`, que o lê daqui. Tinha de sair da CSS por causa da capa — lá o
-  pirata está dentro da mesma imagem, e um véu por cima do `.fundo` clareava-o
-  a ele também.
+  Com `position: fixed` o fundo passa a medir-se pela página e não pelo cartão,
+  e o milímetro a mais de cada lado garante que a cobre inteira, dê o Chrome a
+  medida que der. **Fixed e não absolute**: um elemento fixo não empurra o
+  fluxo, e por isso o que passa da borda não gera uma segunda página — que foi
+  o que aconteceu quando isto se tentou com margens negativas.
+
+  O `.miolo` não é tocado: continua na caixa do cartão, que é onde as medidas do
+  desenho fazem sentido.
 */
 .fundo {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image: url("fundo-grafica.jpg");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-.folha.par .fundo { transform: scaleX(-1); }
-.folha > *:not(.fundo) { position: relative; z-index: 1; }
-
-/*
-  A capa tem fundo próprio, com o pirata e a sombra já lá dentro.
-
-  Não é gosto: o `printToPDF` do Chrome bloqueia indefinidamente numa página
-  que tenha o fundo grande **e** uma segunda imagem, e a capa tinha as duas. A
-  nota com as medições está no `gerador/fundo.py`.
-
-  A figura sai do HTML mas o **vão que ela ocupava tem de ficar**, senão o
-  título sobe 143 mm: a capa distribui-se por vãos explícitos e o `.capa-titulo`
-  desenha-se por cima da figura com um `margin-top` negativo. O `::before`
-  reserva exactamente a mesma caixa — 58 % da largura, na proporção do
-  `pirata-capa.png` — e o `fundo.py` desenha o pirata nessa mesma medida.
-*/
-.capa .fundo { background-image: url("fundo-capa.jpg"); }
-.capa-pirata::before {
-  content: "";
-  display: block;
-  width: 58%;
-  aspect-ratio: 723 / 1079;
+  position: fixed;
+  top: -1mm;
+  left: -1mm;
+  right: -1mm;
+  bottom: -1mm;
+  background-size: 100% 100%, 100% 100%;
 }
 
-/* a medida do texto encolhe com o resto, para a mancha ficar como estava */
-.nome { max-width: calc(105mm * var(--k)); }
-.en   { max-width: calc(118mm * var(--k)); }
-
-/* o verso da capa e a frente da contracapa: pergaminho e mais nada */
-.branca { padding: 0; }
-
-/*
-  A folha que vai ao lixo. Branca, sem fundo nenhum, com a palavra ao meio.
-  O cinzento é deliberado: em CMYK sai um cinzento composto e não um preto
-  chapado, o que deixa claro a quem estiver a montar que aquilo é uma marca de
-  produção e não conteúdo.
-*/
-.corte {
-  padding: 0;
-  background: #fff;
-  align-items: center;
-  justify-content: center;
-}
-.corte span {
-  font-family: "Corpo", "Alegreya Sans", system-ui, sans-serif;
-  font-size: 14pt;
-  letter-spacing: .38em;
-  text-transform: uppercase;
-  color: #8a8a8a;
-}
+/* e o miolo é a área de corte, 2.0mm para dentro de cada lado */
+.miolo { top: 2.0mm; left: 2.0mm; }
 
 @media screen {
-  .folha { outline: .2mm dashed rgb(255 0 120 / .55); outline-offset: -3mm; }
+  .cartao { margin: 12mm auto; box-shadow: 0 2mm 8mm rgba(0,0,0,.45); }
 }
 
 </style>
 </head>
 <body>
-  <section class="folha par branca">
-    <div class="fundo" aria-hidden="true"></div></section>
-  <section class="folha impar">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Entradas</span><span class="en">Appetizers</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Tábua de presunto e queijo</span><span class="pontos"></span><span class="preco">13,50</span></span>
-        <p class="en">Cured ham, aged cheese, olives and bread</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cesto de entradas</span><span class="pontos"></span><span class="preco">4,90</span></span>
-        <p class="en">Three pâtés and a small cheese — bread not included</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Tremoços</span><span class="pontos"></span><span class="preco">1,20</span></span>
-        <p class="en">Lupin beans</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Amendoins sem casca</span><span class="pontos"></span><span class="preco">1,20</span></span>
-        <p class="en">Shelled peanuts</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Azeitonas</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Olives</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Queijinhos</span><span class="pontos"></span><span class="preco">1,90</span></span>
-        <p class="en">Small cheeses</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Patê</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Pâté</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pão simples</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Bread</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pão com manteiga</span><span class="pontos"></span><span class="preco">1,10</span></span>
-        <p class="en">Bread and butter</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pão com chouriço</span><span class="pontos"></span><span class="preco">5,20</span></span>
-        <p class="en">Bread with chorizo</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Chouriço assado</span><span class="pontos"></span><span class="preco">5,40</span></span>
-        <p class="en">Flame-grilled chorizo on a terracotta roasting dish</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Alheira</span><span class="pontos"></span><span class="preco">5,20</span></span>
-        <p class="en">Bread and game meat sausage</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Amêijoa à pirata</span><span class="pontos"></span><span class="preco">16,90</span></span>
-        <p class="en">“Pirate” clams</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Torrada de lapas</span><span class="pontos"></span><span class="preco">11,90</span></span>
-        <p class="en">Limpets with garlic and coriander on toast</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha par">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Entradas</span><span class="en">Appetizers</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Percebes</span><span class="nota">Época</span><span class="pontos"></span><span class="preco">10,50</span></span>
-        <p class="en">Goose barnacles — only when the sea allows</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Navalheira</span><span class="pontos"></span><span class="preco">4,90</span></span>
-        <p class="en">Velvet crab</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Camarão</span><span class="pontos"></span><span class="preco">9,00</span></span>
-        <p class="en">Shrimp (boiled, served warm with coarse salt)</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Snack</span><span class="en">Hot dishes</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Francesinha</span><span class="pontos"></span><span class="preco">13,40</span></span>
-        <p class="en">“Francesinha” sandwich (made with thick slices of white loaf bread, steak, sausage, smoked sausage, ham and cheese)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Meia francesinha</span><span class="pontos"></span><span class="preco">8,90</span></span>
-        <p class="en">Half francesinha</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Francesinha com ovo e batata frita</span><span class="pontos"></span><span class="preco">13,90</span></span>
-        <p class="en">Francesinha with fried egg and chips</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Bacalhau à Brás</span><span class="pontos"></span><span class="preco">12,20</span></span>
-        <p class="en">Shredded salt cod, straw potatoes, egg and black olives</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Bife na pedra</span><span class="pontos"></span><span class="preco">26,90</span></span>
-        <p class="en">Steak served on a sizzling hot stone</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Prego no prato</span><span class="pontos"></span><span class="preco">11,90</span></span>
-        <p class="en">Beef steak with fried egg and French fries (USA) / potato chips (UK)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Lulas ao alho com batata frita</span><span class="pontos"></span><span class="preco">12,40</span></span>
-        <p class="en">Garlic squid, grilled to order, with French fries (USA) / potato chips (UK)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Alheira com ovo e batata frita</span><span class="pontos"></span><span class="preco">8,50</span></span>
-        <p class="en">Game meat sausage with fried egg and French fries (USA) / potato chips (UK)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Salsicha com ovo e batata frita</span><span class="pontos"></span><span class="preco">6,90</span></span>
-        <p class="en">Sausage with fried egg and French fries (USA) / potato chips (UK)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pataniscas</span><span class="pontos"></span><span class="preco">5,20</span></span>
-        <p class="en">Salt cod fritters, made to order</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Moelas</span><span class="pontos"></span><span class="preco">5,20</span></span>
-        <p class="en">Chicken gizzards, slow-stewed in red wine</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Salada Taskuinha</span><span class="pontos"></span><span class="preco">3,50</span></span>
-        <p class="en">House salad</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha impar">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Extras</span><span class="en">On the side</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Ovo estrelado</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Fried egg</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Prato de batata</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Side of French fries (USA) / potato chips (UK)</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Dose de batatas fritas</span><span class="pontos"></span><span class="preco">3,50</span></span>
-        <p class="en">Full portion of French fries (USA) / potato chips (UK)</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Sandes e tostas</span><span class="en">Sandwiches and toasties</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Bifana</span><span class="pontos"></span><span class="preco">3,20</span></span>
-        <p class="en">Thinly sliced pork sandwich, stewed the day before in its own marinade</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Prego no pão</span><span class="pontos"></span><span class="preco">6,50</span></span>
-        <p class="en">Beef steak sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sande P.O.</span><span class="pontos"></span><span class="preco">3,90</span></span>
-        <p class="en">Cured ham and fried egg sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sande de presunto</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Cured ham sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sandes de fiambre</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Ham sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sandes de queijo</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Cheese sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sandes mista</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Ham and cheese sandwich</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cachorro simples</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Hot dog</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cachorro especial</span><span class="pontos"></span><span class="preco">8,40</span></span>
-        <p class="en">Hot dog with cheese and hot sauce</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Tosta especial</span><span class="pontos"></span><span class="preco">7,40</span></span>
-        <p class="en">Special toastie</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Tosta mista</span><span class="pontos"></span><span class="preco">2,90</span></span>
-        <p class="en">Ham and cheese toastie</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha par">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Sandes e tostas</span><span class="en">Sandwiches and toasties</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Tosta de fiambre</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Ham toastie</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Tosta de queijo</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Cheese toastie</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Torrada</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Buttered toast</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Cafetaria</span><span class="en">Coffee</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Café</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Espresso</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Café duplo</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Double espresso</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Café pingado</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Espresso with a drop of milk</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Café com natas</span><span class="pontos"></span><span class="preco">1,40</span></span>
-        <p class="en">Espresso with cream</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Descafeinado</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Decaf</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Abatanado</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Long black coffee</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Carioca de café</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">A weaker, lighter espresso</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pingo</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Milk with a drop of coffee</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Galão</span><span class="pontos"></span><span class="preco">1,80</span></span>
-        <p class="en">Milky coffee, served in a tall glass</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Meia de leite</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Half coffee, half milk</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cappuccino</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Cappuccino</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Copo de leite</span><span class="pontos"></span><span class="preco">1,20</span></span>
-        <p class="en">Glass of milk</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha impar">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Cafetaria</span><span class="en">Coffee</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Cevada</span><span class="pontos"></span><span class="preco">0,90</span></span>
-        <p class="en">Barley coffee</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cevada dupla</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Double barley coffee</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Chá</span><span class="pontos"></span><span class="preco">1,30</span></span>
-        <p class="en">Tea</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Carioca de limão</span><span class="pontos"></span><span class="preco">1,00</span></span>
-        <p class="en">Hot water with lemon peel</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Carioca de limão duplo</span><span class="pontos"></span><span class="preco">1,50</span></span>
-        <p class="en">Double hot water with lemon peel</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Bebidas</span><span class="en">Water &amp; soft drinks</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Água 0,33 L</span><span class="pontos"></span><span class="preco">1,10</span></span>
-        <p class="en">Still water</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Água 1,5 L</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Still water</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Água das Pedras</span><span class="pontos"></span><span class="preco">1,40</span></span>
-        <p class="en">Sparkling water</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Água das Pedras limão</span><span class="pontos"></span><span class="preco">1,80</span></span>
-        <p class="en">Lemon sparkling water</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Água tónica</span><span class="pontos"></span><span class="preco">1,70</span></span>
-        <p class="en">Tonic water</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Pneu</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Sparkling water with fresh lemon</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Coca-Cola pressão</span><span class="pontos"></span><span class="preco">1,70</span></span>
-        <p class="en">Draught Coca-Cola</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Coca-Cola lata</span><span class="pontos"></span><span class="preco">2,10</span></span>
-        <p class="en">Coca-Cola, canned</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Coca-Cola zero</span><span class="pontos"></span><span class="preco">2,10</span></span>
-        <p class="en">No sugar Coca-Cola, canned</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Coca-Cola garrafa</span><span class="pontos"></span><span class="preco">2,30</span></span>
-        <p class="en">Coca-Cola, bottled</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha par">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Bebidas</span><span class="en">Water &amp; soft drinks</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Compal</span><span class="pontos"></span><span class="preco">1,90</span></span>
-        <p class="en">Fruit nectar</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Snappy</span><span class="pontos"></span><span class="preco">1,70</span></span>
-        <p class="en">Sparkling lime soda</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Fuze Tea</span><span class="pontos"></span><span class="preco">2,10</span></span>
-        <p class="en">Iced tea</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sumo de laranja natural</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Freshly squeezed orange juice</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Cerveja</span><span class="en">Beer</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Fino</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Small draught beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Fino preto</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Small draught stout beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca 0,5 L</span><span class="pontos"></span><span class="preco">4,50</span></span>
-        <p class="en">Half-litre mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca super</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Large beer mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca de alumínio</span><span class="pontos"></span><span class="preco">2,70</span></span>
-        <p class="en">Beer in a tin mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca de alumínio preta</span><span class="pontos"></span><span class="preco">2,70</span></span>
-        <p class="en">Stout beer in a tin mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca de alumínio tango</span><span class="pontos"></span><span class="preco">2,80</span></span>
-        <p class="en">Beer with redcurrant syrup in a tin mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca tango</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Beer with redcurrant syrup in a mug</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Tango</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Beer with redcurrant syrup</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Panaché</span><span class="pontos"></span><span class="preco">1,60</span></span>
-        <p class="en">Beer with lime soda</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Super Bock lata</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Super Bock beer, canned</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha impar">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Cerveja</span><span class="en">Beer</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Super Bock sem álcool</span><span class="pontos"></span><span class="preco">1,90</span></span>
-        <p class="en">Alcohol free Super Bock beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Super Bock sem álcool preta</span><span class="pontos"></span><span class="preco">1,90</span></span>
-        <p class="en">Alcohol free Super Bock stout beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Somersby</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Cider</p>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Vinho</span><span class="en">Wine</span></h2>
-    <h3 class="sub">A copo e em caneca · By the glass or in a jug</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Copo de vinho tinto</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Glass of red wine</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Copo de vinho branco</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Glass of white wine</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caneca de vinho pequena</span><span class="pontos"></span><span class="preco">3,80</span></span>
-        <p class="en">Wine jug, small</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Copo de sangria</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Glass of sangria</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Sangria, jarro</span><span class="pontos"></span><span class="preco">16,00</span></span>
-        <p class="en">Jug of sangria</p>
-      </li>
-    </ul>
-    <h3 class="sub">Maduros da Beira · Mature wines from the Beira region</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Montes Ermos</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Quinta Termos</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Quinta Termos Reserva</span><span class="pontos"></span><span class="preco">18,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Quinta Termos Seleção</span><span class="pontos"></span><span class="preco">21,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Termos Touriga Nacional</span><span class="pontos"></span><span class="preco">17,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Termos Vinhas Velhas Reserva</span><span class="pontos"></span><span class="preco">17,50</span></span>
-      </li>
-    </ul>
-    <h3 class="sub">Maduros do Douro · Mature wines from Douro</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Diálogo tinto</span><span class="pontos"></span><span class="preco">16,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Papa Figos</span><span class="pontos"></span><span class="preco">14,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Esteva tinto</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha par">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Vinho</span><span class="en">Wine</span></h2>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Meia Esteva tinto</span><span class="pontos"></span><span class="preco">6,50</span></span>
-        <p class="en">Half bottle</p>
-      </li>
-    </ul>
-    <h3 class="sub">Maduros do Alentejo · Mature wines from Alentejo</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Desespero</span><span class="pontos"></span><span class="preco">33,90</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Jorna</span><span class="pontos"></span><span class="preco">21,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Monte Velho</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Planalto</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-    </ul>
-    <h3 class="sub">Verdes · Vinho verde (young wines)</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Maderne</span><span class="pontos"></span><span class="preco">12,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Dibino</span><span class="pontos"></span><span class="preco">13,50</span></span>
-      </li>
-    </ul>
-    <h3 class="sub">Espumantes · Sparkling wines</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Terras do Demo</span><span class="pontos"></span><span class="preco">19,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Murganheira</span><span class="pontos"></span><span class="preco">19,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Raposeira</span><span class="pontos"></span><span class="preco">17,00</span></span>
-      </li>
-    </ul>
-    <h2 class="categoria"><span class="pt">Bar</span><span class="en">Drinks</span></h2>
-    <h3 class="sub">Gin</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Gin Gordon's</span><span class="pontos"></span><span class="preco">6,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Gin Bombay</span><span class="pontos"></span><span class="preco">8,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Gin Tanqueray</span><span class="pontos"></span><span class="preco">8,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Gin Bulldog</span><span class="pontos"></span><span class="preco">9,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Gin Hendricks</span><span class="pontos"></span><span class="preco">9,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Gin Vigne</span><span class="pontos"></span><span class="preco">10,00</span></span>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha impar">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Bar</span><span class="en">Drinks</span></h2>
-    <h3 class="sub">Rum, vodka e cocktails</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Vodka</span><span class="pontos"></span><span class="preco">5,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Vodka com sumo</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">With juice</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Bacardi</span><span class="pontos"></span><span class="preco">5,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Bacardi limão</span><span class="pontos"></span><span class="preco">5,90</span></span>
-        <p class="en">With lemon</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Captain Morgan</span><span class="pontos"></span><span class="preco">5,00</span></span>
-        <p class="en">Rum</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cuba Libre</span><span class="pontos"></span><span class="preco">5,00</span></span>
-        <p class="en">Rum, Coca-Cola and lemon</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caipirinha</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">Cachaça, lime and sugar</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Caipirão</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">Caipirinha with Beirão liqueur</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Poncha</span><span class="pontos"></span><span class="preco">5,00</span></span>
-        <p class="en">Rum, lemon and honey</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Ponche</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Sweet punch liqueur</p>
-      </li>
-    </ul>
-    <h3 class="sub">Whiskey</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Whiskey novo</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Blended</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Cutty Sark</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Blended Scotch</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Whiskey Jameson</span><span class="pontos"></span><span class="preco">4,50</span></span>
-        <p class="en">Irish</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Whiskey velho</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">Aged</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Whiskey Old Parr</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">Aged blended Scotch</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Whiskey com cola</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">With Coca-Cola</p>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha par">
-    <div class="fundo" aria-hidden="true"></div>
-    <header class="corrida"><span>Taskuinha do Pirata</span><span>Praia de Vila Chã</span></header>
-    <div class="corpo">
-    <h2 class="categoria"><span class="pt">Bar</span><span class="en">Drinks</span></h2>
-    <h3 class="sub">Vinho do Porto e licores</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Porto novo</span><span class="pontos"></span><span class="preco">2,50</span></span>
-        <p class="en">Young Port</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Porto velho</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Aged Port</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Porto tónico</span><span class="pontos"></span><span class="preco">6,00</span></span>
-        <p class="en">Port and tonic</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Favaios</span><span class="pontos"></span><span class="preco">2,00</span></span>
-        <p class="en">Sweet muscat wine</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Favaios com cerveja</span><span class="pontos"></span><span class="preco">2,20</span></span>
-        <p class="en">Muscat with beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Martini</span><span class="pontos"></span><span class="preco">2,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Martini Bianco</span><span class="pontos"></span><span class="preco">3,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Martini com cerveja</span><span class="pontos"></span><span class="preco">2,20</span></span>
-        <p class="en">With beer</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Licor</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Liqueur</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Licor Beirão</span><span class="pontos"></span><span class="preco">4,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Baileys</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Irish cream liqueur</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Amêndoa amarga</span><span class="pontos"></span><span class="preco">3,80</span></span>
-        <p class="en">Bitter almond liqueur</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Aguardente velha</span><span class="pontos"></span><span class="preco">4,00</span></span>
-        <p class="en">Aged wine spirit</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Macieira</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Brandy</p>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Croft</span><span class="pontos"></span><span class="preco">3,00</span></span>
-        <p class="en">Brandy</p>
-      </li>
-    </ul>
-    <h3 class="sub">Shots</h3>
-    <ul class="artigos">
-      <li>
-        <span class="linha"><span class="nome">Shot</span><span class="pontos"></span><span class="preco">2,00</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Shot de whiskey</span><span class="pontos"></span><span class="preco">2,50</span></span>
-      </li>
-      <li>
-        <span class="linha"><span class="nome">Shot de whiskey velho</span><span class="pontos"></span><span class="preco">3,00</span></span>
-      </li>
-    </ul>
-    </div>
-  </section>
-  <section class="folha impar corte"><span>Cortar</span></section>
-  <section class="folha par corte"><span>Cortar</span></section>
-  <section class="folha impar branca">
-    <div class="fundo" aria-hidden="true"></div></section>
-  <section class="folha par contracapa">
-    <div class="fundo" aria-hidden="true"></div>
-    <div class="fim-miolo">
-      <h2 class="fim-titulo">Bom proveito</h2>
-      <p class="fim-lead">
-        Se tiver alergias ou intoler&acirc;ncias, diga-nos antes de pedir.
-        Quase tudo c&aacute; passa por marisco.
-        <span class="en-nota">If you have any allergies or intolerances, please tell
-        us before you order. Almost everything here comes into contact with
-        shellfish.</span>
-      </p>
+  <div class="cartao folha">
+    <div class="pose">
+      <div class="fundo"></div>
+      <div class="miolo">
+        <div class="mesa-nome">TASKUI<span class="virado">N</span>HA</div>
+        <div class="mesa-sub">do Pirata</div>
+        <div class="mesa-risco"></div>
 
-      <div class="fim-blocos">
-        <div>
-          <h3>Hor&aacute;rio</h3>
-          <dl class="horario">
-            <dt>Segunda</dt><dd>Encerrado</dd>
-            <dt>Ter&ccedil;a a s&aacute;bado</dt><dd>10h00 &ndash; 23h00</dd>
-            <dt>Domingo</dt><dd>10h00 &ndash; 20h00</dd>
-          </dl>
-        </div>
-        <div>
-          <h3>Encontrar-nos</h3>
-          <p>Av. dos Banhos 185<br>4485-691 Vila Ch&atilde;, Vila do Conde</p>
-          <p>229 285 079</p>
-          <p>@taskuinhadopirata</p>
-        </div>
-      </div>
+        <div class="mesa-qr"><svg class="mesa-qr-codigo" viewBox="0 0 41 41" width="42.0mm" height="42.0mm" shape-rendering="crispEdges" role="img" aria-label="https://www.taskuinhapirata.pt/ementa"><path d="M4 4h7v1h-7zM12 4h3v1h-3zM18 4h1v1h-1zM20 4h1v1h-1zM23 4h1v1h-1zM26 4h2v1h-2zM30 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM14 5h1v1h-1zM16 5h6v1h-6zM24 5h4v1h-4zM30 5h1v1h-1zM36 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h1v1h-1zM15 6h1v1h-1zM18 6h1v1h-1zM21 6h1v1h-1zM27 6h1v1h-1zM30 6h1v1h-1zM32 6h3v1h-3zM36 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h1v1h-1zM15 7h3v1h-3zM19 7h1v1h-1zM21 7h1v1h-1zM23 7h1v1h-1zM25 7h1v1h-1zM27 7h1v1h-1zM30 7h1v1h-1zM32 7h3v1h-3zM36 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h6v1h-6zM23 8h1v1h-1zM27 8h1v1h-1zM30 8h1v1h-1zM32 8h3v1h-3zM36 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h2v1h-2zM17 9h2v1h-2zM20 9h1v1h-1zM24 9h2v1h-2zM30 9h1v1h-1zM36 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h7v1h-7zM12 11h2v1h-2zM15 11h3v1h-3zM19 11h1v1h-1zM21 11h1v1h-1zM23 11h3v1h-3zM27 11h2v1h-2zM5 12h1v1h-1zM7 12h1v1h-1zM9 12h4v1h-4zM15 12h1v1h-1zM18 12h1v1h-1zM23 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM29 12h3v1h-3zM33 12h2v1h-2zM36 12h1v1h-1zM4 13h2v1h-2zM8 13h1v1h-1zM11 13h2v1h-2zM15 13h1v1h-1zM17 13h2v1h-2zM24 13h1v1h-1zM26 13h1v1h-1zM28 13h4v1h-4zM36 13h1v1h-1zM4 14h3v1h-3zM8 14h1v1h-1zM10 14h3v1h-3zM17 14h2v1h-2zM20 14h2v1h-2zM23 14h4v1h-4zM28 14h1v1h-1zM31 14h2v1h-2zM34 14h1v1h-1zM36 14h1v1h-1zM5 15h2v1h-2zM9 15h1v1h-1zM12 15h2v1h-2zM16 15h1v1h-1zM20 15h2v1h-2zM23 15h2v1h-2zM27 15h2v1h-2zM32 15h2v1h-2zM36 15h1v1h-1zM5 16h2v1h-2zM9 16h2v1h-2zM12 16h1v1h-1zM17 16h3v1h-3zM23 16h1v1h-1zM27 16h1v1h-1zM29 16h2v1h-2zM33 16h1v1h-1zM36 16h1v1h-1zM4 17h3v1h-3zM8 17h1v1h-1zM12 17h4v1h-4zM17 17h1v1h-1zM19 17h1v1h-1zM25 17h2v1h-2zM28 17h1v1h-1zM30 17h3v1h-3zM35 17h2v1h-2zM4 18h1v1h-1zM9 18h2v1h-2zM13 18h3v1h-3zM19 18h1v1h-1zM21 18h1v1h-1zM24 18h7v1h-7zM32 18h4v1h-4zM5 19h2v1h-2zM8 19h1v1h-1zM13 19h1v1h-1zM15 19h1v1h-1zM20 19h4v1h-4zM25 19h2v1h-2zM28 19h1v1h-1zM30 19h1v1h-1zM35 19h1v1h-1zM7 20h1v1h-1zM10 20h1v1h-1zM12 20h2v1h-2zM18 20h1v1h-1zM20 20h1v1h-1zM23 20h6v1h-6zM30 20h1v1h-1zM32 20h1v1h-1zM35 20h1v1h-1zM4 21h1v1h-1zM6 21h4v1h-4zM12 21h1v1h-1zM15 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM25 21h1v1h-1zM27 21h1v1h-1zM31 21h1v1h-1zM33 21h1v1h-1zM35 21h1v1h-1zM6 22h1v1h-1zM8 22h3v1h-3zM17 22h1v1h-1zM20 22h3v1h-3zM24 22h1v1h-1zM26 22h1v1h-1zM29 22h2v1h-2zM34 22h3v1h-3zM4 23h1v1h-1zM11 23h3v1h-3zM19 23h2v1h-2zM23 23h3v1h-3zM28 23h2v1h-2zM31 23h1v1h-1zM36 23h1v1h-1zM5 24h1v1h-1zM7 24h1v1h-1zM10 24h1v1h-1zM13 24h2v1h-2zM16 24h2v1h-2zM19 24h5v1h-5zM26 24h4v1h-4zM31 24h1v1h-1zM5 25h3v1h-3zM12 25h9v1h-9zM23 25h2v1h-2zM26 25h1v1h-1zM28 25h3v1h-3zM33 25h1v1h-1zM35 25h2v1h-2zM4 26h2v1h-2zM7 26h5v1h-5zM13 26h2v1h-2zM17 26h1v1h-1zM24 26h2v1h-2zM30 26h1v1h-1zM33 26h2v1h-2zM36 26h1v1h-1zM5 27h5v1h-5zM17 27h2v1h-2zM21 27h2v1h-2zM25 27h2v1h-2zM28 27h1v1h-1zM31 27h1v1h-1zM36 27h1v1h-1zM4 28h1v1h-1zM7 28h1v1h-1zM9 28h5v1h-5zM15 28h5v1h-5zM23 28h3v1h-3zM28 28h5v1h-5zM35 28h2v1h-2zM12 29h1v1h-1zM15 29h3v1h-3zM20 29h2v1h-2zM23 29h2v1h-2zM28 29h1v1h-1zM32 29h2v1h-2zM35 29h2v1h-2zM4 30h7v1h-7zM12 30h2v1h-2zM17 30h1v1h-1zM19 30h1v1h-1zM21 30h2v1h-2zM24 30h2v1h-2zM28 30h1v1h-1zM30 30h1v1h-1zM32 30h4v1h-4zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM17 31h1v1h-1zM19 31h3v1h-3zM23 31h1v1h-1zM28 31h1v1h-1zM32 31h1v1h-1zM4 32h1v1h-1zM6 32h3v1h-3zM10 32h1v1h-1zM13 32h3v1h-3zM17 32h4v1h-4zM26 32h1v1h-1zM28 32h6v1h-6zM35 32h1v1h-1zM4 33h1v1h-1zM6 33h3v1h-3zM10 33h1v1h-1zM12 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM20 33h6v1h-6zM27 33h2v1h-2zM30 33h1v1h-1zM32 33h4v1h-4zM4 34h1v1h-1zM6 34h3v1h-3zM10 34h1v1h-1zM14 34h1v1h-1zM17 34h1v1h-1zM19 34h1v1h-1zM21 34h1v1h-1zM27 34h3v1h-3zM32 34h1v1h-1zM36 34h1v1h-1zM4 35h1v1h-1zM10 35h1v1h-1zM12 35h1v1h-1zM16 35h1v1h-1zM18 35h1v1h-1zM21 35h2v1h-2zM25 35h1v1h-1zM27 35h4v1h-4zM4 36h7v1h-7zM13 36h4v1h-4zM19 36h1v1h-1zM22 36h1v1h-1zM25 36h1v1h-1zM28 36h2v1h-2zM32 36h1v1h-1zM35 36h1v1h-1z" fill="currentColor"></path></svg></div>
 
-      <div class="fim-qr">
-        <svg class="fim-qr-codigo" viewBox="0 0 37 37" width="34mm" height="34mm" shape-rendering="crispEdges" role="img" aria-label="https://www.taskuinhapirata.pt"><path d="M4 4h7v1h-7zM14 4h1v1h-1zM16 4h5v1h-5zM22 4h2v1h-2zM26 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h3v1h-3zM16 5h2v1h-2zM19 5h1v1h-1zM22 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h3v1h-3zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h2v1h-2zM26 6h1v1h-1zM28 6h3v1h-3zM32 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM14 7h1v1h-1zM18 7h2v1h-2zM21 7h2v1h-2zM24 7h1v1h-1zM26 7h1v1h-1zM28 7h3v1h-3zM32 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h1v1h-1zM19 8h1v1h-1zM23 8h1v1h-1zM26 8h1v1h-1zM28 8h3v1h-3zM32 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM13 9h1v1h-1zM15 9h4v1h-4zM20 9h5v1h-5zM26 9h1v1h-1zM32 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h7v1h-7zM14 11h1v1h-1zM17 11h3v1h-3zM21 11h1v1h-1zM23 11h1v1h-1zM5 12h3v1h-3zM9 12h2v1h-2zM13 12h2v1h-2zM16 12h1v1h-1zM18 12h6v1h-6zM30 12h2v1h-2zM4 13h2v1h-2zM7 13h1v1h-1zM11 13h1v1h-1zM15 13h1v1h-1zM17 13h2v1h-2zM20 13h2v1h-2zM23 13h6v1h-6zM30 13h1v1h-1zM32 13h1v1h-1zM6 14h5v1h-5zM12 14h1v1h-1zM16 14h5v1h-5zM22 14h1v1h-1zM24 14h1v1h-1zM26 14h2v1h-2zM29 14h3v1h-3zM5 15h1v1h-1zM11 15h1v1h-1zM13 15h1v1h-1zM16 15h1v1h-1zM20 15h1v1h-1zM23 15h2v1h-2zM32 15h1v1h-1zM4 16h1v1h-1zM7 16h4v1h-4zM12 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM20 16h2v1h-2zM24 16h2v1h-2zM27 16h1v1h-1zM30 16h3v1h-3zM4 17h3v1h-3zM8 17h2v1h-2zM16 17h8v1h-8zM26 17h2v1h-2zM29 17h2v1h-2zM32 17h1v1h-1zM5 18h1v1h-1zM7 18h8v1h-8zM18 18h1v1h-1zM20 18h1v1h-1zM23 18h2v1h-2zM27 18h3v1h-3zM31 18h2v1h-2zM6 19h1v1h-1zM11 19h2v1h-2zM15 19h2v1h-2zM19 19h2v1h-2zM22 19h3v1h-3zM28 19h2v1h-2zM4 20h2v1h-2zM8 20h3v1h-3zM12 20h2v1h-2zM15 20h2v1h-2zM20 20h1v1h-1zM22 20h1v1h-1zM25 20h1v1h-1zM28 20h2v1h-2zM31 20h1v1h-1zM5 21h1v1h-1zM8 21h1v1h-1zM11 21h3v1h-3zM15 21h1v1h-1zM18 21h1v1h-1zM20 21h1v1h-1zM22 21h1v1h-1zM24 21h2v1h-2zM27 21h1v1h-1zM30 21h1v1h-1zM4 22h1v1h-1zM6 22h2v1h-2zM9 22h2v1h-2zM12 22h1v1h-1zM14 22h3v1h-3zM18 22h3v1h-3zM24 22h1v1h-1zM26 22h3v1h-3zM30 22h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM11 23h2v1h-2zM14 23h3v1h-3zM21 23h1v1h-1zM24 23h4v1h-4zM29 23h2v1h-2zM32 23h1v1h-1zM5 24h2v1h-2zM8 24h1v1h-1zM10 24h1v1h-1zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1zM20 24h12v1h-12zM12 25h1v1h-1zM14 25h2v1h-2zM18 25h1v1h-1zM20 25h1v1h-1zM22 25h3v1h-3zM28 25h2v1h-2zM32 25h1v1h-1zM4 26h7v1h-7zM15 26h2v1h-2zM20 26h5v1h-5zM26 26h1v1h-1zM28 26h1v1h-1zM30 26h2v1h-2zM4 27h1v1h-1zM10 27h1v1h-1zM12 27h4v1h-4zM17 27h1v1h-1zM19 27h2v1h-2zM24 27h1v1h-1zM28 27h1v1h-1zM31 27h1v1h-1zM4 28h1v1h-1zM6 28h3v1h-3zM10 28h1v1h-1zM13 28h2v1h-2zM17 28h1v1h-1zM19 28h1v1h-1zM22 28h1v1h-1zM24 28h9v1h-9zM4 29h1v1h-1zM6 29h3v1h-3zM10 29h1v1h-1zM12 29h4v1h-4zM17 29h1v1h-1zM20 29h2v1h-2zM23 29h1v1h-1zM28 29h1v1h-1zM31 29h1v1h-1zM4 30h1v1h-1zM6 30h3v1h-3zM10 30h1v1h-1zM12 30h1v1h-1zM15 30h1v1h-1zM19 30h2v1h-2zM24 30h1v1h-1zM27 30h1v1h-1zM29 30h1v1h-1zM32 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h2v1h-2zM16 31h2v1h-2zM20 31h1v1h-1zM24 31h2v1h-2zM28 31h2v1h-2zM31 31h1v1h-1zM4 32h7v1h-7zM13 32h3v1h-3zM18 32h3v1h-3zM22 32h3v1h-3zM26 32h2v1h-2zM31 32h1v1h-1z" fill="currentColor"></path></svg>
-        <span class="fim-qr-morada">www.taskuinhapirata.pt</span>
+        <div class="mesa-linguas">A ementa &middot; The menu<br>La carte &middot; La carta</div>
+        <div class="mesa-pe">taskuinhapirata.pt/ementa</div>
       </div>
     </div>
-
-    <div class="fim-pe">O Caminho de Santiago passa &agrave; porta</div>
-  </section>
+  </div>
 </body>
 </html>

@@ -77,7 +77,13 @@ def perfil():
         "castanho quente e sai de lá com outra cor.")
 
 
-def converter(icc):
+def converter(icc, entradas=None, saida=None):
+    """Os `entradas`/`saida` por omissão são os da ementa. O cartão de mesa
+    passa os dele — é a mesma conversão, o mesmo perfil e as mesmas razões, e
+    duas cópias deste comando divergiriam na primeira vez que se afinasse uma
+    delas."""
+    entradas = list(entradas or (CAPA, MIOLO))
+    saida = saida or SAIDA
     print(f"a converter para CMYK com {os.path.basename(icc)}…", flush=True)
     subprocess.run([
         "gs",
@@ -98,7 +104,7 @@ def converter(icc):
         "-dDownsampleMonoImages=false",
         "-dColorImageFilter=/FlateEncode",     # sem JPEG por cima do pergaminho
         "-dGrayImageFilter=/FlateEncode",
-        f"-sOutputFile={SAIDA}", CAPA, MIOLO,      # a ordem é a da leitura
+        f"-sOutputFile={saida}", *entradas,        # a ordem é a da leitura
     ], check=True)
 
 
@@ -130,19 +136,44 @@ def dicionario(d, i):
     raise SystemExit("dicionário sem fim — o PDF não está como se esperava")
 
 
-def caixas():
-    d = open(SAIDA, "rb").read()
+def caixas(saida=None, trim_pt=None, paginas_esperadas=16, sangria_pt=None,
+           origem_pt=None):
+    """Idem: por omissão as da ementa, e o cartão de mesa passa as dele.
 
-    x0, y0 = SANGRIA_PT, SANGRIA_PT
-    x1, y1 = SANGRIA_PT + TRIM_PT[0], SANGRIA_PT + TRIM_PT[1]
+    `sangria_pt` é a folga entre a folha e a área de corte, e por omissão é a da
+    ementa. **O cartão de mesa passa zero**: o fundo dele vem já em 74 × 105, a
+    página é a área de corte e não há folga nenhuma à volta — com o valor da
+    ementa, esta função dava a folha por 6 mm mais pequena do que devia e
+    recusava-se a escrever as caixas.
+    """
+    saida = saida or SAIDA
+    trim_pt = trim_pt or TRIM_PT
+    if sangria_pt is None:
+        sangria_pt = SANGRIA_PT
+    d = open(saida, "rb").read()
+
+    #  `origem_pt` é o canto inferior esquerdo da TrimBox, quando ela não está
+    #  centrada na folha. A ementa não a passa: lá a sangria é igual dos quatro
+    #  lados e a área de corte fica ao meio. **O cartão de mesa passa**, porque
+    #  a folha que o Chrome escreve é uns centésimos maior do que se lhe pediu e
+    #  o conteúdo fica encostado a um canto — ver o `trim_alinhada()` do
+    #  `mesa.py`, que explica porquê e calcula o valor.
+    x0, y0 = origem_pt if origem_pt else (sangria_pt, sangria_pt)
+    x1, y1 = x0 + trim_pt[0], y0 + trim_pt[1]
     trim = f"[{x0:.5f} {y0:.5f} {x1:.5f} {y1:.5f}]".encode()
     media = re.search(rb"/MediaBox\s*\[([^\]]*)\]", d)
     if not media:
         raise SystemExit("o PDF não declara MediaBox")
     largura, altura = [float(v) for v in media.group(1).split()][2:4]
-    if abs(largura - x1 - SANGRIA_PT) > 1 or abs(altura - y1 - SANGRIA_PT) > 1:
-        raise SystemExit(f"a folha mede {largura / 72 * 25.4:.1f} × "
-                         f"{altura / 72 * 25.4:.1f} mm e devia medir 216 × 303")
+    #  Com `origem_pt` a TrimBox já traz a posição decidida por quem chamou, e
+    #  esta verificação — que confere se a folha é a área de corte mais a
+    #  sangria dos dois lados — deixa de fazer sentido.
+    if not origem_pt and (abs(largura - x1 - sangria_pt) > 1
+                          or abs(altura - y1 - sangria_pt) > 1):
+        raise SystemExit(
+            f"a folha mede {largura / 72 * 25.4:.1f} × {altura / 72 * 25.4:.1f} mm "
+            f"e devia medir {(trim_pt[0] + 2 * sangria_pt) / 72 * 25.4:.0f} × "
+            f"{(trim_pt[1] + 2 * sangria_pt) / 72 * 25.4:.0f}")
 
     novos = []
     for m in re.finditer(rb"(\d+)\s+(\d+)\s+obj\s*(<<)", d):
@@ -158,8 +189,8 @@ def caixas():
                   + b"\n/ArtBox " + trim + b"\n" + corpo[2:])
         novos.append((int(m.group(1)), int(m.group(2)), dentro))
 
-    if len(novos) != 16:
-        print(f"  atenção: {len(novos)} páginas, e deviam ser 16")
+    if len(novos) != paginas_esperadas:
+        print(f"  atenção: {len(novos)} páginas, e deviam ser {paginas_esperadas}")
     if not novos:
         print("  as caixas já lá estavam")
         return
@@ -175,23 +206,23 @@ def caixas():
     trailer = d[t0:dicionario(d, t0)]
     trailer = re.sub(rb"/Prev\s+\d+", b"", trailer)
 
-    saida = bytearray(d)
-    if not saida.endswith(b"\n"):
-        saida += b"\n"
+    bytes_ = bytearray(d)
+    if not bytes_.endswith(b"\n"):
+        bytes_ += b"\n"
     posicoes = {}
     for num, ger, corpo in novos:
-        posicoes[num] = len(saida)
-        saida += b"%d %d obj\n" % (num, ger) + corpo + b"\nendobj\n"
+        posicoes[num] = len(bytes_)
+        bytes_ += b"%d %d obj\n" % (num, ger) + corpo + b"\nendobj\n"
 
-    novo_xref = len(saida)
-    saida += b"xref\n"
+    novo_xref = len(bytes_)
+    bytes_ += b"xref\n"
     for num in sorted(posicoes):                 # uma subsecção por objecto
-        saida += b"%d 1\n" % num
-        saida += b"%010d 00000 n \n" % posicoes[num]
-    saida += (b"trailer\n" + trailer[:-2]
-              + b"\n/Prev %d\n>>\nstartxref\n%d\n%%%%EOF\n" % (anterior, novo_xref))
+        bytes_ += b"%d 1\n" % num
+        bytes_ += b"%010d 00000 n \n" % posicoes[num]
+    bytes_ += (b"trailer\n" + trailer[:-2]
+               + b"\n/Prev %d\n>>\nstartxref\n%d\n%%%%EOF\n" % (anterior, novo_xref))
 
-    open(SAIDA, "wb").write(bytes(saida))
+    open(saida, "wb").write(bytes(bytes_))
     print(f"  TrimBox, BleedBox e ArtBox escritas em {len(novos)} páginas")
 
 
