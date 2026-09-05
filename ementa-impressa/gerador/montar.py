@@ -35,57 +35,14 @@ _precos[_chave("Sangria, jarro")] = _precos[_chave("Sangria")]
 #  preços vêm do data/ementa.json: uma cópia transcrita envelhece sozinha, e
 #  um endereço errado no papel não se corrige depois de impresso.
 #
-#  O `lib/site.ts` explica lá porque é que o valor leva `www.`: o domínio sem
-#  ele responde 308 para o `www`, portanto o `www` é a morada e não o atalho.
-#  Mandar mil ementas apontar para o redireccionamento era mandar toda a gente
-#  dar uma volta antes de chegar.
+#  Quem o lê é o `qr.py`, e o desenho do SVG também. Viviam aqui enquanto a
+#  ementa era a única coisa desta casa com um QR; o cartão de mesa é a segunda,
+#  e duas cópias do mesmo endereço era exactamente o que se estava a evitar.
 # ---------------------------------------------------------------------------
 import qr
 
-_ts = open(os.path.join(_raiz, "lib", "site.ts"), encoding="utf-8").read()
-_m = re.search(r'^\s*url:\s*"([^"]+)"', _ts, re.M)
-if not _m:
-    raise SystemExit(
-        "Não encontrei o `url:` no lib/site.ts.\n"
-        "O endereço do QR sai de lá e de mais lado nenhum — se o ficheiro "
-        "mudou de forma, é para actualizar aqui, não para escrever o endereço "
-        "à mão."
-    )
-SITE = _m.group(1)
+SITE = qr.endereco_do_site()
 
-
-def qr_svg(texto, lado_mm, silencio=4):
-    """O QR em SVG, vector, sem fundo — o pergaminho passa por baixo.
-
-    A **zona de silêncio** de quatro módulos entra no `viewBox` em vez de ser
-    margem em CSS: é parte do código, não do espaçamento da folha, e sobre um
-    fundo texturado é ela que faz a diferença entre ler e não ler.
-
-    Um `<path>` só, e não um `<rect>` por módulo: são umas quatrocentas formas,
-    e o Chrome escreve-as todas no stream do PDF.
-    """
-    grelha = qr.codificar(texto)
-    n = len(grelha)
-    partes = []
-    for y, linha in enumerate(grelha):
-        x = 0
-        while x < n:
-            if linha[x]:
-                largura = 1
-                while x + largura < n and linha[x + largura]:
-                    largura += 1
-                partes.append("M%d %dh%dv1h-%dz" % (x + silencio, y + silencio,
-                                                    largura, largura))
-                x += largura
-            else:
-                x += 1
-    lado = n + 2 * silencio
-    return (
-        '<svg class="fim-qr-codigo" viewBox="0 0 %d %d" width="%smm" '
-        'height="%smm" shape-rendering="crispEdges" role="img" '
-        'aria-label="%s"><path d="%s" fill="currentColor"></path></svg>'
-        % (lado, lado, lado_mm, lado_mm, html.escape(texto), "".join(partes))
-    )
 
 # --- 1ª direcção: o papel tem artigos que o site já não tem? ---
 _mudou, _orfaos = [], []
@@ -230,7 +187,7 @@ contra = """  <section class="folha contracapa">
 # pergaminho. Quem mede a zona de silêncio como se fosse margem engana-se em
 # quase um quinto do tamanho — e só dá por isso com o papel na mão.
 contra = (contra
-          .replace("__QR__", qr_svg(SITE, 34))
+          .replace("__QR__", qr.svg(SITE, 34, classe="fim-qr-codigo"))
           .replace("__MORADA__", html.escape(re.sub(r"^https?://", "", SITE))))
 
 CSS = """

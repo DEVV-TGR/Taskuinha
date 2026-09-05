@@ -93,6 +93,7 @@ já apanha entre o site e a gráfica — só que esta ainda não tem quem a apan
 | `fundo-grafica.png` · `fundo-capa.png` | gerados, intermédios. O trabalho em PNG, antes de passar a JPEG |
 | `ementa-coluna-unica.pdf` | o A4 solto, para provar e para a cópia do site |
 | `ementa-coluna-unica.html` | gerado. Não editar |
+| `cartao-mesa-*` | **o cartão de mesa** — tem secção própria mais abaixo |
 | `gerador/` | de onde tudo sai |
 | `origem/` | as imagens e o material de referência |
 
@@ -105,6 +106,248 @@ E fora desta pasta:
 Só o `ementa-grafica-cmyk.pdf` está no repositório. Os fundos e os PDF
 intermédios **não estão**: pesam quase 40 MB entre todos e regeneram-se sempre
 iguais. Estão no `.gitignore`.
+
+## O cartão de mesa
+
+**74 × 105 mm — um A7 — em pergaminho, com o QR da ementa ao centro**, para
+colar nas mesas. É o mesmo fundo, a mesma moldura e a mesma tipografia da ementa; o que
+muda é o tamanho e o que lá está escrito — o nome da casa, o QR, e «A ementa»
+nas quatro línguas do site, em duas linhas de duas.
+
+Sai com estes comandos, e o `gerador/mesa.py` tem lá dentro a razão de cada
+medida:
+
+```bash
+CHROME="$HOME/chrome/mac_arm-151.0.7922.71/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+
+python3 ementa-impressa/gerador/mesa.py             # o fundo e os dois HTML
+
+# o da gráfica leva as medidas da folha em mm — ver abaixo porquê
+node ementa-impressa/gerador/gerar.mjs "$CHROME" \
+  "file://$PWD/ementa-impressa/cartao-mesa-grafica.html" \
+  "ementa-impressa/cartao-mesa-grafica.pdf" 78 109
+
+node ementa-impressa/gerador/gerar.mjs "$CHROME" \
+  "file://$PWD/ementa-impressa/cartao-mesa-a4.html" \
+  "ementa-impressa/cartao-mesa-a4.pdf"
+
+python3 ementa-impressa/gerador/mesa.py --cmyk      # o CMYK, com as caixas
+```
+
+O `mesa.py --html` salta a geração do fundo, que demora dez segundos e não muda
+quando só se mexeu no desenho.
+
+### O fundo vem pronto, e não se lhe toca
+
+O pergaminho é o **`ementa-impressa/origem/fundo-cartao-a7.png`** — já em A7, já
+nas medidas do autocolante, com a moldura onde foi desenhada. O `mesa.py` lê-o e
+converte-o para JPEG, e mais nada: não recorta, não centra, não estica e não
+acrescenta pergaminho nenhum.
+
+Chegou a ser o `origem/fundo-ementa.png`, que é o A4 da ementa, e enquanto foi
+o `mesa.py` teve três funções a torcê-lo para caber — uma para lhe tirar a faixa
+das argolas, outra para o encurtar pelo meio, outra para lhe alargar as bordas
+com pergaminho copiado do interior. Saíram todas. Era esse código a origem da
+moldura fora de eixo, da faixa postiça nas bordas e do rasto na sangria.
+
+**Leva 2 mm de sangria**, que é o que a 360imprimir pede neste produto — o
+editor deles mostra a folha a 78 × 109 para um autocolante de 74 × 105.
+
+O ficheiro do fundo mede a área de corte e mais nada, portanto a sangria é
+acrescentada no `mesa.py`, esticando a fila de píxeis da borda para fora.
+**Isso não é mexer no fundo:** os 2 mm ficam inteiramente para lá da linha de
+corte e são aparados, caia a faca no sítio ou falhe. O que sobrevive ao corte é
+o ficheiro tal e qual.
+
+Esteve a zero, e não chegava: carregado assim no site deles, o editor avisa
+**«O seu produto poderá ficar com margens brancas»**.
+
+Estica-se em vez de se espelhar porque o espelho de 2 mm copiava a moldura para
+dentro da sangria, e um corte que falhasse para fora mostrava uma **moldura
+fantasma** ao lado da boa. A fila da borda, essa, é pergaminho.
+
+### O `78 109` do comando
+
+Isso obriga a um cuidado que uma ementa com sangria não tem. **O Chrome não
+desenha onde a CSS manda, ao décimo de milímetro:** arredonda a folha para
+píxeis do dispositivo (pede-se 74 mm, escreve 74,08), desenha um cartão de
+105 mm com 104,6, e o sítio para onde a diferença vai muda conforme se lhe passe
+o tamanho pelo `@page`, pelo `printToPDF`, ou conforme o fundo seja `absolute`
+ou `fixed`. Numa ementa isso desaparece nos 3 mm de sangria; aqui ficava uma
+**linha branca numa aresta do autocolante**.
+
+Resolve-se em três sítios, e é preciso que os três estejam de acordo:
+
+1. o `@page` pede **meio milímetro a mais de altura** (`FOLGA`, no `mesa.py`),
+   e é esse meio milímetro que o corte leva;
+2. o comando passa `74 105.5` ao `gerar.mjs`, que desliga o `preferCSSPageSize`
+   e crava a folha — **sem isto o Chrome ignora a folga**;
+3. o `.fundo` é `position: fixed` e passa 1 mm da borda, para cobrir a folha
+   toda seja qual for a medida que o Chrome lhe dê.
+
+A TrimBox fica **ao centro da folha**, medida sobre a MediaBox que o Chrome
+escreveu de facto e não sobre a que se lhe pediu.
+
+Houve uma versão que ia procurar o desenho — rasterizava a folha e via onde
+acabava o papel por pintar — e é de evitar: **o pergaminho tem cantos claros**,
+que a busca dava por papel, e a área de corte saía 1,5 mm ao lado. Com 2 mm de
+sangria não é preciso adivinhar nada.
+
+Tentou-se, antes disto, declarar o `@page` em pontos, cravar o `paperWidth` sem
+folga nenhuma, e cortar a folha com o Ghostscript — e as duas últimas são piores
+do que o problema: com `FIXEDMEDIA` o `gs` não corta o que sobra, **passa-o para
+uma segunda página**, e o ficheiro saía com duas.
+
+### O formato é o da 360imprimir, e calha ser um tamanho de papel
+
+O **A7 (74 × 105 mm)** está na lista de tamanhos rectangulares dos autocolantes
+da 360imprimir, nomeado como tal. Às 50 unidades custa 3 € menos que o 90 × 110,
+e ainda por cima tem a proporção do A4.
+
+### A proporção, que era o que fazia o desenho entrar torto
+
+Isto interessa quando o fundo é um A4 e tem de ser reduzido ao cartão — que já
+não é o caso, mas foi, e a razão de o formato ser A7 e não 90 × 110 vem daqui.
+
+Um **A7 tem exactamente a proporção de um A4** — 0,7048 contra 0,7071, três
+milésimas — portanto a fotografia entrava sem se esticar. **Um 90 × 110 não
+tem**: é 0,818 contra 0,707, e encher um com o outro pedia 15,7 % de esticão na
+horizontal.
+
+Esteve assim, e **estava mal**. Quinze por cento não se vêem numa textura, mas
+os ornamentos dos cantos são folhas e uvas — formas que o olho conhece — e
+achatadas denunciam-se à primeira vista. O que se fazia em vez disso está a
+seguir, e **já não corre** — fica escrito para o dia em que o fundo volte a ser
+um A4.
+
+O que se faz em vez disso: **tiram-se 43 mm do meio da folha**, onde só há
+pergaminho liso, e colam-se as duas metades. As molduras de cima e de baixo
+aproximam-se e nenhuma se deforma. Sobra **1,24 %**, doze vezes menos.
+
+**São 512 píxeis e não um número redondo qualquer.** As faixas laterais da
+moldura correm de cima a baixo e atravessam a zona do corte: cortar a eito
+partia-lhes a onda a meio e voltava a colá-la fora de fase, o que dá um degrau
+bem visível numa linha que era regular. 512 são oito períodos exactos dessa onda
+e dezanove da fila de pontinhos ao lado dela, a menos de um píxel.
+
+O número foi **medido, não escolhido**: percorreram-se todos os cortes entre 380
+e 600 px comparando as filas que ficariam vizinhas ao longo das duas faixas
+laterais, e 512 está entre os três degraus mais pequenos — e é, desses, o que
+deixa menos deformação para trás.
+
+Duas verificações, e ambas ficaram feitas:
+
+- **ampliar a junta** — ela cai exactamente a meio do cartão — e ver se a onda
+  lateral salta de fase. Não salta;
+- **medir a energia de desenho das filas removidas** contra as faixas vizinhas
+  do mesmo tamanho: 552 contra 550 e 561. Saiu pergaminho, não saiu moldura.
+
+### São dois ficheiros, e servem coisas diferentes
+
+| | |
+|---|---|
+| `cartao-mesa-a4.pdf` | **o de imprimir em casa.** Quatro cartões numa A4, em tamanho real, com marcas de corte |
+| `cartao-mesa-cmyk.pdf` | **o de enviar à 360imprimir.** Um cartão, CMYK FOGRA39, com sangria e caixas de corte |
+| `cartao-mesa-grafica.pdf` | gerado, intermédio. É o mesmo ainda em RGB |
+| `cartao-mesa-fundo.jpg` | gerado pelo `mesa.py`: o `fundo-cartao-a7.png` com a sangria à volta, 78 × 109 mm a 937 DPI. É este que o HTML usa |
+| `origem/fundo-cartao-a7.png` | **de origem, não é gerado.** O pergaminho do cartão, já em 74 × 105 mm |
+| `cartao-mesa-grafica.html` · `-a4.html` | gerados. Não editar — perdem-se na geração seguinte |
+
+**O desenho vive uma vez só**, numa caixa de 74 × 105 mm, e as duas folhas usam
+a mesma. Na folha A4 os cartões saem **em tamanho real**: 2 × 74 = 148 mm deixa
+31 mm de margem de cada lado, e 2 × 105 = 210 deixa 43,5 em cima e em baixo, que
+qualquer impressora imprime. Não há encolhimento nenhum pelo meio, portanto o
+cartão da prova de casa é do tamanho exacto do que vem da gráfica.
+
+Oito A7 deitados dão exactamente uma A4 e não sobra nada, e já esteve assim. São
+**quatro** ao alto porque um cartão que não roda é um cartão a menos por onde a
+prova de casa se pode afastar da gráfica. O resto da folha fica em branco.
+
+### O QR é da versão 4, e o da contracapa continua na 3
+
+O endereço da ementa — `https://www.taskuinhapirata.pt/ementa` — tem 37 bytes e
+a versão 3 leva 32. Subiu para a **versão 4** (33 × 33), e foi essa a razão de o
+`gerador/qr.py` ter deixado de ter uma versão fixa. A ementa não mudou: os HTML
+dela saem byte a byte iguais aos de antes desta alteração, e está conferido.
+
+É `/ementa` e não `/pt/ementa` porque o português é a língua da casa e é a única
+sem prefixo no endereço — ver o `defaultLocale` do `lib/i18n.ts`. Quem chega de
+fora troca de língua no selector da própria página, e o endereço fica sete
+caracteres mais curto, que num QR são módulos maiores.
+
+O quadrado mede **42 mm com a zona de silêncio**, o que dá 1,02 mm por módulo —
+acima dos 0,92 mm da contracapa, que é papel já impresso e que se sabe que lê.
+Encolheu de 46 para 42 ao voltar o cartão ao A7, e é o que cabe nos 62 mm úteis
+sem apertar o resto do desenho. Gasta-se aqui a folga toda que haja, e de
+propósito:
+
+**o vinil da 360imprimir é brilhante**, e é o único acabamento que eles têm
+neste produto. O brilho é o pior caso para um QR — reflexo especular num tampo
+horizontal ao sol — e é por isso que o módulo leva esta folga toda. O que se
+perde em contraste ganha-se em tamanho. Se um dia se mudar para um vinil mate,
+o QR pode voltar a encolher.
+
+### O fundo e os 3 mm de sangria
+
+Reduz-se o A4 do pergaminho para os 74 × 105 da área de corte — **reduz-se e
+não se estica**, que é a vantagem do A7 — e a moldura acompanha.
+
+A sangria é a **última fila de píxeis da área de corte, repetida para fora** —
+pergaminho liso, porque a moldura passa mais para dentro. Serve para que uma
+faca 1 mm ao lado encontre pergaminho e não papel branco.
+
+**Esteve espelhada, e estava errado.** O espelho dá textura melhor do que uma
+fila esticada, e a justificação escrita no código era que a tira espelhada caía
+toda em pergaminho liso. Não caía: a moldura fica a poucos milímetros do corte
+depois de o A4 encolher para este tamanho, e o espelho de 3 mm copiava-a.
+Ficava uma segunda linha ondulada dentro da sangria, paralela à verdadeira —
+invisível enquanto o corte caísse no sítio, e à vista quando falhasse um
+milímetro para fora, que é exactamente o caso para que a sangria existe.
+
+Vê-se ampliando os primeiros 14 mm da borda do cartão renderizado. Foi assim que
+apareceu, e é assim que se confere se alguma vez se voltar a mexer nisto.
+
+### A moldura fica a 3,2 mm do corte, e é uma decisão e não um descuido
+
+Reduzir um desenho de A4 para este tamanho reduz também as margens dele: os
+8 mm que a moldura tem na ementa ficam em 3,2. Uma gráfica corta com cerca de
+1 mm de tolerância, portanto a moldura pode sair a 2,2 mm de um lado e a 4,2 do
+outro — não desaparece, mas fica visivelmente descentrada para quem repare.
+
+**Ficou assim de propósito**, decidido pelo Gonçalo. A alternativa era recolher
+o desenho e encher a volta com pergaminho liso, como o `fundo.py` faz na tira
+das argolas; ganhava-se margem e perdia-se o cartão ser a folha da ementa em
+ponto pequeno, que é o que se queria dele.
+
+Não é para "corrigir" numa próxima passagem sem voltar a perguntar.
+
+### Verificar antes de mandar imprimir
+
+Sobre o `cartao-mesa-cmyk.pdf`, que é o que se envia:
+
+1. **Uma página** de 74 × 105 mm, e a **TrimBox igual à MediaBox** — este produto não leva sangria, ver acima.
+2. **Nenhum `/DeviceRGB`** — se aparecer, a conversão não pegou.
+3. **`Producer: GPL Ghostscript`**, e `Quartz` em lado nenhum.
+4. **A moldura não aparece a dobrar na sangria.** Ampliam-se os primeiros 14 mm
+   da borda e conta-se: uma linha ondulada, não duas. Ver acima porquê.
+5. **O QR lê**, e lê a partir do PDF e não do HTML. Rasteriza-se e aponta-se-lhe
+   um leitor:
+
+   ```bash
+   gs -q -dNOPAUSE -dBATCH -sDEVICE=png16m -r300 \
+      -sOutputFile=/tmp/prova.png ementa-impressa/cartao-mesa-cmyk.pdf
+   ```
+
+   Depois abre-se o `/tmp/prova.png` e aponta-se-lhe o telemóvel. Tem de dar
+   `https://www.taskuinhapirata.pt/ementa` — e tem de dar **quatro vezes a mesma
+   coisa** na folha A4. Quatro e não três: um cartão que não leia é um cartão
+   que fica numa mesa a não servir para nada.
+6. **O endereço escrito no pé** confere com o do QR. São a mesma variável, mas é
+   a última coisa que alguém lê se o código não pegar.
+
+E, quando os autocolantes chegarem, **o teste que conta é o do sol**: colar um
+numa mesa e lê-lo ao meio-dia. O vinil é brilhante, e é aí que se vê se o
+tamanho do módulo compensou o reflexo.
 
 ## A encadernação com argolas, e tudo o que ela mudou
 
@@ -224,7 +467,8 @@ verdade sobre preços**, mesmo tendo lá números: são sobrepostos a cada gera�
 | `folhas.json` | a ordem dos 155 artigos por folha, os nomes e o inglês |
 | `rever_en.py` | **o inglês que está impresso, com a razão de cada descrição**, e as onze perguntas por responder. Corre-se e confere-se contra o `folhas.json` |
 | `fontes.css` | as quatro tipografias em base64 |
-| `qr.py` | **o QR code da contracapa**, codificado aqui e não por uma biblioteca |
+| `qr.py` | **os QR codes**, codificados aqui e não por uma biblioteca. Versão 3 na contracapa, 4 no cartão de mesa |
+| `mesa.py` | **o cartão de mesa**: o fundo dele e as duas folhas, a de casa e a da gráfica |
 | `gerar.mjs` | gera o PDF pelo Chrome, por DevTools Protocol |
 | `foto.mjs` | fotografa uma página, para se poder olhar sem imprimir |
 
@@ -267,6 +511,23 @@ bits batia certo com a tabela da norma — e **não lia**. Só apareceu ao compa
 os 841 módulos, um a um, com o gerador do próprio macOS (`CIQRCodeGenerator`,
 correcção Q, que dá exactamente esta versão): batiam todos menos oito, e os oito
 eram os do formato.
+
+### E foi a mesma comparação que apanhou o segundo engano
+
+A segunda cópia dos bits do formato escrevia **oito módulos na coluna e sete na
+linha**, e é ao contrário: sete e oito. O oitavo da coluna caía em cima do
+módulo escuro — que a linha seguinte reescrevia, portanto o erro não deixava
+rasto — e a casa que ele devia ocupar na linha 8 ficava por preencher.
+
+**Na versão 3 não se via.** Com a máscara que ela escolhe, esse bit calha ser
+zero, e um zero por escrever é igual a um zero escrito: os 841 módulos batiam
+certo com o macOS na mesma. Só apareceu quando o cartão de mesa obrigou a subir
+à versão 4, onde a máscara é outra e o bit é um — e apareceu à primeira
+comparação, um módulo em 1089.
+
+Fica a lição, que é a mesma das duas vezes: **o que prova um QR é um leitor, ou
+um segundo gerador**. O código está correcto para os dois endereços e as duas
+versões, e isso está conferido contra o `CIQRCodeGenerator` módulo a módulo.
 
 ## A pasta `origem/`
 

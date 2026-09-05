@@ -60,3 +60,15 @@ ementa-impressa/fundo-capa.jpg
 ementa-impressa/ementa-grafica-capa.pdf
 ementa-impressa/ementa-grafica-miolo.pdf
 ementa-impressa/gerador/__pycache__/
+
+# Intermédios do cartão de mesa, pela mesma razão: o fundo é o FundoA7 com a
+# sangria à volta e regenera-se com o gerador/mesa.py, e o -grafica.pdf é só o
+# passo em RGB antes do CMYK. Ficam o cartao-mesa-cmyk.pdf, que é o que se
+# envia à gráfica, e o cartao-mesa-a4.pdf, que é o que se imprime em casa.
+ementa-impressa/cartao-mesa-fundo.png
+ementa-impressa/cartao-mesa-fundo.jpg
+ementa-impressa/cartao-mesa-sangrado.png
+ementa-impressa/cartao-mesa-grafica.pdf
+
+# O Finder deixa isto em qualquer pasta por onde passe.
+.DS_Store
