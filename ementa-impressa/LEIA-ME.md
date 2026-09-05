@@ -20,7 +20,8 @@ python3 ementa-impressa/gerador/grafica.py          # junta, converte para CMYK,
                                                     # e escreve as caixas de corte
 ```
 
-E a quinta, que é a do site e não a da gráfica:
+E a quinta, que é a do site e não a da gráfica. O `montar.py` alivia-lhe as
+imagens sozinho — ver abaixo porquê:
 
 ```bash
 python3 ementa-impressa/gerador/montar.py           # o mesmo miolo, em A4 solto
@@ -76,6 +77,35 @@ O Ghostscript volta a amostrar as imagens a 144 DPI e o mesmo PDF fica em
 carácter a carácter igual e o pergaminho a aguentar bem a olho. Não entra nada
 no `package.json`: o `gs` é uma ferramenta do sistema, como o Chrome do
 Puppeteer.
+
+### Porque é que esta folha leva imagens aliviadas
+
+A versão da gráfica separa a capa do miolo porque o `printToPDF` do Chrome
+pendura com imagens grandes no mesmo documento. **A folha do site não se pode
+separar** — é um A4 solto de doze páginas, e a capa faz parte dele.
+
+Ficou uma semana sem se poder gerar, e teve custo: o preço dos tremoços foi
+corrigido em todo o lado e este PDF ficou para trás. O site mostrava 1,20 € e o
+botão «Levar a ementa» descarregava 1,80 €.
+
+Ao resolvê-lo descobriu-se que **o limite é o peso das imagens e não o número
+delas**. Medido no documento inteiro:
+
+| imagens | resultado |
+|---|---|
+| fundo PNG 10 MB + pirata PNG 1,2 MB | pendura (mais de 8 min) |
+| fundo JPEG 2,4 MB + pirata PNG 1,2 MB | pendura (mais de 8 min) |
+| **fundo JPEG 0,6 MB + pirata PNG 0,7 MB** | **imprime em 5,7 s** |
+
+Por isso o `montar.py` gera o `ementa-site-fundo.jpg` e o `ementa-site-pirata.png`
+e é para eles que o HTML aponta. **Aliviar não custa nada aqui**, porque o passo
+seguinte já reamostra tudo a 144 DPI com o `gs`: guardar 300 DPI para os deitar
+fora a seguir era pagar oito minutos de espera por resolução que ninguém recebe.
+Os 1754 px de altura são um A4 a 150 DPI, o dobro do que sobrevive.
+
+De caminho, o `ementa-coluna-unica.pdf` passou de **18 MB para 2,4**.
+
+A versão da gráfica não é tocada: essa continua a sair do pergaminho inteiro.
 
 **O `public/ementa-taskuinha.pdf` não se actualiza sozinho.** Se o dono mexer
 nos preços pelo painel, o site muda nesse instante e o PDF do botão fica para

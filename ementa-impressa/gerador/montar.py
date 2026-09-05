@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import json, os, sys, html, re
+import json
+import subprocess, os, sys, html, re
 # tudo o que este ficheiro precisa vive ao lado dele
 D = os.path.dirname(os.path.abspath(__file__))
 folhas = json.load(open(f"{D}/folhas.json"))
@@ -979,5 +980,60 @@ if GRAFICA:
     escrever("ementa-grafica-miolo.html", documento(paginas[1:], CSS_GRAFICA),
              len(paginas) - 1)
 else:
+    # ------------------------------------------------------------------
+    #  As imagens desta folha vão aliviadas, e é por obrigação do Chrome
+    # ------------------------------------------------------------------
+    #
+    #  A versão da gráfica separa a capa do miolo porque o `printToPDF`
+    #  pendura com duas imagens grandes no mesmo documento — a nota longa está
+    #  no ramo do `if GRAFICA`. **Esta folha não pode separar-se**: é um A4
+    #  solto de doze páginas, e a capa faz parte dele.
+    #
+    #  Ficou assim uma semana sem se poder gerar, e isso teve custo: o preço
+    #  dos tremoços foi corrigido em todo o lado e o `public/ementa-taskuinha.pdf`
+    #  ficou para trás. O site mostrava 1,20 € e o botão «Levar a ementa»
+    #  descarregava um PDF com 1,80 €.
+    #
+    #  O que se descobriu ao resolvê-lo: **o limite é o peso das imagens, não o
+    #  número delas.** Medido, sempre no documento inteiro de doze páginas:
+    #
+    #      fundo PNG 10 MB + pirata PNG 1,2 MB          pendura (>8 min)
+    #      fundo JPEG 2,4 MB + pirata PNG 1,2 MB        pendura (>8 min)
+    #      fundo JPEG 0,6 MB + pirata PNG 0,7 MB        imprime em 5,7 s
+    #
+    #  Portanto não se separa nada: aliviam-se as duas imagens e o documento
+    #  imprime inteiro. **E aliviar não custa aqui nada**, porque este PDF é a
+    #  cópia leve do site — o passo seguinte do LEIA-ME já o volta a reamostrar
+    #  a 144 DPI com o `gs`. Guardar 300 DPI para os deitar fora a seguir era
+    #  pagar oito minutos de espera por resolução que ninguém recebe.
+    #
+    #  Os 1754 px de altura são um A4 a 150 DPI, que é o dobro do que o `gs`
+    #  vai deixar ficar. A versão da gráfica não é tocada: essa continua a sair
+    #  do pergaminho em tamanho inteiro.
+    SITE_FUNDO = "ementa-site-fundo.jpg"
+    SITE_PIRATA = "ementa-site-pirata.png"
+
+    _base = os.path.dirname(D)
+    for _origem, _saida, _args in (
+            ("fundo-ementa.png", SITE_FUNDO,
+             ["-Z", "1754", "-s", "format", "jpeg", "-s", "formatOptions", "85"]),
+            ("pirata-capa.png", SITE_PIRATA, ["-Z", "900", "-s", "format", "png"])):
+        _de = os.path.join(_base, "origem", _origem)
+        _para = os.path.join(_base, _saida)
+        if not os.path.exists(_de):
+            raise SystemExit(f"falta o origem/{_origem}")
+        if (not os.path.exists(_para)
+                or os.path.getmtime(_para) < os.path.getmtime(_de)):
+            if subprocess.run(["which", "sips"], capture_output=True).returncode:
+                raise SystemExit("falta o `sips` — é do macOS e é ele que alivia "
+                                 "as imagens desta folha")
+            subprocess.run(["sips", *_args, "--out", _para, _de],
+                           check=True, capture_output=True)
+            print(f"  {_saida}: {os.path.getsize(_para) // 1024} KB "
+                  f"(de {os.path.getsize(_de) // 1024} KB)")
+
     paginas = [capa] + [folha(bl, i + 2) for i, bl in enumerate(folhas)] + [contra]
-    escrever("ementa-coluna-unica.html", documento(paginas), len(paginas))
+    _html = (documento(paginas)
+             .replace('url("origem/fundo-ementa.png")', f'url("{SITE_FUNDO}")')
+             .replace('src="origem/pirata-capa.png"', f'src="{SITE_PIRATA}"'))
+    escrever("ementa-coluna-unica.html", _html, len(paginas))

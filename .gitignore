@@ -72,3 +72,9 @@ ementa-impressa/cartao-mesa-grafica.pdf
 
 # O Finder deixa isto em qualquer pasta por onde passe.
 .DS_Store
+
+# As imagens aliviadas da folha A4 do site: geram-se com o gerador/montar.py a
+# partir das de origem, e existem só porque o printToPDF do Chrome pendura com
+# imagens grandes — a medição está lá dentro.
+ementa-impressa/ementa-site-fundo.jpg
+ementa-impressa/ementa-site-pirata.png
