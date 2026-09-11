@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-02T18:51:21.627Z",
+  "actualizado": "2026-09-11T11:07:21.795Z",
   "categorias": [
     {
       "id": "entradas",
@@ -41,7 +41,7 @@
         {
           "id": "tremocos",
           "nome": "Tremoços",
-          "preco": 1.2
+          "preco": 1.8
         },
         {
           "id": "amendoins-sem-casca",
