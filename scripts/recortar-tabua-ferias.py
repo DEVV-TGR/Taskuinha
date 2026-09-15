@@ -144,3 +144,63 @@ saida.putalpha(alfa)
 saida = saida.crop(saida.getbbox())
 saida.save(DESTINO, "WEBP", quality=90, method=6)
 print(f"fase dx={dx} dy={dy} par={par} · {saida.size[0]}×{saida.size[1]} → {DESTINO}")
+
+"""
+## As duas camadas da tábua do Hero
+
+No Hero a tábua está colada à aresta direita do ecrã, como se a barra de
+ferro estivesse aparafusada à parede. Se a imagem inteira balançasse, a barra
+rodava com ela e descolava-se da aresta. Por isso sai em duas camadas do mesmo
+tamanho (757×699), que se sobrepõem ao píxel:
+
+- **a barra**: tudo acima de y = 66 — a barra, a bola, a chapa de fixação e
+  os aros das correntes que a abraçam. Fica parada;
+- **o pendente**: tudo de y = 66 para baixo — os elos e a tábua. Balança à
+  volta do centro da barra.
+
+Medido no ficheiro recortado, linha a linha, pela largura do que é opaco:
+
+| y | O que é |
+|---|---|
+| 3–21 | a bola, a chapa e a metade de cima dos aros |
+| 22–48 | a barra, de ponta a ponta — **o centro, y = 35, é o pivô** |
+| 49–69 | a metade de baixo dos aros, e o fim da bola (até 65) e da chapa (até 69) |
+| 70–221 | só elos, dois fios de corrente (x 176–203 e 532–559) |
+| 222– | a tábua |
+
+**O corte é em 70**, a primeira linha onde já só há elos. A chapa de
+fixação desce em bico até 69, e um corte mais acima deixava uma lasca dela no
+pendente, a balançar solta.
+
+**E as camadas sobrepõem-se nas colunas das correntes.** Com um corte seco, a
+primeira linha do pendente ficava meio transparente ao rodar, e via-se uma
+risca escura a atravessar o elo. Por isso, só nas duas colunas das correntes, o
+pendente começa mais acima (y = 49, logo abaixo da barra) e fica por baixo da
+metade de baixo dos aros, que a barra desenha por cima. A ±0,9° essa zona fica a
+menos de 32px do pivô e desloca-se menos de meio píxel: as duas cópias
+coincidem. Fora das colunas a sobreposição não pode existir — a bola e a chapa
+estão a 350px do pivô e balançariam 5px.
+
+**Se o recorte mudar, remedir estas linhas e colunas.** O pivô em percentagem
+vai para o `transform-origin` do `TabuaFerias.tsx`.
+"""
+
+CORTE = 70
+PIVO = 35
+SOBREPOSICAO = 49
+COLUNAS_DAS_CORRENTES = ((170, 210), (525, 566))
+
+largura, altura = saida.size
+vazia = (0, 0, 0, 0)
+
+barra = Image.new("RGBA", saida.size, vazia)
+barra.paste(saida.crop((0, 0, largura, CORTE)), (0, 0))
+barra.save("public/images/tabua-ferias-barra.webp", "WEBP", quality=90, method=6)
+
+pendente = Image.new("RGBA", saida.size, vazia)
+pendente.paste(saida.crop((0, CORTE, largura, altura)), (0, CORTE))
+for x0, x1 in COLUNAS_DAS_CORRENTES:
+    pendente.paste(saida.crop((x0, SOBREPOSICAO, x1, CORTE)), (x0, SOBREPOSICAO))
+pendente.save("public/images/tabua-ferias-pendente.webp", "WEBP", quality=90, method=6)
+
+print(f"camadas: corte y={CORTE} · pivô y={PIVO} = {100 * PIVO / altura:.3f}% da altura")

@@ -60,7 +60,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
 | Aranha, bandeirinhas, rede, lanternas | `components/decor/` |
-| O mascote — tamanho, sítio, altura do assento | `components/decor/Esqueleto.tsx`, montado em `Casa.tsx` |
+| O mascote — tamanho, sítio, altura do assento | `components/decor/Esqueleto.tsx`, montado em `Casa.tsx` (enquanto houver aviso de férias, a `.tabua-ferias` do `globals.css` chega-o à esquerda) |
 | Onde vive o texto do Hero (topo ou fundo, por tamanho de ecrã) | `components/Hero.tsx` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |

@@ -159,68 +159,73 @@ body {
 }
 
 /*
-  Onde se pendura a tábua das férias no Hero (`components/decor/TabuaFerias.tsx`).
+  A tábua das férias no Hero (`components/decor/TabuaFerias.tsx`), e o que ela
+  obriga o esqueleto a fazer.
 
-  Começou encostada à direita, e nos portáteis de todos os dias — 1280 a
-  1536px — tapava a cabeça do esqueleto: ele cresce com a largura do ecrã e o
-  Hero com a altura, por isso a cabeça sobe para onde a tábua estava sempre
-  que o ecrã é mais largo do que alto. O Gonçalo viu três saídas lado a lado
-  e escolheu a tábua entre o nome e o esqueleto.
+  **Colada à aresta direita do ecrã, sem margem nenhuma.** A ponta direita da
+  barra de ferro é uma chapa de fixação: encostada à aresta, a barra lê-se como
+  aparafusada à parede. Foi o que o Gonçalo pediu, depois de ver uma versão com
+  a tábua a meio, entre o nome e o esqueleto, e não gostar.
 
-  As medidas de que isto depende, e que mudam estas contas se mudarem:
+  **O esqueleto chega-se para a esquerda enquanto a tábua existir.** Colada à
+  direita, a tábua caía em cima da cabeça dele nos portáteis de 1280 a 1536px.
+  O Gonçalo viu quatro saídas (tábua à frente, esqueleto à frente, tábua a
+  encolher, esqueleto à esquerda), escolheu esta, e depois escolheu o recuo
+  entre três. O `:has` é o que desfaz tudo sozinho a 15 de outubro: quando o
+  aviso sai, a tábua deixa de existir e o esqueleto volta ao sítio de sempre.
 
-  - o esqueleto em `lg` tem `min(38vw, 620px)` de largura, 1,139 × isso de
-    altura, e 86% dela acima do fundo do Hero (`Esqueleto.tsx`);
-  - fica dentro do contentor de 1400px, a 2rem da aresta dele — acima dos
-    1400px, a margem do contentor soma-se;
-  - a cabeça começa a ~38% da largura dele (a contar da esquerda) e a ~13% da
-    altura (a contar de cima);
-  - o nome TASKUIИHA em `lg` está sempre a 96px e mede ~620px, 2rem depois da
-    aresta do contentor;
-  - a tábua começa 88px abaixo do topo, e a altura dela é 0,923 × a largura.
+  A conta, com T = largura da tábua e E = largura do esqueleto:
 
-  Os 111px são os 88 do topo mais 23 de folga.
+  - o esqueleto está dentro do contentor de 1400px, e o `right` dele conta a
+    partir da aresta desse contentor — daí subtrair a margem, que só existe
+    acima dos 1400px;
+  - a cabeça acaba a 68% da largura dele, ou seja a 0,32 × E da aresta direita.
+    Com a aresta dele em T + 16px − 0,32 × E, a cabeça acabava 16px antes da
+    tábua — foi a versão que ele viu primeiro;
+  - pediu-o **mais para a esquerda, 65px a 1440px**. Em fracção do esqueleto
+    (E = 547px a 1440) são 0,119 × E, para escalar com o ecrã: −0,32 + 0,119
+    dá o −0,201.
+
+  **Nunca mais perto do texto do Hero do que isto.** Entre 1024 e 1279px o
+  recuo inteiro punha-o por cima da frase e com o chapéu encostado ao nome. A
+  essas larguras nem é preciso tanto: a tábua é estreita e acaba acima da
+  cabeça dele. Por isso o recuo tem um tecto — o `min()` —, que é o `right`
+  a partir do qual ele começava a tocar no texto:
+
+  - o chapéu, a ~40% da largura dele, fica 16px à direita do fim do nome
+    TASKUIИHA (2rem + ~620px desde a aresta do contentor: 668px − 0,40 × E);
+  - o corpo à altura da frase, a ~24%, fica 16px à direita dela
+    (2rem + `max-w-lg`: 560px − 0,24 × E).
+
+  Das duas, manda a que o obriga a ficar mais à direita. Dos 1280px para cima
+  este tecto nunca morde — a conta de cima já o deixa mais longe do texto.
+
+  O `max(2rem, …)` é o sítio de sempre (`sm:right-8` na `Casa`). Nos ecrãs
+  muito largos a margem do contentor é grande e a conta dava um `right` menor
+  do que esse — empurrava-o para a direita, na direcção da tábua. Chegá-lo à
+  esquerda sim, nunca o contrário.
+
+  As medidas vêm de `Esqueleto.tsx` (`lg:w-[38vw] lg:max-w-[620px]`) e do
+  `Hero.tsx`. Se um deles mudar de tamanho, estas contas mudam.
 */
 .tabua-ferias {
-  --esqueleto: min(38vw, 620px);
-  --margem-do-contentor: max(0px, (100vw - 1400px) / 2);
-
-  /*
-    1024 a 1279px: entre o nome e o esqueleto sobram ~160px, e não há tábua
-    que lá caiba. Mas a estas larguras a cabeça está baixa — a tábua fica na
-    coluna do esqueleto, **por cima** da cabeça, e encolhe o que for preciso
-    para acabar antes dela: 100vh − 0,84 × esqueleto é o topo da cabeça.
-  */
-  right: 2rem;
-  width: min(24vw, 380px, (100vh - 0.84 * var(--esqueleto) - 111px) / 0.923);
+  right: 0;
+  width: min(28vw, 440px);
 }
 
-@media (width >= 80rem) {
-  .tabua-ferias {
-    /* A aresta direita acaba antes da cabeça: 66% da largura do esqueleto
-       a contar da direita, deixando-a a 34% da esquerda, contra os 38% da
-       cabeça. */
-    --direita: calc(var(--margem-do-contentor) + 2rem + 0.66 * var(--esqueleto));
-    right: var(--direita);
+@media (width >= 64rem) {
+  body:has(.tabua-ferias) [data-esqueleto] {
+    --tabua: min(28vw, 440px);
+    --esqueleto: min(38vw, 620px);
+    --margem: max(0px, (100vw - 1400px) / 2);
 
-    /*
-      A largura pode crescer por uma de duas razões, e basta uma:
-
-      - **à direita do nome** — o espaço entre a aresta direita do nome
-        (margem + 2rem + ~620px, com folga: 42rem) e a da tábua;
-      - **acima do nome** — o nome começa ~437px acima do fundo do Hero; com
-        folga e com títulos de duas linhas noutras línguas, 30rem.
-
-      Nos portáteis manda a primeira; nos ecrãs grandes, onde o nome está bem
-      abaixo, a segunda deixa a tábua chegar aos 380px. Nunca abaixo de 240px.
-    */
-    width: clamp(
-      240px,
-      max(
-        100vw - var(--direita) - var(--margem-do-contentor) - 42rem,
-        (100vh - 30rem - 88px) / 0.923
-      ),
-      min(24vw, 380px)
+    right: max(
+      2rem,
+      min(
+        var(--tabua) + 16px - 0.201 * var(--esqueleto) - var(--margem),
+        100vw - 2 * var(--margem) - var(--esqueleto) -
+          max(668px - 0.4 * var(--esqueleto), 560px - 0.24 * var(--esqueleto))
+      )
     );
   }
 }
