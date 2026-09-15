@@ -184,9 +184,6 @@ export function Musica({
       <button
         type="button"
         onClick={alternar}
-        /* O `globals.css` usa esta marca para o subir por cima da barra das
-           férias, enquanto ela estiver aberta. */
-        data-musica
         aria-pressed={aTocar}
         aria-label={aTocar ? texto.desligar : texto.ligar}
         title={aTocar ? texto.desligar : texto.ligar}
