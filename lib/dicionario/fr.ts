@@ -60,7 +60,8 @@ export const fr = {
 
   ferias: {
     titulo: "Fermeture annuelle",
-    datas: "du 19 septembre au 14 octobre",
+    desde: "du 19 septembre",
+    ate: "au 14 octobre",
     datasCurtas: "19 sept. – 14 oct.",
     fechar: "Fermer l'avis",
   },

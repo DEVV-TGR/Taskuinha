@@ -29,8 +29,25 @@ import { useAbaVisivel } from "./usarVisibilidade";
   ## O texto
 
   As ripas ocupam, do ficheiro, x 7–90% e y 29–98%. O texto vive dentro disso
-  com folga para as pontas lascadas — daí os 12% de lado e os 35% de cima. Vai
+  com folga para as pontas lascadas — daí os 11% de lado e os 33% de cima. Vai
   dentro do pendente, para balançar com a madeira.
+
+  **As datas são o que mais importa, e o Gonçalo quere-as bem visíveis.**
+  Estavam a 5,4cqw (~22px a 1440) e confundiam-se com o veio. Chegaram a ir
+  para a Rye do título, quase do tamanho dele, e ele preferiu-as na letra de
+  máquina de escrever, só um pouco maiores do que estavam: 6,2cqw (~25px).
+  Uma linha cada — o dicionário parte-as em `desde` e `ate` para a quebra
+  nunca cair a meio.
+
+  O 6,2cqw cabe nas quatro línguas com margem: a linha mais comprida é a
+  espanhola, "del 19 de septiembre", com 10,5em nesta letra — 65cqw, numa
+  caixa de 78cqw. **Se as datas mudarem, remedir**: o `whitespace-nowrap`
+  impede uma linha comprida de partir, e ela sairia da madeira.
+
+  **E há um véu escuro por trás do texto.** A letra clara sobre esta madeira
+  dava 3,4:1 de contraste, e ~2:1 nos veios claros. O véu é um gradiente que
+  se desvanece antes das arestas das ripas — não pode passar delas, senão
+  escurecia a fotografia do Hero à volta da tábua.
 
   As letras estão em `cqw` e não em `rem`: a tábua muda de largura com o ecrã
   (`min(28vw, 440px)`), e o texto tem de crescer e encolher com ela.
@@ -46,6 +63,14 @@ import { useAbaVisivel } from "./usarVisibilidade";
   ver o `PIVO` do script. Se o recorte mudar, muda aqui também.
 */
 const PIVO = "50% 5.007%";
+
+/*
+  O véu por trás do texto. `closest-side` faz a elipse tocar nas arestas da
+  caixa, e o último passo é transparente — nada escurece fora dela. A 0,6 no
+  meio a letra clara passa dos 4,5:1 até sobre os veios mais claros.
+*/
+const VEU =
+  "radial-gradient(closest-side, rgb(8 11 13 / 0.62) 0%, rgb(8 11 13 / 0.55) 55%, rgb(8 11 13 / 0.3) 80%, rgb(8 11 13 / 0) 100%)";
 
 export function TabuaFerias({
   texto,
@@ -91,15 +116,26 @@ export function TabuaFerias({
             sizes="(min-width: 1024px) 440px, 1px"
             className="h-auto w-full"
           />
-          <div className="absolute inset-x-[12%] top-[35%] bottom-[6%] flex flex-col items-center justify-center text-center">
+          {/*
+            O véu: mais escuro no meio, a zero nas arestas desta caixa, que
+            fica dentro das ripas (x 9–88%, y 31–96%).
+          */}
+          <div
+            aria-hidden
+            className="absolute top-[31%] right-[12%] bottom-[4%] left-[9%]"
+            style={{ backgroundImage: VEU }}
+          />
+          <div className="absolute inset-x-[11%] top-[33%] bottom-[6%] flex flex-col items-center justify-center text-center">
             <p className="display letra-na-madeira text-[7.6cqw] leading-[1.05] text-balance text-osso">
               {texto.titulo}
             </p>
             <p
-              className="letra-na-madeira mt-[3.5cqw] text-[5.4cqw] leading-snug text-balance text-osso"
+              data-datas
+              className="letra-na-madeira mt-[3.5cqw] text-[6.2cqw] leading-snug whitespace-nowrap text-osso"
               style={{ fontFamily: "var(--font-maquina)" }}
             >
-              {texto.datas}
+              <span className="block">{texto.desde}</span>
+              <span className="block">{texto.ate}</span>
             </p>
           </div>
         </motion.div>

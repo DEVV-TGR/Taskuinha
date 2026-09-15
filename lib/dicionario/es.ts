@@ -60,7 +60,8 @@ export const es = {
 
   ferias: {
     titulo: "Cerrado por vacaciones",
-    datas: "del 19 de septiembre al 14 de octubre",
+    desde: "del 19 de septiembre",
+    ate: "al 14 de octubre",
     datasCurtas: "19 sept. – 14 oct.",
     fechar: "Cerrar aviso",
   },

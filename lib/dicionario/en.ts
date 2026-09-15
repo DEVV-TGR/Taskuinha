@@ -73,7 +73,8 @@ export const en = {
 
   ferias: {
     titulo: "Closed for holidays",
-    datas: "from 19 September to 14 October",
+    desde: "from 19 September",
+    ate: "to 14 October",
     datasCurtas: "19 Sep – 14 Oct",
     fechar: "Close notice",
   },
