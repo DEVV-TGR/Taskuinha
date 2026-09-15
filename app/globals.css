@@ -140,6 +140,113 @@ body {
 }
 
 /*
+  A barra das férias no telemóvel (`components/BarraFerias.tsx`).
+
+  Enquanto está aberta, sobe o botão da música para cima dela e dá ao `body`
+  uma folga em baixo, para o fim do rodapé não ficar tapado. Pelo `:has`, e
+  não por estado partilhado entre os dois componentes: fechar a barra
+  desmonta-a e as regras deixam de valer sozinhas.
+
+  Fora de `@layer`, de propósito: é isso que as põe à frente do `bottom-4` e
+  do `transition-colors` do Tailwind, que vivem na camada de utilitários. A
+  transição repete as cores por essa mesma razão — sem elas perdia-se o
+  fade do hover.
+
+  Apagar com o resto do aviso depois de 14 de outubro — ver `lib/ferias.ts`.
+*/
+:root {
+  --altura-barra-ferias: 4.5rem;
+}
+
+/*
+  A tábua das férias no Hero (`components/decor/TabuaFerias.tsx`), e o que ela
+  obriga o esqueleto a fazer.
+
+  **Colada à aresta direita do ecrã, sem margem nenhuma.** A ponta direita da
+  barra de ferro é uma chapa de fixação: encostada à aresta, a barra lê-se como
+  aparafusada à parede. Foi o que o Gonçalo pediu, depois de ver uma versão com
+  a tábua a meio, entre o nome e o esqueleto, e não gostar.
+
+  **O esqueleto chega-se para a esquerda enquanto a tábua existir.** Colada à
+  direita, a tábua caía em cima da cabeça dele nos portáteis de 1280 a 1536px.
+  O Gonçalo viu quatro saídas (tábua à frente, esqueleto à frente, tábua a
+  encolher, esqueleto à esquerda), escolheu esta, e depois escolheu o recuo
+  entre três. O `:has` é o que desfaz tudo sozinho a 15 de outubro: quando o
+  aviso sai, a tábua deixa de existir e o esqueleto volta ao sítio de sempre.
+
+  A conta, com T = largura da tábua e E = largura do esqueleto:
+
+  - o esqueleto está dentro do contentor de 1400px, e o `right` dele conta a
+    partir da aresta desse contentor — daí subtrair a margem, que só existe
+    acima dos 1400px;
+  - a cabeça acaba a 68% da largura dele, ou seja a 0,32 × E da aresta direita.
+    Com a aresta dele em T + 16px − 0,32 × E, a cabeça acabava 16px antes da
+    tábua — foi a versão que ele viu primeiro;
+  - pediu-o **mais para a esquerda, 65px a 1440px**. Em fracção do esqueleto
+    (E = 547px a 1440) são 0,119 × E, para escalar com o ecrã: −0,32 + 0,119
+    dá o −0,201.
+
+  **Nunca mais perto do texto do Hero do que isto.** Entre 1024 e 1279px o
+  recuo inteiro punha-o por cima da frase e com o chapéu encostado ao nome. A
+  essas larguras nem é preciso tanto: a tábua é estreita e acaba acima da
+  cabeça dele. Por isso o recuo tem um tecto — o `min()` —, que é o `right`
+  a partir do qual ele começava a tocar no texto:
+
+  - o chapéu, a ~40% da largura dele, fica 16px à direita do fim do nome
+    TASKUIИHA (2rem + ~620px desde a aresta do contentor: 668px − 0,40 × E);
+  - o corpo à altura da frase, a ~24%, fica 16px à direita dela
+    (2rem + `max-w-lg`: 560px − 0,24 × E).
+
+  Das duas, manda a que o obriga a ficar mais à direita. Dos 1280px para cima
+  este tecto nunca morde — a conta de cima já o deixa mais longe do texto.
+
+  O `max(2rem, …)` é o sítio de sempre (`sm:right-8` na `Casa`). Nos ecrãs
+  muito largos a margem do contentor é grande e a conta dava um `right` menor
+  do que esse — empurrava-o para a direita, na direcção da tábua. Chegá-lo à
+  esquerda sim, nunca o contrário.
+
+  As medidas vêm de `Esqueleto.tsx` (`lg:w-[38vw] lg:max-w-[620px]`) e do
+  `Hero.tsx`. Se um deles mudar de tamanho, estas contas mudam.
+*/
+.tabua-ferias {
+  right: 0;
+  width: min(28vw, 440px);
+}
+
+@media (width >= 64rem) {
+  body:has(.tabua-ferias) [data-esqueleto] {
+    --tabua: min(28vw, 440px);
+    --esqueleto: min(38vw, 620px);
+    --margem: max(0px, (100vw - 1400px) / 2);
+
+    right: max(
+      2rem,
+      min(
+        var(--tabua) + 16px - 0.201 * var(--esqueleto) - var(--margem),
+        100vw - 2 * var(--margem) - var(--esqueleto) -
+          max(668px - 0.4 * var(--esqueleto), 560px - 0.24 * var(--esqueleto))
+      )
+    );
+  }
+}
+
+[data-musica] {
+  transition-property: color, background-color, border-color, bottom;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (width < 64rem) {
+  body:has([data-barra-ferias]) {
+    padding-bottom: calc(var(--altura-barra-ferias) + env(safe-area-inset-bottom));
+  }
+
+  body:has([data-barra-ferias]) [data-musica] {
+    bottom: calc(var(--altura-barra-ferias) + env(safe-area-inset-bottom) + 0.75rem);
+  }
+}
+
+/*
   Letra de osso por cima de madeira clara — a tabuleta do "A casa".
 
   O `--osso` foi escolhido para fundo preto, e sobre as ripas da tabuleta o

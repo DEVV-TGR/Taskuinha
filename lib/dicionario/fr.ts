@@ -58,6 +58,14 @@ export const fr = {
     desligar: "Couper la musique",
   },
 
+  ferias: {
+    titulo: "Fermeture annuelle",
+    desde: "du 19 septembre",
+    ate: "au 14 octobre",
+    datasCurtas: "19 sept. – 14 oct.",
+    fechar: "Fermer l'avis",
+  },
+
   hero: {
     titulo: "La mer est à vingt pas.",
     frase:

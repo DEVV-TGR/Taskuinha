@@ -58,6 +58,14 @@ export const es = {
     desligar: "Silenciar la música",
   },
 
+  ferias: {
+    titulo: "Cerrado por vacaciones",
+    desde: "del 19 de septiembre",
+    ate: "al 14 de octubre",
+    datasCurtas: "19 sept. – 14 oct.",
+    fechar: "Cerrar aviso",
+  },
+
   hero: {
     titulo: "El mar está a veinte pasos.",
     frase:
