@@ -71,6 +71,14 @@ export const en = {
     desligar: "Turn the music off",
   },
 
+  ferias: {
+    titulo: "Closed for holidays",
+    desde: "from 19 September",
+    ate: "to 14 October",
+    datasCurtas: "19 Sep – 14 Oct",
+    fechar: "Close notice",
+  },
+
   hero: {
     titulo: "The sea is twenty steps away.",
     frase:

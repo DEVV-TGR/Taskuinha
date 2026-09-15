@@ -90,6 +90,16 @@ export const pt = {
     desligar: "Desligar a música",
   },
 
+  /* O aviso das férias de 2026 — ver `lib/ferias.ts`. */
+  ferias: {
+    titulo: "Encerrado para férias",
+    /* Duas linhas na tábua do Hero, sempre partidas aqui. */
+    desde: "de 19 de setembro",
+    ate: "a 14 de outubro",
+    datasCurtas: "19 set. – 14 out.",
+    fechar: "Fechar aviso",
+  },
+
   hero: {
     titulo: "O mar fica a vinte passos.",
     frase:
