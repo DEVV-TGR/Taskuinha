@@ -140,6 +140,108 @@ body {
 }
 
 /*
+  A barra das férias no telemóvel (`components/BarraFerias.tsx`).
+
+  Enquanto está aberta, sobe o botão da música para cima dela e dá ao `body`
+  uma folga em baixo, para o fim do rodapé não ficar tapado. Pelo `:has`, e
+  não por estado partilhado entre os dois componentes: fechar a barra
+  desmonta-a e as regras deixam de valer sozinhas.
+
+  Fora de `@layer`, de propósito: é isso que as põe à frente do `bottom-4` e
+  do `transition-colors` do Tailwind, que vivem na camada de utilitários. A
+  transição repete as cores por essa mesma razão — sem elas perdia-se o
+  fade do hover.
+
+  Apagar com o resto do aviso depois de 14 de outubro — ver `lib/ferias.ts`.
+*/
+:root {
+  --altura-barra-ferias: 4.5rem;
+}
+
+/*
+  Onde se pendura a tábua das férias no Hero (`components/decor/TabuaFerias.tsx`).
+
+  Começou encostada à direita, e nos portáteis de todos os dias — 1280 a
+  1536px — tapava a cabeça do esqueleto: ele cresce com a largura do ecrã e o
+  Hero com a altura, por isso a cabeça sobe para onde a tábua estava sempre
+  que o ecrã é mais largo do que alto. O Gonçalo viu três saídas lado a lado
+  e escolheu a tábua entre o nome e o esqueleto.
+
+  As medidas de que isto depende, e que mudam estas contas se mudarem:
+
+  - o esqueleto em `lg` tem `min(38vw, 620px)` de largura, 1,139 × isso de
+    altura, e 86% dela acima do fundo do Hero (`Esqueleto.tsx`);
+  - fica dentro do contentor de 1400px, a 2rem da aresta dele — acima dos
+    1400px, a margem do contentor soma-se;
+  - a cabeça começa a ~38% da largura dele (a contar da esquerda) e a ~13% da
+    altura (a contar de cima);
+  - o nome TASKUIИHA em `lg` está sempre a 96px e mede ~620px, 2rem depois da
+    aresta do contentor;
+  - a tábua começa 88px abaixo do topo, e a altura dela é 0,923 × a largura.
+
+  Os 111px são os 88 do topo mais 23 de folga.
+*/
+.tabua-ferias {
+  --esqueleto: min(38vw, 620px);
+  --margem-do-contentor: max(0px, (100vw - 1400px) / 2);
+
+  /*
+    1024 a 1279px: entre o nome e o esqueleto sobram ~160px, e não há tábua
+    que lá caiba. Mas a estas larguras a cabeça está baixa — a tábua fica na
+    coluna do esqueleto, **por cima** da cabeça, e encolhe o que for preciso
+    para acabar antes dela: 100vh − 0,84 × esqueleto é o topo da cabeça.
+  */
+  right: 2rem;
+  width: min(24vw, 380px, (100vh - 0.84 * var(--esqueleto) - 111px) / 0.923);
+}
+
+@media (width >= 80rem) {
+  .tabua-ferias {
+    /* A aresta direita acaba antes da cabeça: 66% da largura do esqueleto
+       a contar da direita, deixando-a a 34% da esquerda, contra os 38% da
+       cabeça. */
+    --direita: calc(var(--margem-do-contentor) + 2rem + 0.66 * var(--esqueleto));
+    right: var(--direita);
+
+    /*
+      A largura pode crescer por uma de duas razões, e basta uma:
+
+      - **à direita do nome** — o espaço entre a aresta direita do nome
+        (margem + 2rem + ~620px, com folga: 42rem) e a da tábua;
+      - **acima do nome** — o nome começa ~437px acima do fundo do Hero; com
+        folga e com títulos de duas linhas noutras línguas, 30rem.
+
+      Nos portáteis manda a primeira; nos ecrãs grandes, onde o nome está bem
+      abaixo, a segunda deixa a tábua chegar aos 380px. Nunca abaixo de 240px.
+    */
+    width: clamp(
+      240px,
+      max(
+        100vw - var(--direita) - var(--margem-do-contentor) - 42rem,
+        (100vh - 30rem - 88px) / 0.923
+      ),
+      min(24vw, 380px)
+    );
+  }
+}
+
+[data-musica] {
+  transition-property: color, background-color, border-color, bottom;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (width < 64rem) {
+  body:has([data-barra-ferias]) {
+    padding-bottom: calc(var(--altura-barra-ferias) + env(safe-area-inset-bottom));
+  }
+
+  body:has([data-barra-ferias]) [data-musica] {
+    bottom: calc(var(--altura-barra-ferias) + env(safe-area-inset-bottom) + 0.75rem);
+  }
+}
+
+/*
   Letra de osso por cima de madeira clara — a tabuleta do "A casa".
 
   O `--osso` foi escolhido para fundo preto, e sobre as ripas da tabuleta o

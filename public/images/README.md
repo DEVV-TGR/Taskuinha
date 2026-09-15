@@ -107,6 +107,21 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | **`porta-esquerda.png`** | 960×1080 | **A folha esquerda do portão.** Tapa meio ecrã à chegada ao site e nas trocas de página. |
 | **`porta-diretia.png`** | 960×1080 | **A folha direita.** A mesma porta espelhada. O nome tem gralha e ficou como chegou. |
 | **`rolo-ementa.webp`** | 1600×1800 | **O rolo da ementa.** Vara, ferragens, caracóis e papel rasgado na mesma imagem, recortados. |
+| **`tabua-ferias.webp`** | 757×699 | **O aviso das férias** (19 set. – 14 out. de 2026). Tábua pendurada numa barra por correntes. **Temporária.** |
+
+> **A `tabua-ferias.webp` foi encontrada pelo Gonçalo e chegou com o xadrez de
+> "transparência" pintado no ficheiro** — um PNG com canal alfa, mas opaco em
+> toda a parte. Com a autorização dele, o xadrez saiu pelo
+> `scripts/recortar-tabua-ferias.py`, que só apaga um píxel quando tem a cor que
+> o xadrez teria naquela posição; as correntes, cinzentas, ficam intactas. O
+> original (`imagem_ferias.jpg`, 800×800) está no `.gitignore`.
+>
+> É usada de duas maneiras: pelo `next/image` na tábua do Hero
+> (`components/decor/TabuaFerias.tsx`) e por `url()` como textura da barra do
+> telemóvel (`components/BarraFerias.tsx`). A segunda não passa por optimizador,
+> por isso os 148 KB do ficheiro são o que o telemóvel descarrega.
+>
+> Sai com o resto do aviso depois de 14 de outubro — ver `lib/ferias.ts`.
 
 > **As duas portas são um par, e a ordem não é indiferente.** A ferragem com o
 > aro cai na aresta **interior** de cada folha, por isso encostadas os dois

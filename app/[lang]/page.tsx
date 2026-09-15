@@ -7,6 +7,7 @@ import { Galeria } from "@/components/Galeria";
 import { Vozes } from "@/components/Vozes";
 import { Encontrar } from "@/components/Encontrar";
 import { Footer } from "@/components/Footer";
+import { BarraFerias } from "@/components/BarraFerias";
 import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
 
 export default async function Home() {
@@ -64,6 +65,10 @@ export default async function Home() {
       {/* Sem trave antes do rodapé: chegou a haver uma e o Gonçalo mandou-a
           tirar. O rodapé ficou a separar-se pela linha fina que sempre teve. */}
       <Footer />
+
+      {/* O aviso das férias no telemóvel. Só aqui, e por isso nunca na
+          ementa — ver `lib/ferias.ts`. */}
+      <BarraFerias texto={dic.ferias} />
     </>
   );
 }

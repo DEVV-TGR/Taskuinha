@@ -65,6 +65,7 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
+| Aviso de férias (tábua no Hero, barra no telemóvel) — **temporário** | `lib/ferias.ts` (data de fim) + `ferias` nos dicionários |
 | Quem entra no painel, e como | `docs/PAINEL.md` |
 | Favicon | `app/icon.svg` |
 | Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |

@@ -73,6 +73,11 @@ ementa-impressa/cartao-mesa-grafica.pdf
 # O Finder deixa isto em qualquer pasta por onde passe.
 .DS_Store
 
+# A tábua das férias como chegou, com o xadrez de "transparência" pintado no
+# ficheiro. O site usa a tabua-ferias.webp, que sai desta pelo
+# scripts/recortar-tabua-ferias.py; o original, como os outros, fica fora.
+public/images/imagem_ferias.jpg
+
 # As imagens aliviadas da folha A4 do site: geram-se com o gerador/montar.py a
 # partir das de origem, e existem só porque o printToPDF do Chrome pendura com
 # imagens grandes — a medição está lá dentro.
