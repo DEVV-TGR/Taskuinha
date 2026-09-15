@@ -150,9 +150,6 @@ export function Esqueleto({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      /* Enquanto houver a tábua das férias no Hero, o `globals.css` usa esta
-         marca para o chegar à esquerda — ver `.tabua-ferias`. */
-      data-esqueleto
       className={`pointer-events-none absolute translate-y-[calc(-100%_+_38px)] w-[93vw] max-w-[min(360px,calc(45vh+33px))] sm:w-[300px] sm:max-w-none sm:translate-y-[-86%] lg:w-[38vw] lg:max-w-[620px] ${className ?? ""}`}
     >
       <Reveal>

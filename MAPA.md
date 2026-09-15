@@ -60,12 +60,11 @@ Alias de importação: `@/*` → raiz do projecto. Ex.: `@/lib/site`, `@/compone
 | Fontes carregadas | `app/layout.tsx` |
 | Texturas de madeira / pergaminho / rede | `lib/texturas.ts` |
 | Aranha, bandeirinhas, rede, lanternas | `components/decor/` |
-| O mascote — tamanho, sítio, altura do assento | `components/decor/Esqueleto.tsx`, montado em `Casa.tsx` (enquanto houver aviso de férias, a `.tabua-ferias` do `globals.css` chega-o à esquerda) |
+| O mascote — tamanho, sítio, altura do assento | `components/decor/Esqueleto.tsx`, montado em `Casa.tsx` |
 | Onde vive o texto do Hero (topo ou fundo, por tamanho de ecrã) | `components/Hero.tsx` |
 | Ecrã de abertura / transição entre páginas | `components/Entrada.tsx`, `components/Travessia.tsx` |
 | Como as secções entram no ecrã | `components/Reveal.tsx` |
 | Ordem das secções da homepage | `app/page.tsx` |
-| Aviso de férias (tábua no Hero, barra no telemóvel) — **temporário** | `lib/ferias.ts` (data de fim) + `ferias` nos dicionários |
 | Quem entra no painel, e como | `docs/PAINEL.md` |
 | Favicon | `app/icon.svg` |
 | Cartão de partilha (WhatsApp, Facebook) | `app/opengraph-image.tsx` |
