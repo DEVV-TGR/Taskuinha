@@ -107,29 +107,6 @@ Não são da casa. São imagens externas usadas como decoração, e é por isso 
 | **`porta-esquerda.png`** | 960×1080 | **A folha esquerda do portão.** Tapa meio ecrã à chegada ao site e nas trocas de página. |
 | **`porta-diretia.png`** | 960×1080 | **A folha direita.** A mesma porta espelhada. O nome tem gralha e ficou como chegou. |
 | **`rolo-ementa.webp`** | 1600×1800 | **O rolo da ementa.** Vara, ferragens, caracóis e papel rasgado na mesma imagem, recortados. |
-| **`tabua-ferias.webp`** | 757×699 | **O aviso das férias** (19 set. – 14 out. de 2026). Tábua pendurada numa barra por correntes. Textura da barra do telemóvel. **Temporária.** |
-| **`tabua-ferias-barra.webp`** | 757×699 | A mesma, só a barra de ferro, a bola, a chapa e os aros. A camada **parada** da tábua do Hero. **Temporária.** |
-| **`tabua-ferias-pendente.webp`** | 757×699 | A mesma, só os elos e a tábua. A camada que **balança**. **Temporária.** |
-
-> **A `tabua-ferias.webp` foi encontrada pelo Gonçalo e chegou com o xadrez de
-> "transparência" pintado no ficheiro** — um PNG com canal alfa, mas opaco em
-> toda a parte. Com a autorização dele, o xadrez saiu pelo
-> `scripts/recortar-tabua-ferias.py`, que só apaga um píxel quando tem a cor que
-> o xadrez teria naquela posição; as correntes, cinzentas, ficam intactas. O
-> original (`imagem_ferias.jpg`, 800×800) está no `.gitignore`.
->
-> A inteira é a textura da barra do telemóvel (`components/BarraFerias.tsx`), por
-> `url()`. Não passa por optimizador, por isso os 148 KB do ficheiro são o que o
-> telemóvel descarrega.
->
-> No Hero a tábua está colada à aresta direita, com a barra de ferro presa à
-> parede, e só as correntes com a tábua balançam. Para isso o mesmo script corta-a
-> em **duas camadas do mesmo tamanho**, que o `components/decor/TabuaFerias.tsx`
-> sobrepõe: a `-barra` parada por cima, a `-pendente` a balançar por baixo. O
-> corte, o pivô e a sobreposição nas colunas das correntes estão explicados no
-> script. **Se o recorte mudar, remedir lá.**
->
-> Sai com o resto do aviso depois de 14 de outubro — ver `lib/ferias.ts`.
 
 > **As duas portas são um par, e a ordem não é indiferente.** A ferragem com o
 > aro cai na aresta **interior** de cada folha, por isso encostadas os dois
