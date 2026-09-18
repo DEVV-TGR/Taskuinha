@@ -1,6 +1,7 @@
 import { ForkKnife } from "@phosphor-icons/react/dist/ssr";
 import { HeroMedia } from "@/components/HeroMedia";
 import { Cta } from "@/components/Cta";
+import { TabuaFerias } from "@/components/decor/TabuaFerias";
 import { site } from "@/lib/site";
 import { caminho } from "@/lib/i18n";
 import { linguaActual, dicionario } from "@/lib/dicionario/servidor";
@@ -49,6 +50,17 @@ export async function Hero() {
   return (
     <section className="relative flex min-h-[100vh] items-start overflow-hidden bg-gradient-to-b from-breu to-breu-raso lg:items-end">
       <HeroMedia />
+
+      {/*
+        O aviso das férias — só em `lg`. Por baixo disso o aviso é a barra
+        fixa da página (`BarraFerias`). Onde fica e que largura tem, para não
+        tocar no nome nem na cabeça do esqueleto, é a classe `.tabua-ferias`
+        do `globals.css`.
+      */}
+      <TabuaFerias
+        texto={dic.ferias}
+        className="tabua-ferias absolute top-[calc(var(--altura-nav)+1.25rem)] z-30 hidden lg:block"
+      />
 
       {/*
         O `pt` só existe enquanto o conteúdo está alinhado ao topo: a Nav é
