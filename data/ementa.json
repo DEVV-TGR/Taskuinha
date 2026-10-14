@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-11T11:08:59.525Z",
+  "actualizado": "2026-10-14T11:19:27.755Z",
   "categorias": [
     {
       "id": "entradas",
@@ -759,7 +759,7 @@
         {
           "id": "copo-de-sangria",
           "nome": "Copo de sangria",
-          "preco": 3
+          "preco": 4
         },
         {
           "id": "sangria",
